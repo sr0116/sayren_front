@@ -25,7 +25,6 @@ export default function Header() {
   }, []);
 
   return (
-      // ✅ sticky → fixed 로 교체
       <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
         {/* 상단 바 (PC 전용, 스크롤 전용) */}
         {!isMobile && !isScrolled && (
