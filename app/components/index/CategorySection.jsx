@@ -2,14 +2,14 @@
 
 export default function CategorySection() {
   const categories = [
-    { name: "정수기", img: "https://placehold.co/80x80?text=WATER" },
-    { name: "TV", img: "https://placehold.co/80x80?text=TV" },
-    { name: "에어컨", img: "https://placehold.co/80x80?text=AIRCON" },
-    { name: "냉장고", img: "https://placehold.co/80x80?text=FRIDGE" },
-    { name: "세탁기", img: "https://placehold.co/80x80?text=WASH" },
-    { name: "의류건조기", img: "https://placehold.co/80x80?text=DRYER" },
-    { name: "청소기", img: "https://placehold.co/80x80?text=CLEAN" },
-    { name: "PC", img: "https://placehold.co/80x80?text=PC" },
+    { name: "정수기",img: "/image/refrigerator.png" },
+    { name: "TV", img: "/image/refrigerator.png" },
+    { name: "에어컨", img: "/image/refrigerator.png" },
+    { name: "냉장고", img: "/image/refrigerator.png" },
+    { name: "세탁기", img: "/image/refrigerator.png" },
+    { name: "의류건조기", img: "/image/refrigerator.png"},
+    { name: "청소기", img: "/image/refrigerator.png" },
+    { name: "PC", img: "/image/refrigerator.png" },
   ];
 
   return (

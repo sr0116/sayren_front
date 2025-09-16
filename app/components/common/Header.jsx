@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { Search, ShoppingCart, User, Menu } from "lucide-react";
 
 export default function Header() {
@@ -10,10 +12,10 @@ export default function Header() {
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
-
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -23,12 +25,23 @@ export default function Header() {
   }, []);
 
   return (
-      <header className="w-full sticky top-0 z-50 bg-white border-b border-gray-200">
-        {/* 상단 바 (PC 전용, 스크롤 전ㅇ[만) */}
+      // ✅ sticky → fixed 로 교체
+      <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
+        {/* 상단 바 (PC 전용, 스크롤 전용) */}
         {!isMobile && !isScrolled && (
             <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 h-12 text-xs text-gray-600">
-              <div className="text-lg font-extrabold tracking-tight text-gray-900">
-                SAYREN
+              <div className="flex items-center">
+                <Link href="/">
+                  <div className="relative h-8 w-[120px] min-w-[120px] flex-shrink-0 flex items-center cursor-pointer">
+                    <Image
+                        src="/image/Logo.svg"
+                        alt="SAYREN Logo"
+                        fill
+                        className="object-contain"
+                        priority
+                    />
+                  </div>
+                </Link>
               </div>
               <div className="flex items-center space-x-6">
                 <a href="#">회원가입</a>
@@ -42,14 +55,24 @@ export default function Header() {
 
         {/* 하단 바 */}
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 h-12">
-          <div className="flex items-center space-x-8 h-full">
+          <div className="flex items-center space-x-6 h-full">
             {(isMobile || isScrolled) && (
-                <div className="text-lg font-extrabold tracking-tight text-gray-900">
-                  SAYREN
+                <div className="flex items-center">
+                  <Link href="/">
+                    {/* Symbol → scale-90 적용 */}
+                    <div className="relative h-8 w-[32px] min-w-[32px] flex-shrink-0 flex items-center cursor-pointer scale-90">
+                      <Image
+                          src="/image/Symbol.svg"
+                          alt="SAYREN Symbol"
+                          fill
+                          className="object-contain"
+                          priority
+                      />
+                    </div>
+                  </Link>
                 </div>
             )}
-            {/* 카테고리  */}
-            <nav className="hidden md:flex space-x-8 text-sm font-medium text-gray-700 h-full items-center">
+            <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-700 h-full items-center">
               <a href="#">Product</a>
               <a href="#">Rental</a>
               <a href="#">Review</a>
