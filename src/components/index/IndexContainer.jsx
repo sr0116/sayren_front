@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {productData} from "@/app/service/productApi";
-import HeroSection from "@/app/components/index/HeroSection";
-import CategorySection from "@/app/components/index/CategorySection";
-import ProductHighlight from "@/app/components/index/ProductHighlight";
-import PlanOverview from "@/app/components/index/PlanOverview";
-import ReviewSection from "@/app/components/index/ReviewSection";
-import QnASection from "@/app/components/index/QnASection";
+import {productData} from "@/service/productApi";
+import HeroSection from "@/components/index/HeroSection";
+import CategorySection from "@/components/index/CategorySection";
+import ProductHighlight from "@/components/index/ProductHighlight";
+import PlanOverview from "@/components/index/PlanOverview";
+import ReviewSection from "@/components/index/ReviewSection";
+import QnASection from "@/components/index/QnASection";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchProducts} from "@/app/store/productSlice";
+import {fetchProducts} from "@/store/productSlice";
 
 export default function IndexContainer() {
 

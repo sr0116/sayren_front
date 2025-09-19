@@ -1,6 +1,6 @@
 import "./globals.css";
-import Header from "@/app/components/common/Header"
-import Footer from "@/app/components/common/Footer";
+import Header from "@/components/common/Header"
+import Footer from "@/components/common/Footer";
 import ReduxProvider from "@/app/providers/ReduxProvider";
 
 export const metadata = {

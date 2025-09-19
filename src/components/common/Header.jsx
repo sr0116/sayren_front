@@ -30,7 +30,7 @@ export default function Header() {
         {!isMobile && !isScrolled && (
             <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 h-12 text-xs text-gray-600">
               <div className="flex items-center">
-                <Link href="/">
+                <Link href="/public">
                   <div className="relative h-8 w-[120px] min-w-[120px] flex-shrink-0 flex items-center cursor-pointer">
                     <Image
                         src="/image/Logo.svg"
@@ -57,7 +57,7 @@ export default function Header() {
           <div className="flex items-center space-x-6 h-full">
             {(isMobile || isScrolled) && (
                 <div className="flex items-center">
-                  <Link href="/">
+                  <Link href="/public">
                     {/* Symbol → scale-90 적용 */}
                     <div className="relative h-8 w-[32px] min-w-[32px] flex-shrink-0 flex items-center cursor-pointer scale-90">
                       <Image
