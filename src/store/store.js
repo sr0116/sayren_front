@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storageSession from "redux-persist/lib/storage/session";
 import authReducer from "./authSlice";
 import productReducer from "./productSlice";
+import modalReducer from "./modalSlice";
 
 // auth slice만 persist
 const authPersistConfig = {
@@ -16,6 +17,7 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   product: productReducer,
+  modal: modalReducer,
 });
 
 // wrapper에서 쓸 store 생성 함수

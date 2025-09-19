@@ -2,6 +2,7 @@ import "./globals.css";
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer";
 import ReduxProvider from "@/app/providers/ReduxProvider";
+import GlobalModal from "@/components/common/GlobalModal";
 
 export const metadata = {
   title: "Sayren - 세상 이쁜 렌탈, 세이렌",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
       <ReduxProvider>
         <Header />
         <main className="flex-grow pt-24">{children}</main>
+        <GlobalModal/>
         <Footer />
       </ReduxProvider>
       </body>
