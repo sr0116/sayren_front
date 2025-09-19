@@ -14,7 +14,7 @@ export function TextInput({ value, onChange, placeholder, name, autoComplete }) 
             autoComplete={autoComplete}
             className="w-full border border-gray-300 rounded-md px-3 py-2
                    focus:outline-none focus:ring focus:ring-gray-900
-                   placeholder:text-gray-500 placeholder:font-medium"
+                   placeholder:text-gray-500"
         />
       </div>
   );
@@ -33,7 +33,7 @@ export function PasswordInput({ value, onChange, placeholder, name }) {
             placeholder={placeholder}
             className="w-full border border-gray-300 rounded-md px-3 py-2
                    focus:outline-none focus:ring focus:ring-gray-900
-                   placeholder:text-gray-500 placeholder:font-medium"
+                   placeholder:text-gray-500"
         />
         <button
             type="button"
@@ -49,18 +49,8 @@ export function PasswordInput({ value, onChange, placeholder, name }) {
 
 
 
-export function CheckBox({ label, onChange, name, defaultChecked = false}) {
-  const [checked, setChecked] = useState(defaultChecked);
+export function CheckBox({ label, onChange, name, checked}) {
 
-  const handleChange = () => {
-    const newChecked = !checked;
-    setChecked(newChecked);
-
-    // 부모에도 전달
-    if (onChange) {
-      onChange(newChecked);
-    }
-  };
 
   return (
       <label className="flex items-center gap-2 cursor-pointer select-none text-gray-500 text-sm">
@@ -68,7 +58,7 @@ export function CheckBox({ label, onChange, name, defaultChecked = false}) {
             name={name}
             type="checkbox"
             checked={checked}
-            onChange={handleChange}
+            onChange={onChange}
             className="hidden"
         />
         {checked ? (

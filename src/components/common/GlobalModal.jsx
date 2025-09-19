@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelector, useDispatch } from "react-redux";
-import { close } from "@/store/modalSlice";
+import { closeModal } from "@/store/modalSlice";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -29,7 +29,7 @@ export default function GlobalModal() {
 
   const handleClose = () => {
     setAnimate(false);
-    setTimeout(() => dispatch(close()), 200);
+    setTimeout(() => dispatch(closeModal()), 200);
   };
 
   return (
@@ -39,11 +39,10 @@ export default function GlobalModal() {
         ${animate ? "opacity-100" : "opacity-0"}`}
       >
         <div
-            className={`relative bg-white rounded-lg shadow-lg p-6 w-[400px] max-w-[90%]
+            className={`relative bg-white rounded-lg shadow-lg p-6 w-[600px] max-w-[90%]
           transform transition-all duration-200
           ${animate ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
         >
-          {/* 닫기 버튼 */}
           <button
               onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 cursor-pointer"
@@ -51,7 +50,6 @@ export default function GlobalModal() {
             <X size={20} />
           </button>
 
-          {/* 모달 컨텐츠 */}
           <div>{content}</div>
         </div>
       </div>
