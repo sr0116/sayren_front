@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {productData} from "@/service/productApi";
+import {productData} from "@/api/productApi";
 import HeroSection from "@/components/index/HeroSection";
 import CategorySection from "@/components/index/CategorySection";
 import ProductHighlight from "@/components/index/ProductHighlight";

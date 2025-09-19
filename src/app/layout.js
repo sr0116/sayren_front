@@ -4,7 +4,7 @@ import Footer from "@/components/common/Footer";
 import ReduxProvider from "@/app/providers/ReduxProvider";
 
 export const metadata = {
-  title: "Sayren - 구독 결제 플랫폼",
+  title: "Sayren - 세상 이쁜 렌탈, 세이렌",
   description: "렌탈/구독 결제를 쉽게!",
 };
 
