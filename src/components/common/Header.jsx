@@ -44,7 +44,7 @@ export default function Header() {
               </div>
               <div className="flex items-center space-x-6">
                 <a href="#">회원가입</a>
-                <a href="#">로그인</a>
+                <a href="/member/login">로그인</a>
                 <a href="#">로그아웃</a>
                 <a href="#">마이페이지</a>
                 <User className="w-4 h-4 text-gray-700" />

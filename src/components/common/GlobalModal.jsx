@@ -46,7 +46,7 @@ export default function GlobalModal() {
           {/* 닫기 버튼 */}
           <button
               onClick={handleClose}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <X size={20} />
           </button>
