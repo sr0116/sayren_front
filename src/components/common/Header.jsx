@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, ShoppingCart, User, Menu } from "lucide-react";
 import {useSelector} from "react-redux";
 import {LogoutButton} from "@/components/common/Button";
+import {authActions} from "@/store/authStore";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,6 +27,7 @@ export default function Header() {
     };
   }, []);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+
   return (
       <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
         {/* 상단 바 (PC 전용, 스크롤 전용) */}
@@ -48,7 +50,7 @@ export default function Header() {
                 {isAuthenticated ? (
                   <div className="space-x-5 flex">
                     <p><strong>{user?.name}님</strong> 안녕하세요</p>
-                    <Link href="#">마이페이지</Link>
+                    <Link href="/mypage">마이페이지</Link>
                     <LogoutButton>로그아웃</LogoutButton>
                   </div>
                 ) : (
@@ -92,7 +94,7 @@ export default function Header() {
           <div className="flex items-center space-x-5 h-full">
             <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
             <ShoppingCart className="w-5 h-5 text-gray-700 cursor-pointer" />
-            <Link href={isAuthenticated ? "/" : "/member/login"}>
+            <Link href={isAuthenticated ? "/mypage" : "/member/login"}>
               <User className="w-5 h-5 text-gray-700 cursor-pointer" />
             </Link>
             {isMobile && (

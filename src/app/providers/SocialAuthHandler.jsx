@@ -16,37 +16,15 @@ export default function SocialAuthHandler() {
 
   useEffect(() => {
     const handler = (event) => {
-      if (event.origin !== "http://localhost:8080") return;
+      if (event.origin !== process.env.NEXT_PUBLIC_SPRING_API_BASE_URL) return;
       const data = event.data;
 
-      if (data.accessToken) {
-        dispatch(login({ accessToken: data.accessToken }));
+      if (data && data.id) {
+        // ✅ 로그인 성공 → DTO 응답
+        dispatch(login({ data }));
         router.push("/");
       } else if (data.error === "SIGNUP_REQUIRED") {
-        dispatch(
-          openModal(
-            <SocialSignupModal
-              socialUser={data.socialUser}
-              onAgree={async ({ serviceAgree, privacyAgree }) => {
-                try {
-                  const result = await socialSignup({
-                    socialUser: data.socialUser,
-                    serviceAgree: serviceAgree,
-                    privacyAgree: privacyAgree,
-                  });
-
-                  if (result.accessToken) {
-                    dispatch(login({ accessToken: result.accessToken }));
-                    dispatch(closeModal());
-                    router.push("/");
-                  }
-                } catch (err) {
-                  console.error("소셜 회원가입 실패:", err);
-                }
-              }}
-            />
-          )
-        );
+        dispatch(openModal(<SocialSignupModal socialUser={data.socialUser} />));
       } else if (data.error === "LINK_REQUIRED") {
         dispatch(openModal(<SocialLinkModal socialUser={data.socialUser} />));
       } else {

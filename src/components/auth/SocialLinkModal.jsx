@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { socialLink } from "@/api/authApi";
-import { login } from "@/store/authSlice";
-import { closeModal } from "@/store/modalSlice";
-import { useRouter } from "next/navigation";
-import {PasswordInput, TextInput} from "@/components/common/Input";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {socialLink} from "@/api/authApi";
+import {login} from "@/store/authSlice";
+import {closeModal} from "@/store/modalSlice";
+import {useRouter} from "next/navigation";
+import {PasswordInput} from "@/components/common/Input";
 
-export default function SocialLinkModal({ socialUser }) {
+export default function SocialLinkModal({socialUser}) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -23,13 +23,13 @@ export default function SocialLinkModal({ socialUser }) {
         password,
       });
 
-      if (result?.accessToken) {
-        dispatch(login({ accessToken: result.accessToken }));
+      if (result && result.id) {
+        dispatch(login({ data:result }));
         dispatch(closeModal());
         router.push("/");
       }
     } catch (err) {
-      const { message } = err.response?.data || {};
+      const {message} = err.response?.data || {};
       alert(message || "계정 연동에 실패했습니다.");
     } finally {
       setLoading(false);

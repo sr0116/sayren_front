@@ -6,6 +6,7 @@ import GlobalModal from "@/components/common/GlobalModal";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 import AuthInitializer from "@/app/providers/AuthInitializer";
 
+
 export const metadata = {
   title: "Sayren - 세상 이쁜 렌탈, 세이렌",
   description: "렌탈/구독 결제를 쉽게!",

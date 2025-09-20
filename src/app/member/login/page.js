@@ -25,7 +25,7 @@ export default function LoginPage() {
   const mutation = useMutation({
     mutationFn: loginApi,
     onSuccess: (data) => {
-      dispatch(login({ accessToken: data.accessToken }));
+      dispatch(login({ data }));
       router.push("/");
     },
     onError: (err) => {
@@ -43,6 +43,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(loginRequestDTO);
     mutation.mutate(loginRequestDTO);
   };
 
