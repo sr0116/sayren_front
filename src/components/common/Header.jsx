@@ -54,7 +54,7 @@ export default function Header() {
                 ) : (
                   <div className="space-x-5">
                     <Link href="/member/login">로그인</Link>
-                    <Link href="#">회원가입</Link>
+                    <Link href="/member/signup">회원가입</Link>
                   </div>
                 )}
 
@@ -92,7 +92,9 @@ export default function Header() {
           <div className="flex items-center space-x-5 h-full">
             <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
             <ShoppingCart className="w-5 h-5 text-gray-700 cursor-pointer" />
-            <User className="w-5 h-5 text-gray-700 cursor-pointer" />
+            <Link href={isAuthenticated ? "/" : "/member/login"}>
+              <User className="w-5 h-5 text-gray-700 cursor-pointer" />
+            </Link>
             {isMobile && (
                 <button
                     className="p-1.5 rounded hover:bg-gray-100"

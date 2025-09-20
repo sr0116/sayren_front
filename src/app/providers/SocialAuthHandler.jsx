@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/store/authSlice";
 import { socialSignup } from "@/api/authApi";
 import { openModal, closeModal } from "@/store/modalSlice";
-import TermsModal from "@/components/auth/TermsModal";
+import SocialSignupModal from "@/components/auth/SocialSignupModal";
 import SocialLinkModal from "@/components/auth/SocialLinkModal";
 
 export default function SocialAuthHandler() {
@@ -25,14 +25,14 @@ export default function SocialAuthHandler() {
       } else if (data.error === "SIGNUP_REQUIRED") {
         dispatch(
           openModal(
-            <TermsModal
+            <SocialSignupModal
               socialUser={data.socialUser}
               onAgree={async ({ serviceAgree, privacyAgree }) => {
                 try {
                   const result = await socialSignup({
                     socialUser: data.socialUser,
-                    serviceAgree,
-                    privacyAgree,
+                    serviceAgree: serviceAgree,
+                    privacyAgree: privacyAgree,
                   });
 
                   if (result.accessToken) {

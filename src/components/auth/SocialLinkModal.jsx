@@ -6,6 +6,7 @@ import { socialLink } from "@/api/authApi";
 import { login } from "@/store/authSlice";
 import { closeModal } from "@/store/modalSlice";
 import { useRouter } from "next/navigation";
+import {PasswordInput, TextInput} from "@/components/common/Input";
 
 export default function SocialLinkModal({ socialUser }) {
   const [password, setPassword] = useState("");
@@ -36,7 +37,7 @@ export default function SocialLinkModal({ socialUser }) {
   };
 
   return (
-    <div className="w-[420px] bg-white rounded-xl shadow-xl p-6">
+    <div className="p-3">
       {/* 제목 */}
       <h2 className="text-lg font-bold text-gray-800 mb-3">계정 연동</h2>
       <p className="text-sm text-gray-600 mb-4 leading-relaxed">
@@ -47,17 +48,10 @@ export default function SocialLinkModal({ socialUser }) {
         계정의 비밀번호를 입력해주세요.
       </p>
 
-      {/* 비밀번호 입력 */}
-      <input
-        type="password"
-        placeholder="비밀번호 입력"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5"
-      />
+      <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} placeholder={"비밀번호 입력"}/>
 
       {/* 버튼 영역 */}
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 pt-6">
         <button
           onClick={() => dispatch(closeModal())}
           className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"

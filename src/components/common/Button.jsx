@@ -15,7 +15,7 @@ export default function Button({
                                  disabled = false,
                                }) {
   const base =
-      "w-full py-2 rounded-md font-semi-bold transition focus:outline-none disabled:bg-gray-300 cursor-pointer";
+      "w-full py-3 rounded-md font-semi-bold transition focus:outline-none disabled:bg-gray-300 cursor-pointer";
 
   const variants = {
     primary: "bg-gray-900 text-white hover:bg-gray-700", // 메인 버튼
