@@ -2,17 +2,30 @@
 import axios from "axios";
 import api from "@/lib/axios";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
+
+// 회원가입 API
+export const signup = async ({ email, password , name , serviceAgree, privacyAgree }) => {
+  const response = await axios.post(
+    `${BASE_URL}/api/user/member/register`,
+    { email, password , name , serviceAgree, privacyAgree },
+  {withCredentials: true}
+    );
+  return response.data;
+}
+
+
 
 // 로그인 API (RefreshToken 쿠키 발급 + AccessToken 반환)
 export const login = async ({ username, password, rememberMe }) => {
   const response = await axios.post(
       `${BASE_URL}/api/auth/login`,
       { username, password, rememberMe },
-      { withCredentials: true } // ✅ RefreshToken 쿠키 저장
+      { withCredentials: true }
   );
-  return response.data; // { accessToken, message }
+  return response.data;
 };
+
 
 // AccessToken 재발급 (RefreshToken 쿠키 사용)
 export const refreshAccessToken = async () => {

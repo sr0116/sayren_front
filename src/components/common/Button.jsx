@@ -1,5 +1,11 @@
 "use client";
 
+import {useDispatch} from "react-redux";
+import {useRouter} from "next/navigation";
+import { logout as logoutApi } from "@/api/authApi";
+import { logout } from "@/store/authSlice";
+
+
 export default function Button({
                                  children,
                                  variant = "primary",
@@ -9,7 +15,7 @@ export default function Button({
                                  disabled = false,
                                }) {
   const base =
-      "w-full py-2 rounded-md font-semi-bold transition focus:outline-none disabled:bg-gray-300 cursor-pointer";
+      "w-full py-3 rounded-md font-semi-bold transition focus:outline-none disabled:bg-gray-300 cursor-pointer";
 
   const variants = {
     primary: "bg-gray-900 text-white hover:bg-gray-700", // 메인 버튼
@@ -26,5 +32,28 @@ export default function Button({
       >
         {children}
       </button>
+  );
+}
+
+export function LogoutButton({children}) {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const ok = await logoutApi();
+    if (ok) {
+      dispatch(logout());
+      router.push("/member/login");
+    }
+  };
+
+  return (
+
+    <label className="cursor-pointer">
+      {children}
+      <button onClick={handleLogout} className="px-4 py-2 bg-gray-200 rounded hidden">
+        로그아웃
+      </button>
+    </label>
   );
 }

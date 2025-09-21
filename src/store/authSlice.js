@@ -1,10 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { jwtDecode } from "jwt-decode";
 
 const initialState = {
   isAuthenticated: false,
   user: null,
-  accessToken: null,
 };
 
 const authSlice = createSlice({
@@ -12,21 +10,20 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      try {
-        const decoded = jwtDecode(action.payload.accessToken);
-        const { sub: email, name, roles, status, emailVerified } = decoded;
+      const member = action.payload.data;
 
-        state.isAuthenticated = true;
-        state.user = { email, name, roles, status, emailVerified };
-        state.accessToken = action.payload.accessToken;
-      } catch (e) {
-        console.error("토큰 파싱 실패:", e);
-      }
+      state.isAuthenticated = true;
+      state.user = {
+        id: member.id,
+        name: member.name,
+        roles: member.roles,
+        status: member.status,
+        emailVerified: member.emailVerified,
+      };
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
-      state.accessToken = null;
     },
   },
 });
