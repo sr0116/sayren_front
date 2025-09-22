@@ -8,6 +8,8 @@ import StatusTestPage from "@/components/test_components/StasusTestPage";
 import EmptyState from "@/components/common/EmptyState";
 import TestEmpty from "@/components/test_components/TestEmpty";
 import TestToast from "@/components/test_components/TestToast";
+import TestSpinner from "@/components/test_components/TestSpinner";
+import TestLaunch from "@/components/test_components/TestLunch";
 
 export default function Page() {
 
@@ -17,6 +19,8 @@ export default function Page() {
       <StatusTestPage />
       <TestEmpty />
       <TestToast />
+      <TestSpinner />
+      {/*<TestLaunch />*/}
 
     </>
   );
