@@ -1,11 +1,6 @@
 import "./globals.css";
-import Header from "@/components/common/layout/Header"
-import Footer from "@/components/common/layout/Footer";
-import ReduxProvider from "@/app/providers/ReduxProvider";
-import GlobalModal from "@/components/common/GlobalModal";
-import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
-import AuthInitializer from "@/app/providers/AuthInitializer";
-
+import Frame from "@/components/common/layout/Frame";
+import ProvidersList from "@/app/providers/ProvidersList";
 
 export const metadata = {
   title: "Sayren - 세상 이쁜 렌탈, 세이렌",
@@ -15,16 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
       <html lang="ko">
-      <body className="flex flex-col min-h-screen font-sans">
-      <ReduxProvider>
-        <ReactQueryProvider>
-          <AuthInitializer />
-          <Header />
-          <main className="flex-grow pt-24">{children}</main>
-          <GlobalModal/>
-          <Footer />
-        </ReactQueryProvider>
-      </ReduxProvider>
+      <body>
+      <ProvidersList>
+        <Frame>{children}</Frame>
+      </ProvidersList>
       </body>
       </html>
   );
