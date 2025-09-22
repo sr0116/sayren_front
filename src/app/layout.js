@@ -1,6 +1,6 @@
 import "./globals.css";
-import Header from "@/components/common/Header"
-import Footer from "@/components/common/Footer";
+import Header from "@/components/common/layout/Header"
+import Footer from "@/components/common/layout/Footer";
 import ReduxProvider from "@/app/providers/ReduxProvider";
 import GlobalModal from "@/components/common/GlobalModal";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
