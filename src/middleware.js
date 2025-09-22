@@ -34,7 +34,7 @@ export function middleware(req) {
   // 로그인 안한 유저 관리
   else {
     if (req.nextUrl.pathname.startsWith("/mypage")) {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/member/login", req.url));
     }
 
   }
@@ -49,5 +49,4 @@ export const config = {
     "/admin/:path*",
     "/mypage/:path*",
   ],
-  runtime: "experimental-edge",
 };
