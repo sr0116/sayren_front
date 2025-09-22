@@ -19,6 +19,14 @@ body {
   @apply border-[#E93A5E];
 }
 
+.hover\:bg-primary-dark:hover {
+  @apply bg-[#c72e4b];
+}
+
+.hover\:bg-primary-light:hover {
+  @apply bg-[#f46a87];
+}
+
 .hover\:bg-primary:hover {
   @apply bg-[#E93A5E];
 }
