@@ -72,7 +72,7 @@ export default function SignupPage() {
 
 
   return (
-    <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white my-20">
+    <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white">
       <SocialAuthHandler />
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <TextInput

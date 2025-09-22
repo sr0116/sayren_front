@@ -130,11 +130,13 @@ export default function Header() {
                 </div>
               )}
               <div className="border-b border-gray-200 my-4"/>
-              <Link href="#" >Product</Link>
-              <Link href="#" >Rental</Link>
-              <Link href="#" >Review</Link>
-              <Link href="#" >Support</Link>
-              <Link href="#" >B2B</Link>
+              <div className="flex flex-col gap-2">
+                <Link href="#" >Product</Link>
+                <Link href="#" >Rental</Link>
+                <Link href="#" >Review</Link>
+                <Link href="#" >Support</Link>
+                <Link href="#" >B2B</Link>
+              </div>
             </div>
         )}
       </header>

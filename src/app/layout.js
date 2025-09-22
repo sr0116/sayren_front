@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           <AuthInitializer />
           <ScrollToTop/>
           <Header />
-          <main className="flex-grow pt-24">{children}</main>
+          <main className="flex-grow pt-24 md:pt-40 mb-28">{children}</main>
           <GlobalModal/>
           <Footer />
         </ReactQueryProvider>
