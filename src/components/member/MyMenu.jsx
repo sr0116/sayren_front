@@ -16,7 +16,8 @@ const menuGroups = [
     items: [
       { name: "이메일 인증", href: "/mypage/emailvarify" },
       { name: "휴대폰 번호 수정", href: "/mypage/telmodify" },
-      { name: "회원정보 수정", href: "/mypage/userinfo" },
+      { name: "소셜 연동 관리", href: "/mypage/sociallink" },
+      { name: "회원정보 수정", href: "/mypage/usermodify" },
     ],
   },
   {
@@ -43,7 +44,7 @@ export default function NavMenu() {
     menuGroups.map((group) => (
       <div key={group.title} className="mb-4">
         <h3 className="text-sm font-bold text-gray-500 mb-3">{group.title}</h3>
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col ">
           {group.items.map((menu) => {
             const isActive = pathname === menu.href;
             return (

@@ -12,15 +12,17 @@ import Button from "@/components/common/Button";
 import {useDispatch} from "react-redux";
 import {closeModal, openModal} from "@/store/modalSlice";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
+import {useFormInput} from "@/hooks/useFormInput";
 
 export default function SignupPage() {
-  const [memberSignupDTO, setMemberSignupDTO] = useState({
+
+  const { formData: memberSignupDTO, handleChange } = useFormInput({
     email: "",
     password: "",
     name: "",
     serviceAgree: false,
     privacyAgree: false,
-  });
+  })
 
   const [passwordCheck, setPasswordCheck] = useState("");
 
@@ -48,14 +50,6 @@ export default function SignupPage() {
     },
   });
 
-  const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-    setMemberSignupDTO((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     mutation.mutate(memberSignupDTO);
@@ -69,7 +63,6 @@ export default function SignupPage() {
     memberSignupDTO.serviceAgree &&
     memberSignupDTO.password === passwordCheck // 비번 확인 일치
   )
-
 
   return (
     <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white">

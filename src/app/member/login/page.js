@@ -10,13 +10,14 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
+import {useFormInput} from "@/hooks/useFormInput";
 
 export default function LoginPage() {
-  const [loginRequestDTO, setLoginRequestDTO] = useState({
+  const { formData: loginRequestDTO, handleChange } = useFormInput({
     username: "",
     password: "",
     rememberMe: false,
-  });
+  })
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -32,14 +33,6 @@ export default function LoginPage() {
       console.error("로그인 실패:", err);
     },
   });
-
-  const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-    setLoginRequestDTO((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
