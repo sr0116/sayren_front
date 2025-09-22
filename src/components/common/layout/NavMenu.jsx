@@ -10,7 +10,7 @@ const navItems = [
   {label: "Product", href: "#"},
   {label: "Rental", href: "#"},
   {label: "Review", href: "#"},
-  {label: "Support", href: "#"},
+  {label: "Support", href: "/board/support"},
   {label: "B2B", href: "#"},
 ];
 
