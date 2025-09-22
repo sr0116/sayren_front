@@ -5,6 +5,7 @@ import ReduxProvider from "@/app/providers/ReduxProvider";
 import GlobalModal from "@/components/common/GlobalModal";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 import AuthInitializer from "@/app/providers/AuthInitializer";
+import {ScrollToTop} from "@/components/common/ScrollToTop";
 
 
 export const metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <ReduxProvider>
         <ReactQueryProvider>
           <AuthInitializer />
+          <ScrollToTop/>
           <Header />
           <main className="flex-grow pt-24">{children}</main>
           <GlobalModal/>
