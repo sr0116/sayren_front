@@ -2,7 +2,6 @@
 
 import {useDispatch} from "react-redux";
 import {closeModal} from "@/store/modalSlice";
-import LogoutButton from "@/components/common/Button";
 import Button from "@/components/common/Button";
 
 // 작업(결제, 환불, 삭제 등) 전에 사용자에게 확인을 받는 모달
