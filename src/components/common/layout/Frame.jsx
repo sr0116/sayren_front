@@ -3,6 +3,7 @@
 import Header from "@/components/common/layout/Header";
 import Footer from "@/components/common/layout/Footer";
 import GlobalModal from "@/components/common/GlobalModal";
+import ToastContainer from "@/components/common/layout/ToastContainer";
 
 // Frame
 // - Header, Footer, GlobalModal 같은 레이아웃 구성 요소 포함
@@ -13,6 +14,7 @@ export default function Frame({ children }) {
         <Header />
         <main className="flex-grow pt-24">{children}</main>
         <GlobalModal />
+        <ToastContainer />
         <Footer />
       </div>
   );
