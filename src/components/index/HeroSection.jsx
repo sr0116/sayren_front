@@ -28,16 +28,17 @@ export default function HeroSection() {
               className="w-full h-full"
           >
             {slides.map((url, i) => (
-                <SwiperSlide key={i}>
+                <SwiperSlide key={i} className="swiper-slide-custom">
                   <Image
                       src={url}
                       alt={`Slide ${i + 1}`}
                       fill
-                      priority={i === 0} // 첫 슬라이드는 우선 로드
+                      priority={i === 0}
                       className="object-cover"
                   />
                 </SwiperSlide>
             ))}
+
 
             {/* 좌우 버튼 */}
             <button
