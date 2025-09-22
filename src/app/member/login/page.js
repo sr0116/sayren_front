@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { login as loginApi } from "@/api/authApi";
 import { login } from "@/store/authSlice";
 import { TextInput, CheckBox, PasswordInput } from "@/components/common/Input";
-import Button from "@/components/common/Button";
+import LogoutButton from "@/components/common/LogoutButton";
 import Link from "next/link";
 import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
@@ -71,9 +71,9 @@ export default function LoginPage() {
           checked={loginRequestDTO.rememberMe}
           onChange={handleChange}
         />
-        <Button variant="primary" type="submit" disabled={mutation.isPending}>
+        <LogoutButton variant="primary" type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? "로그인 중..." : "로그인"}
-        </Button>
+        </LogoutButton>
 
         {mutation.isError && (
           <p className="text-red-500 text-sm">
