@@ -36,7 +36,7 @@ const menuGroups = [
   },
 ];
 
-export default function NavMenu() {
+export default function MyMenu() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 

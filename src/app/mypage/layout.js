@@ -1,4 +1,5 @@
 import NavMenu from "@/components/member/MyMenu";
+import MyMenu from "@/components/member/MyMenu";
 
 export default function MypageRayOut({children}) {
   return(
@@ -6,7 +7,7 @@ export default function MypageRayOut({children}) {
       {/* 왼쪽 메뉴 영역 */}
       <aside className="w-full md:w-60 shrink-0">
         <h2 className="text-xl font-bold mb-6 text-gray-800">마이페이지</h2>
-        <NavMenu />
+        <MyMenu />
       </aside>
 
       {/* 오른쪽 컨텐츠 영역 */}
