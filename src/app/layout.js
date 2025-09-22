@@ -1,11 +1,12 @@
 import "./globals.css";
-import Header from "@/components/common/Header"
-import Footer from "@/components/common/Footer";
 import ReduxProvider from "@/app/providers/ReduxProvider";
 import GlobalModal from "@/components/common/GlobalModal";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 import AuthInitializer from "@/app/providers/AuthInitializer";
 import {ScrollToTop} from "@/components/common/ScrollToTop";
+import Header from "@/components/common/layout/Header";
+import Footer from "@/components/common/layout/Footer";
+import ToastContainer from "@/components/common/layout/ToastContainer";
 
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <main className="flex-grow pt-24 md:pt-40 mb-28">{children}</main>
           <GlobalModal/>
           <Footer />
+          <ToastContainer />
         </ReactQueryProvider>
       </ReduxProvider>
       </body>
