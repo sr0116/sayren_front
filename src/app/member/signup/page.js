@@ -8,7 +8,7 @@ import {useRouter} from "next/navigation";
 import {PasswordInput, TextInput} from "@/components/common/Input";
 import ServiceAgree from "@/components/term/ServiceAgree";
 import PrivacyAgree from "@/components/term/PrivacyAgree";
-import Button from "@/components/common/Button";
+import LogoutButton from "@/components/common/LogoutButton";
 import {useDispatch} from "react-redux";
 import {closeModal, openModal} from "@/store/modalSlice";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
@@ -34,12 +34,12 @@ export default function SignupPage() {
         <div className="flex flex-col justify-center items-center gap-2">
           <h3>회원가입 성공</h3>
           <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
-          <Button variant={"primary"} onClick={() => {
+          <LogoutButton variant={"primary"} onClick={() => {
             dispatch(closeModal());
             setTimeout(() => router.push("/member/login"), 200);
           }}>
             확인
-          </Button>
+          </LogoutButton>
         </div>
       ))
     },
@@ -111,9 +111,9 @@ export default function SignupPage() {
           )}
           <ServiceAgree size={"m"} checked={memberSignupDTO.serviceAgree} onChange={handleChange} name="serviceAgree" />
           <PrivacyAgree size={"m"} checked={memberSignupDTO.privacyAgree} onChange={handleChange} name="privacyAgree" />
-          <Button variant="primary" type="submit" disabled={isvalid}>
+          <LogoutButton variant="primary" type="submit" disabled={isvalid}>
             회원가입
-          </Button>
+          </LogoutButton>
           <p className="text-xs text-center text-gray-500">
             또는 소셜 회원가입으로 간편하게 이용
           </p>
