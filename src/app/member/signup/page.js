@@ -8,19 +8,21 @@ import {useRouter} from "next/navigation";
 import {PasswordInput, TextInput} from "@/components/common/Input";
 import ServiceAgree from "@/components/term/ServiceAgree";
 import PrivacyAgree from "@/components/term/PrivacyAgree";
-import LogoutButton from "@/components/common/LogoutButton";
+import Button from "@/components/common/Button";
 import {useDispatch} from "react-redux";
 import {closeModal, openModal} from "@/store/modalSlice";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
+import {useFormInput} from "@/hooks/useFormInput";
 
 export default function SignupPage() {
-  const [memberSignupDTO, setMemberSignupDTO] = useState({
+
+  const { formData: memberSignupDTO, handleChange } = useFormInput({
     email: "",
     password: "",
     name: "",
     serviceAgree: false,
     privacyAgree: false,
-  });
+  })
 
   const [passwordCheck, setPasswordCheck] = useState("");
 
@@ -34,12 +36,12 @@ export default function SignupPage() {
         <div className="flex flex-col justify-center items-center gap-2">
           <h3>회원가입 성공</h3>
           <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
-          <LogoutButton variant={"primary"} onClick={() => {
+          <Button variant={"primary"} onClick={() => {
             dispatch(closeModal());
             setTimeout(() => router.push("/member/login"), 200);
           }}>
             확인
-          </LogoutButton>
+          </Button>
         </div>
       ))
     },
@@ -47,14 +49,6 @@ export default function SignupPage() {
       console.error("회원가입 실패:", err);
     },
   });
-
-  const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-    setMemberSignupDTO((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,55 +64,57 @@ export default function SignupPage() {
     memberSignupDTO.password === passwordCheck // 비번 확인 일치
   )
 
-
   return (
-    <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white my-20">
-      <SocialAuthHandler />
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <TextInput
-            placeholder="이름"
-            name="name"
-            autoComplete="name"
-            value={memberSignupDTO.name}
-            onChange={handleChange}
-          />
-          <TextInput
-            placeholder="이메일"
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={memberSignupDTO.email}
-            onChange={handleChange}
-          />
-          <PasswordInput
-            placeholder="비밀번호"
-            name="password"
-            value={memberSignupDTO.password}
-            onChange={handleChange}
-          />
-          {(memberSignupDTO.password.trim().length < 8 && memberSignupDTO.password.trim()) && (
-            <p className="text-sm">8자리 이상, 공백불가</p>
-          )}
-          <TextInput
-            type="password"
-            placeholder="비밀번호 확인"
-            name="passwordCheck"
-            value={passwordCheck}
-            onChange={(e) => setPasswordCheck(e.target.value)}
-          />
-          {(memberSignupDTO.password !== passwordCheck && passwordCheck.trim())&& (
-            <p className="text-sm">비밀번호가 다릅니다</p>
-          )}
-          <ServiceAgree size={"m"} checked={memberSignupDTO.serviceAgree} onChange={handleChange} name="serviceAgree" />
-          <PrivacyAgree size={"m"} checked={memberSignupDTO.privacyAgree} onChange={handleChange} name="privacyAgree" />
-          <LogoutButton variant="primary" type="submit" disabled={isvalid}>
-            회원가입
-          </LogoutButton>
-          <p className="text-xs text-center text-gray-500">
-            또는 소셜 회원가입으로 간편하게 이용
-          </p>
-          <SocialLoginButton text={"회원가입"}/>
-        </form>
+    <div>
+      <h2 className="text-center text-3xl font-medium mb-8">회원가입</h2>
+      <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white">
+        <SocialAuthHandler />
+          <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+            <TextInput
+              placeholder="이름"
+              name="name"
+              autoComplete="name"
+              value={memberSignupDTO.name}
+              onChange={handleChange}
+            />
+            <TextInput
+              placeholder="이메일"
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={memberSignupDTO.email}
+              onChange={handleChange}
+            />
+            <PasswordInput
+              placeholder="비밀번호"
+              name="password"
+              value={memberSignupDTO.password}
+              onChange={handleChange}
+            />
+            {(memberSignupDTO.password.trim().length < 8 && memberSignupDTO.password.trim()) && (
+              <p className="text-sm">8자리 이상, 공백불가</p>
+            )}
+            <TextInput
+              type="password"
+              placeholder="비밀번호 확인"
+              name="passwordCheck"
+              value={passwordCheck}
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            />
+            {(memberSignupDTO.password !== passwordCheck && passwordCheck.trim())&& (
+              <p className="text-sm">비밀번호가 다릅니다</p>
+            )}
+            <ServiceAgree size={"m"} checked={memberSignupDTO.serviceAgree} onChange={handleChange} name="serviceAgree" />
+            <PrivacyAgree size={"m"} checked={memberSignupDTO.privacyAgree} onChange={handleChange} name="privacyAgree" />
+            <Button variant="primary" type="submit" disabled={isvalid}>
+              회원가입
+            </Button>
+            <p className="text-xs text-center text-gray-500">
+              또는 소셜 회원가입으로 간편하게 이용
+            </p>
+            <SocialLoginButton text={"회원가입"}/>
+          </form>
+      </div>
     </div>
   )
 
