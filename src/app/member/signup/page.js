@@ -32,21 +32,33 @@ export default function SignupPage() {
   const mutation = useMutation({
     mutationFn: signupApi,
     onSuccess: () => {
-      dispatch(openModal(
-        <div className="flex flex-col justify-center items-center gap-2">
-          <h3>회원가입 성공</h3>
-          <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
-          <Button variant={"primary"} onClick={() => {
-            dispatch(closeModal());
-            setTimeout(() => router.push("/member/login"), 200);
-          }}>
-            확인
-          </Button>
-        </div>
+      dispatch(openModal({
+        content: (
+          <div className="flex flex-col justify-center items-center gap-2">
+            <h3>회원가입 성공</h3>
+            <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
+            <Button variant={"primary"} onClick={() => {
+              dispatch(closeModal());
+              setTimeout(() => router.push("/member/login"), 200);
+            }}>
+              확인
+            </Button>
+          </div>
+        )
+      }
       ))
     },
     onError: (err) => {
-      console.error("회원가입 실패:", err);
+      dispatch(openModal({
+        content: (<div className="flex flex-col justify-center items-center gap-2">
+          <p>회원가입에 실패했습니다. 다시 시도해주세요.</p>
+          <Button variant={"primary"} onClick={() => {
+            dispatch(closeModal());
+          }}>
+            확인
+          </Button>
+        </div>)
+      }))
     },
   });
 
