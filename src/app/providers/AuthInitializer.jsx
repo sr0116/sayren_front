@@ -16,7 +16,6 @@ export default function AuthInitializer() {
 
     (async () => {
       try {
-        // ✅ 프록시 경유로 Spring Boot API 호출
         const res = await fetch("/api/proxy/api/auth/me", {
           method: "GET",
           credentials: "include", // SR_ACCESS 같은 HttpOnly 쿠키 자동 포함
