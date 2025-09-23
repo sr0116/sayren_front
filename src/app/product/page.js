@@ -13,9 +13,10 @@ async function getProducts() {
 
 
 const dummyProducts = [
-  { id: 1, category: "TV", name: "LG OLED TV", price: 2400000, image: "/tv.png" },
-  { id: 2, category: "냉장고", name: "삼성 비스포크 냉장고", price: 1200000, image: "/fridge.png" },
-  { id: 3, category: "정수기", name: "LG 퓨리케어 정수기", price: 500000, image: "/water.png" },
+  { id: 1, category: "TV", name: "SAYREN OLED TV", price: 2400000, image: "/tv.png" },
+  { id: 2, category: "냉장고", name: "SAYREN 비스포크 냉장고", price: 1200000, image: "/fridge.png" },
+  { id: 3, category: "정수기", name: "SAYREN 퓨리케어 정수기", price: 500000, image: "/water.png" },
+  { id: 4, category: "PC", name: "SAYREN PC/모니터", price: 300000, image: "/pc.png" },
 ];
 
 export default function ProductListPage() {
@@ -54,7 +55,7 @@ export default function ProductListPage() {
       <div className="grid grid-cols-2 md:grid-cols-4   gap-6">
         {filtered.map((p) => (
           <div key={p.id} className="border rounded p-3 text-center">
-            <Image src={p.image} alt={p.name} className="w-full h-64 object-cover rounded" />
+            <img src={p.image} alt={p.name} className="w-full h-64 object-cover rounded" />
             <h3 className="mt-2 text-sm">{p.name}</h3>
             <p className="text-[#ff0066] font-bold">
               {p.price.toLocaleString()}원

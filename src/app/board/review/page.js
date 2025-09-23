@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/common/Button";
+import Link from "next/link";
 
 // 더미 데이터
 const dummyReviews = [
@@ -38,7 +40,6 @@ const dummyReviews = [
 
 const categories = [
   "전체",
-  "패키지",
   "TV",
   "냉장고",
   "정수기",
@@ -59,29 +60,47 @@ export default function ReviewListPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">리뷰 게시판</h2>
+        <h2 className="text-2xl font-bold mb-6">후기 게시판</h2>
 
-      {/* 카테고리 탭 */}
-      <div className="grid grid-cols-4 md:grid-cols-7 gap-2 mb-6">
-        {categories.map((c) => (
-          <button
-            key={c}
-            onClick={() => setFilter(c)}
-            className={`border px-3 py-1 rounded text-sm ${
-              filter === c
-                ? "bg-[#ff0066] text-white font-semibold"
-                : "bg-white text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
+      {/* 카테고리 + 작성 버튼 한 줄 정렬 */}
+      <div className="flex items-center justify-between mb-6">
+        {/* 카테고리 탭 */}
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <Button
+              key={c}
+              type="button"
+              variant={filter === c ? "primary" : "outline"}
+              onClick={() => setFilter(c)}
+              className="!w-auto px-4 py-2 rounded text-sm"
+            >
+              {c}
+            </Button>
+          ))}
+        </div>
+
+        {/* 글작성 버튼 */}
+        <Link href="/board/review/new">
+          <Button type="button" variant="primary" className="px-4 py-2 w-auto">
+            리뷰 작성하기
+          </Button>
+        </Link>
       </div>
+
+      {/* 후기 개수 */}
+      <p className="text-sm text-gray-600 mb-6">
+        총 <span className="font-semibold text-[#ff0066]">{filteredReviews.length}</span> 개의 후기가 등록되어 있습니다.
+      </p>
+
 
       {/* 리뷰 카드 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredReviews.map((r) => (
-          <div key={r.id} className="border rounded p-4 shadow-sm bg-white">
+          <Link
+            key={r.id}
+            href={`/board/review/${r.id}`}
+            className="border rounded p-4 shadow-sm bg-white hover:shadow-md transition cursor-pointer block"
+          >
             <img
               src={r.image}
               alt={r.productName}
@@ -96,7 +115,7 @@ export default function ReviewListPage() {
               <span>{r.writer}</span>
               <span>{r.createdAt}</span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
