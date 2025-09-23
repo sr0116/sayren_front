@@ -16,6 +16,7 @@ export default function Button({
     outline:
         "border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white", // 테두리 버튼
     secondary: "bg-gray-500 text-white hover:bg-gray-700", // 보조 버튼
+    none: ""
   };
 
   return (

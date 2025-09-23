@@ -1,11 +1,13 @@
 import axios from "axios";
-import { store } from "@/store/store";
-import { logout } from "@/store/authSlice";
-import { refreshAccessToken } from "@/api/authApi";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SPRING_API_BASE_URL + "/api",
+  baseURL: "/api/proxy",
   withCredentials: true,
 });
+
+api.interceptors.response.use(
+    (res) => res.data,
+    (err) => Promise.reject(err)
+);
 
 export default api;

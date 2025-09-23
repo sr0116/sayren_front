@@ -60,10 +60,10 @@ export default function Header() {
 
         {/* 모바일 드롭다운 */}
         {isOpen && (
-            <div className="md:hidden bg-white border-t px-4 py-3 space-y-2 text-sm">
-              <NavMenu layout="vertical"/>
-              <hr/>
+            <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-2 text-sm">
               <AuthNav isAuthenticated={isAuthenticated} user={user}/>
+              <div className="border-b"/>
+              <NavMenu layout="vertical"/>
             </div>
         )}
       </header>
