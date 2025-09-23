@@ -10,15 +10,17 @@ import Button from "@/components/common/Button";
 
 export default function IconGroup({ isMobile, onToggle, isAuthenticated }) {
   return (
-      <div className="flex items-center space-x-5 h-full">
+      <div className="flex items-center">
         {/* 검색 아이콘 */}
-        <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
-
+        <Link href={"/"} className="p-3">
+          <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
+        </Link>
         {/* 장바구니 아이콘 */}
-        <ShoppingCart className="w-5 h-5 text-gray-700 cursor-pointer" />
-
+        <Link href={"/"} className="p-3">
+          <ShoppingCart className="w-5 h-5 text-gray-700 cursor-pointer" />
+        </Link>
         {/* 유저 아이콘 (로그인 여부에 따라 링크 분기) */}
-        <Link href={isAuthenticated ? "/mypage" : "/member/login"}>
+        <Link href={isAuthenticated ? "/mypage" : "/member/login"} className="p-3">
           <User className="w-5 h-5 text-gray-700 cursor-pointer" />
         </Link>
 
@@ -26,8 +28,8 @@ export default function IconGroup({ isMobile, onToggle, isAuthenticated }) {
         {isMobile && (
             <Button
                 type="button"
-                variant="outline"
-                className="p-1.5 w-auto h-auto rounded flex items-center justify-center"
+                variant="none"
+                className="flex items-center justify-center px-3"
                 onClick={onToggle}
             >
               <Menu className="w-5 h-5 text-gray-700" />
