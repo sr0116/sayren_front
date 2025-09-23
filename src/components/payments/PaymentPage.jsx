@@ -11,8 +11,8 @@ export default function PaymentPage() {
         />
         <div className="p-4">
           <h1 className="text-xl font-bold mb-4">결제 테스트 페이지</h1>
-          {/* orderItemId는 더미값 3으로 테스트 */}
-          <PaymentButton orderItemId={3} />
+          {/* 결제 버튼 */}
+          <PaymentButton />
         </div>
       </>
   );

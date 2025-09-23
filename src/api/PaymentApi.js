@@ -15,14 +15,16 @@ export const preparePayment = async ({ orderItemId, paymentType }) => {
   }
 };
 
-
 // 결제 완료 검증 (PortOne imp_uid 검증)
 export const completePayment = async ({ paymentId, impUid }) => {
   try {
     const res = await axios.post(
-        `/api/proxy/api/payments/${paymentId}/complete?imp_uid=${impUid}`,
-        {},
-        { withCredentials: true }
+        `/api/proxy/api/user/payments/${paymentId}/complete`,
+        null, // body 없음
+        {
+          params: { imp_uid: impUid }, //
+          withCredentials: true,
+        }
     );
     return res.data;
   } catch (err) {
@@ -30,6 +32,10 @@ export const completePayment = async ({ paymentId, impUid }) => {
     throw err;
   }
 };
+
+
+
+
 
 // 환불 요청
 export const refundPayment = async ({ paymentId }) => {
