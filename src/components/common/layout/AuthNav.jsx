@@ -23,7 +23,6 @@ export default function AuthNav({ isAuthenticated, user }) {
 
   return isAuthenticated ? (
       <div className="space-x-5 flex items-center text-sm">
-        {/*안녕하세요 생략?*/}
         <p>
           <strong>{user?.name}님</strong> 안녕하세요
         </p>
@@ -32,7 +31,7 @@ export default function AuthNav({ isAuthenticated, user }) {
         </Link>
         <button
             onClick={handleLogout}
-            className="text-sm text-gray-600 hover:underline"
+            className="text-sm text-gray-600 hover:underline cursor-pointer"
         >
           로그아웃
         </button>
