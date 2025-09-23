@@ -4,24 +4,28 @@ const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
 
 export async function callSpringAPI(req, url, method = "GET") {
   try {
-    // 쿠키에서 SR_ACCESS / SR_REFRESH 꺼내기
     let token = req.cookies.get("SR_ACCESS")?.value;
     const refreshToken = req.cookies.get("SR_REFRESH")?.value;
 
+    //  원본 요청 URL에서 쿼리스트링 추출
+    const originalUrl = new URL(req.url);
+    const queryString = originalUrl.search; // ?imp_uid=xxx
+
     const doFetch = async (accessToken) => {
-      return await fetch(`${BASE_URL}${url}`, {
+      return await fetch(`${BASE_URL}${url}${queryString}`, {
         method,
         headers: {
           "Content-Type": "application/json",
           ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
         },
         body: ["POST", "PUT", "PATCH"].includes(method)
-          ? JSON.stringify(await req.json().catch(() => null))
-          : undefined,
+            ? JSON.stringify(await req.json().catch(() => null))
+            : undefined,
         cache: "no-store",
         credentials: "include",
       });
     };
+
 
     // AccessToken이 없을 때 → Refresh 시도
     if (!token && refreshToken) {
@@ -74,8 +78,8 @@ export async function callSpringAPI(req, url, method = "GET") {
   } catch (err) {
     console.error(`Spring API 호출 실패: [${method}] ${url}`, err);
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+        { error: "Internal Server Error" },
+        { status: 500 }
     );
   }
 }
@@ -83,8 +87,8 @@ export async function callSpringAPI(req, url, method = "GET") {
 async function buildResponse(res, newToken) {
   const contentType = res.headers.get("content-type");
   const data = contentType?.includes("application/json")
-    ? await res.json()
-    : await res.text();
+      ? await res.json()
+      : await res.text();
 
   const response = NextResponse.json(data, { status: res.status });
 
