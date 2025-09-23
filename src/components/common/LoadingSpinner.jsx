@@ -22,7 +22,7 @@ export default function LoadingSpinner({ size = "md", fullscreen = false }) {
   // fullscreen 모드
   if (fullscreen) {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
           {spinner}
         </div>
     );

@@ -4,9 +4,9 @@ import GlobalModal from "@/components/common/GlobalModal";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 import AuthInitializer from "@/app/providers/AuthInitializer";
 import {ScrollToTop} from "@/components/common/ScrollToTop";
-import Header from "@/components/common/layout/Header";
 import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
+import Header from "@/components/common/Header";
 
 
 export const metadata = {

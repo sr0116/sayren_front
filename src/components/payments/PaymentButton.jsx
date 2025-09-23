@@ -10,7 +10,7 @@ export default function PaymentButton() {
     try {
       setLoading(true);
 
-      // 1. 결제 준비 API 호출 (orderItemId=3 고정)
+      // 1. 결제 준비 API 호출 (camelCase)
       const paymentData = await preparePayment({
         orderItemId: 3,
         paymentType: "CARD",
@@ -23,16 +23,21 @@ export default function PaymentButton() {
         alert("PortOne SDK가 로드되지 않았습니다.");
         return;
       }
-      // PortOne 초기화
       IMP.init(process.env.NEXT_PUBLIC_IMP_CODE);
 
+      const isDev = process.env.NODE_ENV !== "production";
+      const pgValue = isDev
+          ? "nice_v2"
+          : `nice.${process.env.NEXT_PUBLIC_MERCHANT_CODE}`;
+
+      // 3. PortOne 결제 요청 (camelCase 응답 사용)
       const paymentRequest = {
-        pg: "nice_v2", // PG MID 사용
+        pg: pgValue,
         pay_method: "card",
-        merchant_uid: paymentData.merchant_uid,
-        name: "테스트 결제",
+        merchant_uid: paymentData.merchantUid,
+        name: isDev ? "테스트 결제" : "운영 결제",
         amount: paymentData.amount,
-        buyer_email: "test@example.com",
+        buyer_email: isDev ? "test@example.com" : "real@example.com",
         buyer_name: "홍길동",
         buyer_tel: "010-1234-5678",
       };
@@ -42,12 +47,11 @@ export default function PaymentButton() {
 
         if (rsp.imp_uid) {
           try {
-            // 3. 결제 완료 검증 API 호출
+            // 4. 결제 완료 검증 API 호출 (camelCase)
             const result = await completePayment({
-              paymentId: paymentData.payment_id, // 백엔드 응답값 사용
+              paymentId: paymentData.paymentId,
               impUid: rsp.imp_uid,
             });
-
             alert("결제 성공\n" + JSON.stringify(result));
           } catch (err) {
             console.error("결제 검증 실패:", err);
