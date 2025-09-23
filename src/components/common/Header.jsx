@@ -5,9 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, ShoppingCart, User, Menu } from "lucide-react";
 import {useSelector} from "react-redux";
-import {LogoutButton} from "@/components/common/Button";
+
 import {authActions} from "@/store/authStore";
 import {usePathname} from "next/navigation";
+import LogoutButton from "@/components/common/LogoutButton";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);

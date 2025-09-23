@@ -35,6 +35,7 @@ export async function callSpringAPI(req, url, method = "GET") {
 
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json(); // { accessToken }
+        console.log(refreshData)
         token = refreshData.accessToken;
 
         const retryRes = await doFetch(token);
@@ -87,7 +88,7 @@ async function buildResponse(res, newToken) {
     : await res.text();
 
   const response = NextResponse.json(data, { status: res.status });
-
+  console.log(newToken)
   // AccessToken 재발급 시 쿠키 갱신
   if (newToken) {
     response.cookies.set("SR_ACCESS", newToken, {
