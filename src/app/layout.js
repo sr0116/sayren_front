@@ -6,7 +6,7 @@ import AuthInitializer from "@/app/providers/AuthInitializer";
 import {ScrollToTop} from "@/components/common/ScrollToTop";
 import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
-import Header from "@/components/common/Header";
+import Header from "@/components/common/layout/Header";
 
 
 export const metadata = {
