@@ -94,7 +94,7 @@ async function buildResponse(res, newToken) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: parseInt(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE, 10),
+      maxAge: Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) * 60,
       sameSite: "lax",
     });
   }
