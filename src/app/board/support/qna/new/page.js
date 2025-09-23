@@ -4,10 +4,11 @@ import { useState } from "react";
 import Button from "@/components/common/Button";
 import { TextInput } from "@/components/common/Input";
 
-export default function QuestionNewPage() {
+export default function QnaNewPage() {
   const [type, setType] = useState("일반");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isSecret, setIsSecret] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,8 +47,20 @@ export default function QuestionNewPage() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
+
+        {/* 비밀글 체크 */}
+        <label className="flex items-center gap-2 mb-4">
+          <input
+            type="checkbox"
+            checked={isSecret}
+            onChange={(e) => setIsSecret(e.target.checked)}
+            className="w-4 h-4 accent-[#ff0066] cursor-pointer" // 체크박스 색상만 통일
+          />
+          비밀글로 등록하기
+        </label>
+
         <Button type="submit">
-          {type}문의 제출하기
+          {type}문의 등록하기
         </Button>
       </form>
     </div>

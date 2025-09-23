@@ -32,7 +32,7 @@ export default function FaqPage() {
               filter === c
                 ? "border-[#ff0066] text-[#ff0066] font-bold"
                 : "border-transparent text-gray-500"
-            }`}
+            } cursor-pointer`}
           >
             {c}
           </button>
@@ -52,7 +52,7 @@ export default function FaqPage() {
               <span className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">
                 {f.category}
               </span>
-              <span className="text-[#111827] font-medium">{f.question}</span>
+              <span className="text-[#111827] font-medium cursor-pointer">{f.question}</span>
             </span>
 
               {/* 토글 아이콘 */}
