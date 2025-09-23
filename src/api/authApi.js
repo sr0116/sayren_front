@@ -1,4 +1,3 @@
-// api/authApi.js
 import axios from "axios";
 import api from "@/lib/axios";
 
@@ -16,7 +15,7 @@ export const signup = async ({ email, password , name , serviceAgree, privacyAgr
 
 
 
-// 로그인 API (RefreshToken 쿠키 발급 + AccessToken 반환)
+// 로그인 API (RefreshToken 쿠키 발급 + AccessToken쿠키 반환)
 export const login = async ({ username, password, rememberMe }) => {
   const response = await axios.post(
       `${BASE_URL}/api/auth/login`,
