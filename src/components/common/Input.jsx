@@ -47,6 +47,46 @@ export function PasswordInput({value, onChange, placeholder, name}) {
   );
 }
 
+export function NumberInput({ name, value, onChange, maxLength, placeholder, disabled=false }) {
+  const handleChange = (e) => {
+    // 숫자만 허용
+    const onlyNumber = e.target.value.replace(/\D/g, "");
+
+    // 길이 제한
+    const limited = maxLength ? onlyNumber.slice(0, maxLength) : onlyNumber;
+
+    if (onChange) {
+      // 부모에게 이벤트 형식 그대로 전달
+      onChange({
+        ...e,
+        target: {
+          ...e.target,
+          name,
+          value: limited,
+        },
+      });
+    }
+  };
+
+  return (
+      <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          placeholder={placeholder}
+          name={name}
+          value={value}
+          onChange={handleChange}
+          className="w-full h-full max-h-[48px] border border-gray-300 rounded-md px-3 py-2
+                   focus:outline-none focus:ring focus:ring-gray-900
+                   placeholder:text-gray-500"
+          maxLength={maxLength}
+          disabled={disabled}
+      />
+  );
+}
+
+
 
 export function CheckBox({label, onChange, name, checked}) {
 

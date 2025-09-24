@@ -2,8 +2,7 @@
 
 import React, {useState} from "react";
 import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
-import {useMutation} from "@tanstack/react-query";
-import {signup as signupApi} from "@/api/authApi";
+import {useSignupMutation} from "@/api/authApi";
 import {useRouter} from "next/navigation";
 import {PasswordInput, TextInput} from "@/components/common/Input";
 import ServiceAgree from "@/components/term/ServiceAgree";
@@ -29,42 +28,44 @@ export default function SignupPage() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const mutation = useMutation({
-    mutationFn: signupApi,
-    onSuccess: () => {
-      dispatch(openModal({
-        content: (
-          <div className="flex flex-col justify-center items-center gap-2">
-            <h3>회원가입 성공</h3>
-            <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
+  const signupMutation = useSignupMutation({
+      onSuccess: () => {
+        dispatch(openModal({
+          content: (
+            <div className="flex flex-col justify-center items-center gap-4">
+              <h3>회원가입 성공</h3>
+              <p>작성하신 이메일로 인증링크가 전송되었습니다.</p>
+              <Button variant={"primary"} onClick={() => {
+                dispatch(closeModal());
+                setTimeout(() => router.push("/member/login"), 200);
+              }}>
+                확인
+              </Button>
+            </div>
+          )
+        }
+        ))
+      },
+      onError: (err) => {
+        dispatch(openModal({
+          content: (<div className="flex flex-col justify-center items-center gap-4">
+            <p>{err.response?.data?.message}</p>
+            <p>회원가입에 실패했습니다. 다시 시도해주세요.</p>
             <Button variant={"primary"} onClick={() => {
               dispatch(closeModal());
-              setTimeout(() => router.push("/member/login"), 200);
             }}>
               확인
             </Button>
-          </div>
-        )
-      }
-      ))
-    },
-    onError: (err) => {
-      dispatch(openModal({
-        content: (<div className="flex flex-col justify-center items-center gap-2">
-          <p>회원가입에 실패했습니다. 다시 시도해주세요.</p>
-          <Button variant={"primary"} onClick={() => {
-            dispatch(closeModal());
-          }}>
-            확인
-          </Button>
-        </div>)
-      }))
-    },
-  });
+          </div>)
+        }))
+      },
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutation.mutate(memberSignupDTO);
+    signupMutation.mutate({
+      data: memberSignupDTO
+    });
   };
 
   const isvalid = !(
