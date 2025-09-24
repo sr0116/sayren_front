@@ -9,11 +9,12 @@ async function getPrivacyTerms() {
 }
 
 
-export default function PrivacyAgree({ onChange , checked , size , name }) {
+export default function PrivacyAgree({ initialData, onChange , checked , size , name }) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["terms", "privacy"],
     queryFn: getPrivacyTerms,
     staleTime: Infinity,
+    initialData,
   });
 
   return (
