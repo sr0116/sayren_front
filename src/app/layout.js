@@ -8,6 +8,7 @@ import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
 import Header from "@/components/common/layout/Header";
 import GlobalLoading from "@/components/common/loading/GlobalLoding";
+import RouteLoading from "@/components/common/loading/RountLoading";
 
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <ScrollToTop/>
           <Header />
           <GlobalLoading />
+          <RouteLoading />
           <main className="flex-grow pt-24 md:pt-40 mb-28">{children}</main>
           <GlobalModal/>
           <Footer />
