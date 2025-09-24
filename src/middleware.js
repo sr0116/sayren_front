@@ -4,15 +4,16 @@ import { NextResponse } from "next/server";
 function parseJwt(token) {
   try {
     const base64Payload = token.split(".")[1];
-    const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(payload);
+    return JSON.parse(Buffer.from(base64Payload, "base64").toString("utf8"));
   } catch (e) {
+    console.error("Invalid JWT:", e);
     return null;
   }
 }
 
 export function middleware(req) {
   const token = req.cookies.get("SR_ACCESS")?.value;
+  const login = req.cookies.has("SR_ACTIVE");
 
   if (token) {
     const user = parseJwt(token);
@@ -23,16 +24,19 @@ export function middleware(req) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // 관리자 접근 제한
+    // 관리자 접근제한.
     if (req.nextUrl.pathname.startsWith("/admin")) {
-      const roles = Array.isArray(user?.role) ? user.role : [user?.role];
+      const roles = Array.isArray(user?.roles)
+          ? user.roles
+          : [user?.role].filter(Boolean);
+
       if (!roles.includes("ADMIN")) {
         return NextResponse.redirect(new URL("/", req.url));
       }
     }
   }
   // 로그인 안한 유저 관리
-  else {
+  else if(!login) {
     if (req.nextUrl.pathname.startsWith("/mypage")) {
       return NextResponse.redirect(new URL("/member/login", req.url));
     }

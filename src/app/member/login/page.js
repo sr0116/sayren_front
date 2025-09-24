@@ -1,9 +1,7 @@
 "use client";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { login as loginApi } from "@/api/authApi";
+import {useLoginMutation} from "@/api/authApi";
 import { login } from "@/store/authSlice";
 import { TextInput, CheckBox, PasswordInput } from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -11,6 +9,8 @@ import Link from "next/link";
 import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
 import {useFormInput} from "@/hooks/useFormInput";
+import {closeModal, openModal} from "@/store/modalSlice";
+import React from "react";
 
 export default function LoginPage() {
   const { formData: loginRequestDTO, handleChange } = useFormInput({
@@ -22,22 +22,32 @@ export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // ✅ 일반 로그인 mutation
-  const mutation = useMutation({
-    mutationFn: loginApi,
+
+  const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       dispatch(login({ data }));
       router.push("/");
     },
     onError: (err) => {
-      console.error("로그인 실패:", err);
+      dispatch(openModal({
+        content: (<div className="flex flex-col justify-center items-center gap-4">
+          <p>{err.response?.data?.message}</p>
+          <Button variant={"primary"} onClick={() => {
+            dispatch(closeModal());
+          }}>
+            확인
+          </Button>
+        </div>)
+      }))
     },
-  });
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(loginRequestDTO);
-    mutation.mutate(loginRequestDTO);
+    loginMutation.mutate({
+      data: loginRequestDTO
+    });
   };
 
   return (
@@ -65,15 +75,9 @@ export default function LoginPage() {
             checked={loginRequestDTO.rememberMe}
             onChange={handleChange}
           />
-          <Button variant="primary" type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "로그인 중..." : "로그인"}
+          <Button variant="primary" type="submit" disabled={loginMutation.isPending}>
+            {loginMutation.isPending ? "로그인 중..." : "로그인"}
           </Button>
-
-          {mutation.isError && (
-            <p className="text-red-500 text-sm">
-              로그인 실패: {mutation.error.message}
-            </p>
-          )}
 
           <p className="text-xs text-center text-gray-500">
             소셜 로그인으로 간편하게 이용
