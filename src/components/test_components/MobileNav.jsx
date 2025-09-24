@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef } from "react";
-import MegaMenuPanel from "@/components/common/layout/MegaMenuPanel";
+import MegaMenuPanel from "@/components/test_components/MegaMenuPanel";
 
 const navItems = [
   { label: "Product", href: "/product", hasMegaMenu: true },

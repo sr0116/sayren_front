@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { preparePayment, completePayment } from "@/api/paymentApi";
+import {useState} from "react";
+import {preparePayment, completePayment} from "@/api/paymentApi";
 
 export default function PaymentButton() {
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function PaymentButton() {
       IMP.request_pay(paymentRequest, async (rsp) => {
         console.log("PortOne 응답:", rsp);
 
-        if (rsp.imp_uid) {
+        if (rsp.succress) { // 성공 여부
           try {
             // 3. 결제 완료 검증 API 호출
             const result = await completePayment({
@@ -48,13 +48,13 @@ export default function PaymentButton() {
               impUid: rsp.imp_uid,
             });
 
-            alert("결제 성공\n" + JSON.stringify(result));
+            alert("결제 성공" + JSON.stringify(result));
           } catch (err) {
             console.error("결제 검증 실패:", err);
-            alert("결제 검증 실패\n" + err.message);
+            alert("결제 검증 실패" + err.message);
           }
         } else {
-          alert("결제 실패\n" + JSON.stringify(rsp));
+          alert("결제 실패 또는 취소" + rsp.error_msg);
         }
       });
     } catch (err) {
