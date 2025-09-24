@@ -49,7 +49,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 h-12">
           <div className="flex items-center space-x-6 h-full">
             {(isMobile || isScrolled) && <Logo variant="symbol"/>}
-            <NavMenu layout="horizontal" isMobile={isMobile} isScrolled={isScrolled} />
+            <NavMenu layout="horizontal" />
           </div>
           <IconGroup
               isMobile={isMobile}
@@ -63,7 +63,7 @@ export default function Header() {
             <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-2 text-sm">
               <AuthNav isAuthenticated={isAuthenticated} user={user}/>
               <div className="border-b"/>
-              <NavMenu layout="vertical" isMobile={isMobile} isScrolled={isScrolled} />
+              <NavMenu layout="vertical"  />
             </div>
         )}
       </header>
