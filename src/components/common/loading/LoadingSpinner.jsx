@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function LoadingSpinner({
                                          size = "md",
                                          fullscreen = false,
-                                         blockUI = true, // 기본값: UI 차단
+                                         blockUI = true, // 기본값: 클릭 차단
                                        }) {
   const sizeMap = {
     sm: "w-4 h-4 border-2",
