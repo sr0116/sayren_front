@@ -1,4 +1,4 @@
-import LaunchLoading from "@/components/common/LaunchLoading";
+import LaunchLoading from "@/components/common/loading/LaunchLoading";
 
 export default function TestLaunch() {
   return (
