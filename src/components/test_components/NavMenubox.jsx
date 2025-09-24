@@ -7,23 +7,23 @@ import Link from "next/link";
 // layout="vertical" → 모바일 드롭다운용
 
 const navItems = [
-  { label: "Product", href: "/product", hasMegaMenu: true },
-  { label: "Rental", href: "#" },
-  { label: "Review", href: "/board/review" },
-  { label: "Support", href: "/board/support" },
-  { label: "B2B", href: "#" },
+  {label: "Product", href: "#"},
+  {label: "Rental", href: "#"},
+  {label: "Review", href: "#"},
+  {label: "Support", href: "#"},
+  {label: "B2B", href: "#"},
 ];
 
 export default function NavMenu({layout = "horizontal"}) {
   const base =
       layout === "horizontal"
-          ? "hidden md:flex space-x-6 text-sm font-medium text-gray-700 h-full items-center"
+          ? "hidden md:flex gap-8 text-sm font-medium text-gray-700 items-center"
           : "space-y-2 text-sm";
 
   return (
       <nav className={base}>
         {navItems.map((item) => (
-            <Link key={item.label} href={item.href} className="block">
+            <Link key={item.label} href={item.href} className="block py-3">
               {item.label}
             </Link>
         ))}
