@@ -9,6 +9,8 @@ import {
   Monitor,
 } from "lucide-react";
 
+
+// 현재 사용 안하고 나중에 사용가능성
 export default function LaunchLoading({
                                         title = "세상 이쁜 렌탈, 세이렌",
                                       }) {
