@@ -20,9 +20,9 @@ export const completePayment = async ({ paymentId, impUid }) => {
   try {
     const res = await axios.post(
         `/api/proxy/api/user/payments/${paymentId}/complete`,
-        null, // body 없음
+        {}, // ✅ null 대신 빈 객체
         {
-          params: { imp_uid: impUid }, //
+          params: { imp_uid: impUid }, // ✅ 쿼리 파라미터 보장
           withCredentials: true,
         }
     );
@@ -32,6 +32,7 @@ export const completePayment = async ({ paymentId, impUid }) => {
     throw err;
   }
 };
+
 
 
 
