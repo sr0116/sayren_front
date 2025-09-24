@@ -20,7 +20,7 @@ export default function Page() {
       <TestEmpty />
       <TestToast />
       <TestSpinner />
-      <TestLaunch />
+      {/*<TestLaunch />*/}
 
     </>
   );
