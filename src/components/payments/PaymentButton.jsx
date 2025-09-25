@@ -1,20 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {preparePayment, completePayment, usePreparePaymentMutation} from "@/api/paymentApi";
+import { preparePayment, completePayment } from "@/api/paymentApi";
 
-export default function PaymentButton() {
+export default function PaymentButton({ orderItemId }) {
   const [loading, setLoading] = useState(false);
-
-
-  // const prepareMutation = usePreparePaymentMutation({
-  //   onSuccess: () => {
-  //
-  //   },
-  //   onError: () => {
-  //
-  //   }
-  // })
 
   const handleClick = async () => {
     try {
@@ -24,7 +14,15 @@ export default function PaymentButton() {
         orderItemId: 3,
         paymentType: "CARD",
       });
-      console.log("결제 준비 응답:", paymentData);
+
+      console.log("결제 준비 응답:", paymentData); //  확인
+
+      if (!paymentData) {
+        throw new Error("결제 준비 응답이 비어있습니다.");
+      }
+      if (!paymentData.merchantUid) {
+        throw new Error("merchantUid 없음: " + JSON.stringify(paymentData));
+      }
 
       const IMP = window.IMP;
       if (!IMP) {
@@ -50,7 +48,7 @@ export default function PaymentButton() {
 
         try {
           const result = await completePayment({
-            paymentId: paymentData.paymentId, // camelCase 사용
+            paymentId: paymentData.paymentId,
             impUid: rsp.imp_uid,
           });
 
@@ -66,11 +64,12 @@ export default function PaymentButton() {
       });
     } catch (err) {
       console.error("결제 처리 중 오류:", err);
-      alert("결제 처리 중 오류 발생");
+      alert("결제 처리 중 오류 발생: " + err.message);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
       <button
