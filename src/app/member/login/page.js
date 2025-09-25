@@ -1,103 +1,16 @@
-"use client";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import {login as loginApi} from "@/api/authApi";
-import { login } from "@/store/authSlice";
-import { TextInput, CheckBox, PasswordInput } from "@/components/common/Input";
-import Button from "@/components/common/Button";
-import Link from "next/link";
 import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
-import SocialLoginButton from "@/components/auth/SocialLoginButton";
-import {useFormInput} from "@/hooks/useFormInput";
-import {closeModal, openModal} from "@/store/modalSlice";
 import React from "react";
-import {useMutation} from "@tanstack/react-query";
+import LoginForm from "@/components/member/LoginForm";
 
 export default function LoginPage() {
-  const { formData: loginRequestDTO, handleChange } = useFormInput({
-    username: "",
-    password: "",
-    rememberMe: false,
-  })
 
-  const router = useRouter();
-  const dispatch = useDispatch();
-
-
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
-    onSuccess: (data) => {
-      dispatch(login({ data }));
-      router.push("/");
-    },
-    onError: (err) => {
-      dispatch(openModal({
-        content: (<div className="flex flex-col justify-center items-center gap-4">
-          <p>{err.response?.data?.message}</p>
-          <Button variant={"primary"} onClick={() => {
-            dispatch(closeModal());
-          }}>
-            확인
-          </Button>
-        </div>)
-      }))
-    },
-  })
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(loginRequestDTO);
-    loginMutation.mutate({
-      data: loginRequestDTO
-    });
-  };
 
   return (
     <div>
       <h2 className="text-center text-3xl font-medium mb-8">로그인</h2>
       <div className="w-[400px] mx-auto rounded-lg p-6 border border-gray-200 bg-white">
         <SocialAuthHandler />
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <TextInput
-            placeholder="아이디 또는 전화번호"
-            name="username"
-            autoComplete="email"
-            value={loginRequestDTO.username}
-            onChange={handleChange}
-          />
-          <PasswordInput
-            placeholder="비밀번호"
-            name="password"
-            value={loginRequestDTO.password}
-            onChange={handleChange}
-          />
-          <CheckBox
-            label="로그인 상태 유지"
-            name="rememberMe"
-            checked={loginRequestDTO.rememberMe}
-            onChange={handleChange}
-          />
-          <Button variant="primary" type="submit" disabled={loginMutation.isPending}>
-            {loginMutation.isPending ? "로그인 중..." : "로그인"}
-          </Button>
-
-          <p className="text-xs text-center text-gray-500">
-            소셜 로그인으로 간편하게 이용
-          </p>
-          <SocialLoginButton />
-        </form>
-
-        <div className="flex justify-center gap-4 mt-4 text-sm text-gray-600">
-          <Link href="/member/signup" className="hover:underline">
-            회원가입
-          </Link>
-          <Link href="/" className="hover:underline">
-            아이디 찾기
-          </Link>
-          <Link href="/" className="hover:underline">
-            비밀번호 찾기
-          </Link>
-        </div>
+        <LoginForm/>
       </div>
     </div>
   );
