@@ -10,7 +10,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-neutral-900 text-neutral-200 py-10">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col gap-8">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:px-8 gap-8">
         {/* 상단 */}
         <div className="flex items-start justify-between w-full">
           <div className="w-full">
