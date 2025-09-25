@@ -12,7 +12,7 @@ api.interceptors.response.use(
 );
 
 const noApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  baseURL: process.env.NEXT_PUBLIC_SPRING_API_BASE_URL,
   withCredentials: true,
 });
 

@@ -1,9 +1,9 @@
-import TelCheckForm from "@/components/auth/TelCheckForm";
+import TelModify from "@/components/auth/TelModify";
 
-export default function TelModify() {
+export default function TelModifyPage() {
   return (
     <div>
-      <TelCheckForm />
+      <TelModify />
     </div>
   )
 }
