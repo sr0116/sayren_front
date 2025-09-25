@@ -1,4 +1,3 @@
-import axios from "axios";
 import { api , noApi } from "@/lib/axios";
 import {useApiMutation} from "@/hooks/useApi";
 
@@ -10,15 +9,21 @@ export function useSignupMutation(options) {
 }
 
 // 로그인
-export function useLoginMutation(options) {
-  return useApiMutation("POST", "/api/auth/login", { options });
-}
+export const login = async ({ data }) => {
+  try {
+    const res = await noApi.post("/api/auth/login", data);
+    return res; // 쿠키는 자동 저장됨 (withCredentials: true 때문에)
+  } catch (err) {
+    console.error("로그인 실패:", err.response?.data?.message || err.message);
+    throw err;
+  }
+};
 
 
 // 로그아웃
 export const logout = async () => {
   try {
-    await api.post("/auth/logout", {});
+    await noApi.post("/api/auth/logout", {});
     return true;
   } catch (err) {
     console.error("로그아웃 실패:", err.response?.data?.message || err.message);

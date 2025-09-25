@@ -1,7 +1,7 @@
 "use client";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import {useLoginMutation} from "@/api/authApi";
+import {login as loginApi} from "@/api/authApi";
 import { login } from "@/store/authSlice";
 import { TextInput, CheckBox, PasswordInput } from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -11,6 +11,7 @@ import SocialLoginButton from "@/components/auth/SocialLoginButton";
 import {useFormInput} from "@/hooks/useFormInput";
 import {closeModal, openModal} from "@/store/modalSlice";
 import React from "react";
+import {useMutation} from "@tanstack/react-query";
 
 export default function LoginPage() {
   const { formData: loginRequestDTO, handleChange } = useFormInput({
@@ -23,7 +24,8 @@ export default function LoginPage() {
   const dispatch = useDispatch();
 
 
-  const loginMutation = useLoginMutation({
+  const loginMutation = useMutation({
+    mutationFn: loginApi,
     onSuccess: (data) => {
       dispatch(login({ data }));
       router.push("/");

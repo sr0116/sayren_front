@@ -3,7 +3,7 @@ import MyMenu from "@/components/member/MyMenu";
 
 export default function MypageRayOut({children}) {
   return(
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 px-6">
+    <div className="w-full flex flex-col md:flex-row gap-6 px-6">
       {/* 왼쪽 메뉴 영역 */}
       <aside className="w-full md:w-60 shrink-0">
         <h2 className="text-xl font-bold mb-6 text-gray-800">마이페이지</h2>

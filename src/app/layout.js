@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
           <AuthInitializer />
           <ScrollToTop/>
           <Header />
-          <main className="flex-grow pt-24 md:pt-40  px-6 md:px-8 mb-28 max-w-7xl mx-auto">{children}</main>
+          <main className="flex-grow pt-24 md:pt-40  px-6 md:px-8 mb-28 max-w-7xl mx-auto w-full">{children}</main>
           <GlobalLoader />
           <GlobalModal/>
           <Footer />
