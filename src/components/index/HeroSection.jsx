@@ -15,7 +15,7 @@ export default function HeroSection() {
   ];
 
   return (
-      <section className="max-w-7xl mx-auto mt-24 my-6 sm:my-12 px-2 sm:px-4">
+      <section className="max-w-7xl mx-auto  px-2 sm:px-4">
         <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-lg sm:rounded-xl overflow-hidden shadow bg-gray-200">
           <Swiper
               modules={[Navigation, Autoplay]}

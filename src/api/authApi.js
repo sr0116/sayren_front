@@ -1,68 +1,33 @@
 import axios from "axios";
-import api from "@/lib/axios";
+import { api , noApi } from "@/lib/axios";
+import {useApiMutation} from "@/hooks/useApi";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
 
-// 회원가입 API
-export const signup = async ({ email, password , name , serviceAgree, privacyAgree }) => {
-  const response = await axios.post(
-    `${BASE_URL}/api/user/member/register`,
-    { email, password , name , serviceAgree, privacyAgree },
-  {withCredentials: true}
-    );
-  return response.data;
+// 회원가입
+export function useSignupMutation(options) {
+  return useApiMutation("POST", "/api/user/member/register", { options });
+}
+
+// 로그인
+export function useLoginMutation(options) {
+  return useApiMutation("POST", "/api/auth/login", { options });
 }
 
 
-
-// 로그인 API (RefreshToken 쿠키 발급 + AccessToken쿠키 반환)
-export const login = async ({ username, password, rememberMe }) => {
-  const response = await axios.post(
-      `${BASE_URL}/api/auth/login`,
-      { username, password, rememberMe },
-      { withCredentials: true }
-  );
-  return response.data;
-};
-
-
-// AccessToken 재발급 (RefreshToken 쿠키 사용)
-export const refreshAccessToken = async () => {
-  try {
-    const response = await axios.post(
-        `${BASE_URL}/api/auth/refresh`,
-        {},
-        { withCredentials: true }
-    );
-    return response.data; // { accessToken }
-  } catch (err) {
-    if (err.response?.status === 401) {
-      // 로그인 안 된 상태 → 조용히 null
-      return null;
-    }
-    console.error("토큰 갱신 실패:", err);
-    return null;
-  }
-};
-
-// 로그아웃 (서버에서 RefreshToken 쿠키 삭제)
+// 로그아웃
 export const logout = async () => {
   try {
-    await axios.post(
-        `${BASE_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-    );
+    await api.post("/auth/logout", {});
     return true;
   } catch (err) {
-    console.error("로그아웃 실패:", err);
+    console.error("로그아웃 실패:", err.response?.data?.message || err.message);
     return false;
   }
 };
 
-// -----------------------------
+
 // 소셜 로그인 핸들러 (window.open)
-// -----------------------------
 export const googleLoginHandler = () => {
   window.open(
       `${BASE_URL}/oauth2/authorization/google`,
@@ -87,9 +52,7 @@ export const kakaoLoginHandler = () => {
   );
 };
 
-// -----------------------------
-// 소셜 관련 API (AccessToken 필요) → api 인스턴스 사용
-// -----------------------------
+
 
 // 소셜 회원가입
 export const socialSignup = async ({ socialUser, serviceAgree, privacyAgree }) => {
@@ -105,6 +68,11 @@ export const socialSignup = async ({ socialUser, serviceAgree, privacyAgree }) =
     throw err;
   }
 };
+
+export function useSocialSignupMutation(options) {
+  return useApiMutation("POST", "/auth/social-signup", { options });
+}
+
 
 // 소셜 계정 연동
 export const socialLink = async ({ socialUser, password }) => {

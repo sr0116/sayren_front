@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 import {useDispatch, useSelector} from "react-redux";
 import {useApiMutation} from "@/hooks/useApi";
 import {closeModal, openModal} from "@/store/modalSlice";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 
 
@@ -16,28 +16,29 @@ export default function EmailVerifyPage(){
   const signupMutation = useApiMutation("POST", "/api/auth/email-verify", {
     options: {
       onSuccess: () => {
-        dispatch(openModal(
-            <div className="flex flex-col justify-center items-center gap-2">
+        dispatch(openModal({
+            content: (<div className="flex flex-col justify-center items-center gap-2">
               <p>이메일로 인증링크가 전송되었습니다.</p>
               <Button variant={"primary"} onClick={() => {
                 dispatch(closeModal());
               }}>
                 확인
               </Button>
-            </div>
-        ))
+            </div>)}
+        ));
+        setCooldown(300);
       },
       onError: (err) => {
-        dispatch(openModal(
-            <div className="flex flex-col justify-center items-center gap-2">
+        dispatch(openModal({
+            content: (<div className="flex flex-col justify-center items-center gap-2">
               <p>메일 전송에 실패했습니다. 다시 시도해주세요.</p>
               <Button variant={"primary"} onClick={() => {
                 dispatch(closeModal());
               }}>
                 확인
               </Button>
-            </div>
-        ))
+            </div>)
+        }))
       },
     },
   });
@@ -45,6 +46,18 @@ export default function EmailVerifyPage(){
   const emailSendHandler = () => {
     signupMutation.mutate();
   }
+
+  const [cooldown, setCooldown] = useState(0); // 남은 시간(초)
+
+  // 1초마다 cooldown 줄이기
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
 
   return (
       <div className="flex items-center justify-center h-full">
@@ -64,9 +77,18 @@ export default function EmailVerifyPage(){
               <p className="text-gray-600 mt-2">
                 이메일 인증이 필요합니다.
               </p>
-              <Button variant={"outline"} className={"flex items-center justify-center gap-2 mt-8"} onClick={emailSendHandler}>
+              <Button
+                variant={"outline"}
+                className={"flex items-center justify-center gap-2 mt-8"}
+                onClick={emailSendHandler}
+                disabled={cooldown > 0} // 쿨다운 중이면 비활성화
+              >
                 <RefreshCw className="w-5 h-5" />
-                인증 메일 재전송
+                {cooldown > 0
+                  ? `재전송 대기중 (${Math.floor(cooldown / 60)}:${String(
+                    cooldown % 60
+                  ).padStart(2, "0")})`
+                  : "인증 메일 재전송"}
               </Button>
             </div>
           ) }

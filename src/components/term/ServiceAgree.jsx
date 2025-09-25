@@ -9,11 +9,12 @@ async function getServiceTerms() {
 }
 
 
-export default function ServiceAgree({ onChange , checked , size, name }) {
+export default function ServiceAgree({ initialData, onChange , checked , size, name }) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["terms", "service"],
     queryFn: getServiceTerms,
     staleTime: Infinity,
+    initialData,
   });
 
   return (
