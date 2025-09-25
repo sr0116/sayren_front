@@ -9,7 +9,7 @@ import {closeModal, openModal} from "@/store/modalSlice";
 import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 
-export default function TelCheckForm({mutation}){
+export default function TelCheckForm({mutation, col}){
   const { formData : memberTelDTO , handleChange } = useFormInput({
     tel: "",
     phoneAuthCode: "",
@@ -71,10 +71,10 @@ export default function TelCheckForm({mutation}){
 
   return (
       <form className="flex-col flex gap-4" onSubmit={handleSubmit}>
-        <div className="flex gap-2">
-          <TelInput name="tel" value={memberTelDTO.tel} onChange={handleChange}/>
-          <div className="w-[120px]">
-            <Button variant={"primary"} type="button" disabled={cooldown > 0} onClick={sendHandler}>인증번호 발송</Button>
+        <div className={"flex gap-2 " + (col && "flex-col")}>
+          <TelInput name="tel" value={memberTelDTO.tel} onChange={handleChange} disabled={cooldown > 0}/>
+          <div className={col ? "" : "w-[120px]"}>
+            <Button variant={"primary"} type="button" disabled={cooldown > 0 || memberTelDTO.tel.length < 11 } onClick={sendHandler}>인증번호 발송</Button>
           </div>
         </div>
         {cooldown > 0 && (
