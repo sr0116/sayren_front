@@ -1,12 +1,13 @@
 import axios from "axios";
+import {api} from "@/lib/axios";
+import {useApiMutation} from "@/hooks/useApi";
 
 // 결제 준비
 export const preparePayment = async ({ orderItemId, paymentType }) => {
   try {
-    const res = await axios.post(
-        "/api/proxy/api/user/payments/prepare",
+    const res = await api.post(
+        "/api/user/payments/prepare",
         { orderItemId, paymentType },
-        { withCredentials: true }
     );
     return res.data; // PaymentResponseDTO
   } catch (err) {
@@ -15,14 +16,20 @@ export const preparePayment = async ({ orderItemId, paymentType }) => {
   }
 };
 
+// export function usePreparePaymentMutation(options) {
+//   return useApiMutation("POST", "/api/user/payments/prepare", { options });
+// }
+
+
+
 // 결제 완료 검증 (PortOne imp_uid 검증)
 export const completePayment = async ({ paymentId, impUid }) => {
   try {
-    const res = await axios.post(
-        `/api/proxy/api/user/payments/${paymentId}/complete`,
-        {}, // ✅ null 대신 빈 객체
+    const res = await api.post(
+        `/api/user/payments/${paymentId}/complete`,
+        {}, //  null 대신 빈 객체
         {
-          params: { imp_uid: impUid }, // ✅ 쿼리 파라미터 보장
+          params: { imp_uid: impUid }, //  쿼리 파라미터 보장
           withCredentials: true,
         }
     );
