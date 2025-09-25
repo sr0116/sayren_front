@@ -7,10 +7,11 @@ export async function callSpringAPI(req, url, method = "GET") {
     let token = req.cookies.get("SR_ACCESS")?.value;
     const refreshToken = req.cookies.get("SR_REFRESH")?.value;
 
-    //  원본 요청 URL에서 쿼리스트링 추출
+    // 원본 요청 URL에서 쿼리스트링 추출
     const originalUrl = new URL(req.url);
     const queryString = originalUrl.search; // ?imp_uid=xxx
 
+    // 실제 API 호출 함수
     const doFetch = async (accessToken) => {
       return await fetch(`${BASE_URL}${url}${queryString}`, {
         method,
@@ -26,21 +27,30 @@ export async function callSpringAPI(req, url, method = "GET") {
       });
     };
 
+    // refresh 토큰으로 새 access 발급
+    const tryRefresh = async () => {
+      if (!refreshToken) return null;
 
-    // AccessToken이 없을 때 → Refresh 시도
-    if (!token && refreshToken) {
       const refreshRes = await fetch(`${BASE_URL}/api/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `SR_REFRESH=${refreshToken}; Path=/; HttpOnly`,
+          Cookie: `SR_REFRESH=${refreshToken}`, // ✅ name=value 형식만
         },
+        credentials: "include",
       });
 
-      if (refreshRes.ok) {
-        const refreshData = await refreshRes.json(); // { accessToken }
-        token = refreshData.accessToken;
+      if (!refreshRes.ok) return null;
 
+      const refreshData = await refreshRes.json(); // { accessToken }
+      return refreshData.accessToken;
+    };
+
+    // 토큰이 없고 refreshToken만 있는 경우 → 바로 refresh
+    if (!token && refreshToken) {
+      const newToken = await tryRefresh();
+      if (newToken) {
+        token = newToken;
         const retryRes = await doFetch(token);
         return await buildResponse(retryRes, token);
       } else {
@@ -48,24 +58,14 @@ export async function callSpringAPI(req, url, method = "GET") {
       }
     }
 
-    // AccessToken 있을 때 → 요청
+    // 토큰이 있을 때 → 먼저 요청
     let res = await doFetch(token);
 
-    // 401 → Refresh 시도
+    // 401이면 refresh 후 다시 시도
     if (res.status === 401 && refreshToken) {
-      const refreshRes = await fetch(`${BASE_URL}/api/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `SR_REFRESH=${refreshToken}; Path=/; HttpOnly`,
-        },
-      });
-
-      if (refreshRes.ok) {
-        const refreshData = await refreshRes.json(); // { accessToken }
-        token = refreshData.accessToken;
-        console.log("refreshData", refreshData);
-
+      const newToken = await tryRefresh();
+      if (newToken) {
+        token = newToken;
         const retryRes = await doFetch(token);
         return await buildResponse(retryRes, token);
       } else {
@@ -75,6 +75,7 @@ export async function callSpringAPI(req, url, method = "GET") {
 
     // 정상 응답
     return await buildResponse(res, token);
+
   } catch (err) {
     console.error(`Spring API 호출 실패: [${method}] ${url}`, err);
     return NextResponse.json(
@@ -94,11 +95,13 @@ async function buildResponse(res, newToken) {
 
   // AccessToken 재발급 시 쿠키 갱신
   if (newToken) {
+    const maxAgeSec = Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) * 60;
+
     response.cookies.set("SR_ACCESS", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) * 60,
+      maxAge: maxAgeSec,
       sameSite: "lax",
     });
   }

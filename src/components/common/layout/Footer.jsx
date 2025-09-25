@@ -14,7 +14,7 @@ export default function Footer() {
         {/* 상단 */}
         <div className="flex items-start justify-between w-full">
           <div className="w-full">
-            <Image src="/image/whiteLogo.svg" alt="SAYREN Logo" width={120} height={120} className="mb-8"/>
+            <Image src="/image/whiteLogo.svg"  alt="SAYREN Logo" width={120} height={120} style={{ height: "auto", width: "auto" }} priority  className="mb-8"/>
             {/* 사업자 정보 */}
             <div className="mt-2">
               <button

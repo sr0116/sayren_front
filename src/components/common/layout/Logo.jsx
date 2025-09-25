@@ -17,7 +17,7 @@ export default function Logo({variant = "full"}) {
         <div
             className={`relative ${sizeClass} flex-shrink-0 flex items-center cursor-pointer`}
         >
-          <Image src={src} alt="SAYREN Logo" fill className="object-contain"/>
+          <Image src={src} alt="SAYREN Logo" fill priority className="object-contain"/>
         </div>
       </Link>
   );

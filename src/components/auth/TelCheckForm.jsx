@@ -9,7 +9,7 @@ import {closeModal, openModal} from "@/store/modalSlice";
 import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 
-export default function TelCheckForm(){
+export default function TelCheckForm({mutation}){
   const { formData : memberTelDTO , handleChange } = useFormInput({
     tel: "",
     phoneAuthCode: "",
@@ -61,24 +61,30 @@ export default function TelCheckForm(){
     telSendMutation.mutate()
   }
 
-
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    mutation.mutate({
+      data: memberTelDTO
+    })
+  }
 
 
   return (
-      <form className="flex-col flex gap-4">
+      <form className="flex-col flex gap-4" onSubmit={handleSubmit}>
         <div className="flex gap-2">
           <TelInput name="tel" value={memberTelDTO.tel} onChange={handleChange}/>
           <div className="w-[120px]">
             <Button variant={"primary"} type="button" disabled={cooldown > 0} onClick={sendHandler}>인증번호 발송</Button>
           </div>
         </div>
-        <div className="flex gap-2 h-[48px]">
-          <NumberInput name="phoneAuthCode" value={memberTelDTO.phoneAuthCode} onChange={handleChange} placeholder={"인증번호입력"}/>
-          <div className="w-[120px] flex-shrink-0">
-            <Button variant={"primary"} type="submit">인증하기</Button>
+        {cooldown > 0 && (
+          <div className="flex gap-2 h-[48px]">
+            <NumberInput name="phoneAuthCode" value={memberTelDTO.phoneAuthCode} onChange={handleChange} placeholder={"인증번호입력"}/>
+            <div className="w-[120px] flex-shrink-0">
+              <Button variant={"primary"} type="submit">인증하기</Button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
   );
 }
