@@ -7,13 +7,18 @@ import {useFindIdMutation} from "@/api/memberApi";
 import {useDispatch} from "react-redux";
 import {closeModal, openModal} from "@/store/modalSlice";
 import Button from "@/components/common/Button";
+import dayjs from "dayjs";
+import Link from "next/link";
 
 export default function FindIdForm(){
   const dispatch = useDispatch();
   const [check, setCheck] = useState(false);
+  const [idData, setIdData] = useState(null);
+
   const findIdMutation = useFindIdMutation({
-    onSuccess:() => {
+    onSuccess:(data) => {
       setCheck(true);
+      setIdData(data);
     },
     onError:() => {
       dispatch(openModal({
@@ -34,7 +39,20 @@ export default function FindIdForm(){
   return(
       <div>
         {check? (
-            <div/>
+          <div>
+            {idData?.email ? (
+              <div>
+                <p>아이디를 찾았습니다.</p>
+                <div className="flex justify-between">
+                  <p>{idData.email}</p>
+                  <p>{dayjs(idData.regDate).format("YYYY년 MM월 DD일")} 가입</p>
+                </div>
+              </div>
+            ) : (
+            <p>해당 휴대폰으로 등록된 아이디가 없습니다.</p>
+            )
+          }
+          </div>
         ) : (
           <TelCheckForm col={true} mutation={findIdMutation}/>
         )}

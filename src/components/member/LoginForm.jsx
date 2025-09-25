@@ -84,17 +84,7 @@ export default function LoginForm(){
         <SocialLoginButton />
       </form>
 
-      <div className="flex justify-center gap-4 mt-4 text-sm text-gray-600">
-        <Link href="/member/signup" className="hover:underline">
-          회원가입
-        </Link>
-        <Link href="/member/find-id" className="hover:underline">
-          아이디 찾기
-        </Link>
-        <Link href="/" className="hover:underline">
-          비밀번호 찾기
-        </Link>
-      </div>
+
     </div>
   )
 }
