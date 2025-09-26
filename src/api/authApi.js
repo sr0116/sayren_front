@@ -1,5 +1,6 @@
 import { api , noApi } from "@/lib/axios";
 import {useApiMutation} from "@/hooks/useApi";
+import {useNoApiMutation} from "@/hooks/useNoApi";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
 
@@ -75,7 +76,7 @@ export const socialSignup = async ({ socialUser, serviceAgree, privacyAgree }) =
 };
 
 export function useSocialSignupMutation(options) {
-  return useApiMutation("POST", "/auth/social-signup", { options });
+  return useNoApiMutation("POST", "api/auth/social-signup", { options });
 }
 
 
