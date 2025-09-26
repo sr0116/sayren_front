@@ -31,7 +31,7 @@ export default async function SignupPage() {
         <Link href="/member/find-id" className="hover:underline">
           아이디 찾기
         </Link>
-        <Link href="/" className="hover:underline">
+        <Link href="/member/find-pw" className="hover:underline">
           비밀번호 찾기
         </Link>
       </div>

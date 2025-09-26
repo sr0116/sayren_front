@@ -3,13 +3,11 @@
 import {CheckBox, PasswordInput, TextInput} from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
-import Link from "next/link";
 import React from "react";
 import {useFormInput} from "@/hooks/useFormInput";
 import {useRouter} from "next/navigation";
 import {useDispatch} from "react-redux";
-import {useMutation} from "@tanstack/react-query";
-import {login as loginApi} from "@/api/authApi";
+import {useLoginMutation} from "@/api/authApi";
 import {login} from "@/store/authSlice";
 import {closeModal, openModal} from "@/store/modalSlice";
 
@@ -24,8 +22,7 @@ export default function LoginForm(){
   const dispatch = useDispatch();
 
 
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
+  const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       dispatch(login({ data }));
       router.push("/");
