@@ -39,9 +39,7 @@ export default function SocialSignupModal({ socialUser }) {
 
   const handleSignup = () => {
     socialSignupMutation.mutate({
-      socialUser,
-      serviceAgree: socialSignupRequestDTO.serviceAgree,
-      privacyAgree: socialSignupRequestDTO.privacyAgree,
+      data: socialSignupRequestDTO
     });
   };
 
