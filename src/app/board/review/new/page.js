@@ -1,93 +1,144 @@
+// app/board/review/new/page.js
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import "@toast-ui/editor/dist/toastui-editor.css";
-import {createReview} from "@/api/reviewApi"; // 실제 API 함수 import
-import Button from "@/components/common/Button"; // 공통 버튼 import
+import { TextInput } from "@/components/common/Input";
+import Button from "@/components/common/Button";
+import { useFormInput } from "@/hooks/useFormInput";
+import { useReviewCreateMutation } from "@/api/reviewApi";
 
-// dynamic import (named export Editor 불러오기)
-const Editor = dynamic(
-  async () => {
-    const { Editor } = await import("@toast-ui/react-editor");
-    return Editor;
-  },
-  { ssr: false }
-);
+const Editor = dynamic(() => import("@toast-ui/react-editor").then(m => m.Editor), { ssr: false });
+
+const isHtml = (html) => {
+  if (!html) return false;
+  const box = document.createElement("div");
+  box.innerHTML = html;
+  const hasMedia = !!box.querySelector("img, video, iframe, figure, svg, table");
+  const text = (box.textContent || "")
+    .replace(/\u00A0|\u200B|\u200C|\u200D|\uFEFF/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+  return hasMedia || text.length > 0;
+};
+
+// ref/DOM 폴백으로 HTML 긁어오기
+const grabHtml = (ref) => {
+  const r = ref.current;
+  let html = "";
+  if (r?.getInstance) {
+    try { html = r.getInstance().getHTML() || ""; } catch {}
+  }
+  if (!html && r?.editorInst?.getHTML) {
+    try { html = r.editorInst.getHTML() || ""; } catch {}
+  }
+  if (!html) {
+    const root = document.getElementById("review-editor-root");
+    const ww = root?.querySelector(".toastui-editor-ww-container .toastui-editor-contents");
+    const md = root?.querySelector(".toastui-editor-md-container .toastui-editor-contents");
+    html = ww?.innerHTML || md?.innerHTML || "";
+  }
+  return html;
+};
 
 export default function ReviewNewPage() {
   const router = useRouter();
+  const params = useSearchParams();
   const editorRef = useRef(null);
-  const [title, setTitle] = useState("");
+  const [editorHtml, setEditorHtml] = useState("");
 
-  const handleSubmit = async (e) => {
+  // 쿼리에서 productId 받기
+  const productId = Number(params.get("productId") || 0);
+
+  const { formData: form, handleChange } = useFormInput({
+    title: "",
+    categoryId: 2,
+    isSecret: false,
+  });
+
+  const { mutate: createReview, isLoading } = useReviewCreateMutation({
+    onSuccess: () => {
+      alert("후기가 등록되었습니다!");
+      router.push("/board/review");
+    },
+    onError: (err) => {
+      console.error("[리뷰 등록 실패]", err);
+      alert("등록 실패: " + (err.response?.data?.message || err.message));
+    },
+  });
+
+  const handleEditorChange = () => setEditorHtml(grabHtml(editorRef));
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 내용 가져오기 (없으면 빈 문자열로 보정)
-    const content = editorRef.current?.getInstance().getHTML() || "";
+    // productId 없으면 막아
+    // if (!productId) {
+    //   alert("상품을 선택하고 후기 작성 페이지로 이동");
+    //   return;
+    // }
 
-    const instance = editorRef.current?.getInstance();
-    const html = instance?.getHTML() || "";
-    const text = html.replace(/<[^>]*>/g, "").trim(); // 태그 제거 후 순수 텍스트만 남김
+    const html = editorHtml || grabHtml(editorRef);
 
+    console.group("[REVIEW/SUBMIT]");
+    console.log("title:", form.title);
+    console.log("productId:", productId);
+    console.log("html.length:", html.length);
+    console.log("isHtml:", isHtml(html));
+    console.groupEnd();
 
-    // 유효성 검사 + 토스트 알림
-    if (!title.trim()) return window.toast("error", "제목은 필수입니다");
-    if (!content.trim()) return window.toast("error", "내용은 필수입니다");
-
-    try {
-      // 등록 API 호출
-      await createReview({
-        categoryId: 3,   // DB에 맞는 REVIEW 카테고리 ID
-        title,
-        content,
-        secret: false,   // 후기 게시판은 비밀글 불가
-      });
-
-      window.toast("success", "등록 완료!");
-      router.push("/board/review"); // 등록 후 목록으로 이동
-    } catch (err) {
-      console.error(err);
-      window.toast("error", "등록 실패, 서버 오류 발생");
+    if (!form.title.trim()) {
+      alert("제목을 입력하세요");
+      return;
     }
+    if (!isHtml(html)) {
+      alert("내용을 입력하세요");
+      return;
+    }
+
+    // productId 포함해서 보냄
+    createReview({
+      data: {
+        ...form,
+        productId:3,
+        content: html,
+      },
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h1 className="text-2xl font-bold">후기 작성</h1>
-
-      {/* 제목 입력 */}
-      <input
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto p-6 bg-white">
+      <TextInput
+        name="title"
         type="text"
+        value={form.title}
+        onChange={handleChange}
         placeholder="제목을 입력하세요"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="w-full border p-2 rounded"
       />
 
-      {/* TOAST UI Editor */}
-      <Editor
-        ref={editorRef}
-        initialValue="후기내용을 입력하세요"
-        previewStyle="vertical"
-        height="500px"
-        initialEditType="wysiwyg"
-        useCommandShortcut={true}
-      />
+      <div id="review-editor-root">
+        <Editor
+          ref={editorRef}
+          height="460px"
+          initialEditType="wysiwyg"
+          hideModeSwitch={true}
+          usageStatistics={false}
+          toolbarItems={[
+            ["heading", "bold", "italic", "strike"],
+            ["hr", "quote"],
+            ["ul", "ol", "task"],
+            ["table", "link"],
+            ["image"],
+            ["code", "codeblock"],
+          ]}
+          onChange={handleEditorChange}
+        />
+      </div>
 
-      {/* 버튼 영역 */}
-      <div className="flex gap-2">
-        <Button variant="primary" type="submit" className="w-32">
-          등록
-        </Button>
-        <Button
-          variant="outline"
-          type="button"
-          className="w-32"
-          onClick={() => router.push("/board/review")}
-        >
-          취소
+      <div className="mt-4">
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "등록중..." : "등록하기"}
         </Button>
       </div>
     </form>

@@ -1,59 +1,37 @@
-import axios from "axios";
+import { api } from "@/lib/axios";
+import { useApiMutation } from "@/hooks/useApi";
 
-// 후기 등록
-export const createReview = async ({ title, content }) => {
-  try {
-    const res = await axios.post(
-      "/api/proxy/api/reviews",   // 서버 엔드포인트
-      {
-        categoryId: 3,           // REVIEW 카테고리 번호 (DB 맞게 조정)
-        title,
-        content,
-        secret: false,           // 후기글은 비밀글 불가
-      },
-      { withCredentials: true }
-    );
-    return res.data;
-  } catch (err) {
-    console.error("후기 등록 실패:", err);
-    throw err;
-  }
+// 리뷰 등록
+export function useReviewCreateMutation(options) {
+  return useApiMutation("POST", "/api/user/reviews", { options });
+}
+
+// 리뷰 수정
+export const updateReview = async (id, data) => {
+  console.log("[리뷰 수정 요청]", id, data);
+  const res = await api.put(`/api/user/reviews/${id}`, data);
+  console.log("[리뷰 응답]", res);
+  return res;
 };
 
-// 후기 목록 조회
+// 리뷰 목록 조회
 export const getReviews = async () => {
-  try {
-    const res = await axios.get("/api/proxy/api/reviews?category=REVIEW", {
-      withCredentials: true,
-    });
-    return res.data;
-  } catch (err) {
-    console.error("후기 목록 조회 실패:", err);
-    throw err;
-  }
+  const res = await api.get("/api/user/reviews");
+  console.log("[리뷰 응답]", res);
+  return res;
 };
 
-// 후기 상세 조회
-export const getReviewById = async (boardId) => {
-  try {
-    const res = await axios.get(`/api/proxy/api/reviews/${boardId}`, {
-      withCredentials: true,
-    });
-    return res.data;
-  } catch (err) {
-    console.error("후기 상세 조회 실패:", err);
-    throw err;
-  }
+// 리뷰 상세 조회
+export const getReviewById = async (id) => {
+  const res = await api.get(`/api/user/reviews/${id}`);
+  console.log("[리뷰 응답]", res);
+  return res;
 };
 
-// 후기 삭제
-export const deleteReview = async (boardId) => {
-  try {
-    await axios.delete(`/api/proxy/api/reviews/${boardId}`, {
-      withCredentials: true,
-    });
-  } catch (err) {
-    console.error("후기 삭제 실패:", err);
-    throw err;
-  }
+// 리뷰 삭제
+export const deleteReview = async (id) => {
+  console.log("DELETE 요청 보냄:", `/api/user/reviews/${id}`);
+  const res = await api.delete(`/api/user/reviews/${id}`);
+  console.log("DELETE 응답:", res);
+  return res;
 };

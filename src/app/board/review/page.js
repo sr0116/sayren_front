@@ -39,7 +39,7 @@ export default function ReviewListPage() {
   const filteredReviews =
     filter === "전체"
       ? reviews
-      : reviews.filter((r) => r.category === filter);
+      : reviews.filter((r) => r.productName.includes(filter));
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -74,36 +74,31 @@ export default function ReviewListPage() {
       <p className="text-sm text-gray-600 mb-6">
         총{" "}
         <span className="font-semibold text-[#ff0066]">
-          {filteredReviews.length}
+         {filteredReviews ? filteredReviews.length : 0}
         </span>{" "}
         개의 후기가 등록되어 있습니다.
       </p>
 
       {/* 리뷰 카드 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredReviews.map((r) => (
+        {(filteredReviews || []).map((r) => (
           <Link
-            key={r.boardId} // 백엔드 응답에 맞게 boardId 사용 (확인 필요)
+            key={r.boardId}
             href={`/board/review/${r.boardId}`}
             className="border rounded p-4 shadow-sm bg-white hover:shadow-md transition cursor-pointer block"
           >
-            <img
-              src={r.thumbnailUrl || "/no-image.png"} // 응답 필드 맞게 수정
-              alt={r.productName || r.title}
-              className="w-full h-48 object-cover mb-3 rounded"
-            />
-            <div className="text-red-500 text-sm mb-1">
-              {"★".repeat(r.rating || 0)}
-            </div>
-            <h3 className="font-bold mb-1">{r.productName}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">{r.content}</p>
+            <h3 className="font-bold mb-1">{r.title}</h3>
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {r.content.replace(/<[^>]*>/g, "")}
+            </p>
             <div className="flex justify-between mt-3 text-xs text-gray-500">
-              <span>{r.writer}</span>
-              <span>{r.createdAt}</span>
+              <span>익명</span>
+              <span>{new Date(r.regDate).toLocaleDateString()}</span>
             </div>
           </Link>
         ))}
       </div>
+
     </div>
   );
 }
