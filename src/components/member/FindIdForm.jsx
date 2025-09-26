@@ -2,13 +2,11 @@
 
 import TelCheckForm from "@/components/auth/TelCheckForm";
 import React, {useState} from "react";
-import {useMutation} from "@tanstack/react-query";
 import {useFindIdMutation} from "@/api/memberApi";
 import {useDispatch} from "react-redux";
 import {closeModal, openModal} from "@/store/modalSlice";
 import Button from "@/components/common/Button";
 import dayjs from "dayjs";
-import Link from "next/link";
 
 export default function FindIdForm(){
   const dispatch = useDispatch();
