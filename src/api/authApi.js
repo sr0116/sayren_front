@@ -9,28 +9,15 @@ export function useSignupMutation(options) {
   return useApiMutation("POST", "/api/user/member/register", { options });
 }
 
-// 로그인
-export const login = async ({ data }) => {
-  try {
-    const res = await noApi.post("/api/auth/login", data);
-    return res; // 쿠키는 자동 저장됨 (withCredentials: true 때문에)
-  } catch (err) {
-    console.error("로그인 실패:", err.response?.data?.message || err.message);
-    throw err;
-  }
-};
+
+export function useLoginMutation(options) {
+  return useNoApiMutation("POST", "/api/auth/login", { options });
+}
 
 
-// 로그아웃
-export const logout = async () => {
-  try {
-    await noApi.post("/api/auth/logout", {});
-    return true;
-  } catch (err) {
-    console.error("로그아웃 실패:", err.response?.data?.message || err.message);
-    return false;
-  }
-};
+export function useLogoutMutation(options) {
+  return useNoApiMutation("POST", "/api/auth/logout", { options });
+}
 
 
 // 소셜 로그인 핸들러 (window.open)
@@ -59,40 +46,16 @@ export const kakaoLoginHandler = () => {
 };
 
 
-
 // 소셜 회원가입
-export const socialSignup = async ({ socialUser, serviceAgree, privacyAgree }) => {
-  try {
-    const response = await api.post("/auth/social-signup", {
-      socialUser,
-      serviceAgree,
-      privacyAgree,
-    });
-    return response.data; // { accessToken }
-  } catch (err) {
-    console.error("소셜 회원가입 실패:", err);
-    throw err;
-  }
-};
-
 export function useSocialSignupMutation(options) {
   return useNoApiMutation("POST", "api/auth/social-signup", { options });
 }
 
 
 // 소셜 계정 연동
-export const socialLink = async ({ socialUser, password }) => {
-  try {
-    const res = await api.post("/auth/social-link", {
-      socialUser,
-      password,
-    });
-    return res.data; // 서버에서 내려주는 MemberLoginResponseDTO
-  } catch (err) {
-    console.error("소셜 계정 연동 실패:", err);
-    throw err;
-  }
-};
+export function useSocialLinkMutation(options) {
+  return useNoApiMutation("POST", "api/auth/social-link", { options });
+}
 
 // 소셜 연동 시작 (리다이렉트 URL 받아서 팝업 오픈)
 export const socialLinkHandler = async (provider) => {
