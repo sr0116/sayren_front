@@ -26,6 +26,7 @@ export const getReviewById = async (id) => {
   const res = await api.get(`/api/user/reviews/${id}`);
   console.log("[리뷰 응답]", res);
   return res;
+
 };
 
 // 리뷰 삭제
@@ -34,4 +35,5 @@ export const deleteReview = async (id) => {
   const res = await api.delete(`/api/user/reviews/${id}`);
   console.log("DELETE 응답:", res);
   return res;
+
 };
