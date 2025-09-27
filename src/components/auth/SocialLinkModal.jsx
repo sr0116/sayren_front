@@ -30,7 +30,7 @@ export default function SocialLinkModal({socialUser}) {
       queryClient.invalidateQueries("social-list");
     },
     onError: () => {
-      alert("계정 연동에 실패했습니다.");
+      alert("비밀번호가 다릅니다.");
     },
   })
 
@@ -41,7 +41,7 @@ export default function SocialLinkModal({socialUser}) {
       queryClient.invalidateQueries("social-list");
     },
     onError: () => {
-      alert("계정 연동에 실패했습니다.");
+      alert("비밀번호가 다릅니다.");
     },
   })
 

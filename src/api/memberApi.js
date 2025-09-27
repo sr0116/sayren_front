@@ -1,6 +1,17 @@
 import {useApiMutation, useApiQuery} from "@/hooks/useApi";
 import {useNoApiMutation} from "@/hooks/useNoApi";
 
+export function useEmailSendMutation(options) {
+  return useNoApiMutation("POST", "api/user/member/email-verify", { options });
+}
+
+export function useSignupNextMutation(options) {
+  return useNoApiMutation("POST", "api/user/member/signup-next", { options });
+}
+
+
+
+
 export function useFindIdMutation(options) {
   return useApiMutation("POST", "/api/user/member/find-email", { options });
 }
@@ -26,4 +37,6 @@ export function useSocialListQuery(options) {
 export function useSocialDisconnectMutation(options) {
   return useApiMutation("POST", "api/user/member/social-disconnect", { options });
 }
+
+
 
