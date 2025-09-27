@@ -8,6 +8,7 @@ import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
 import Header from "@/components/common/layout/Header";
 import GlobalLoader from "@/components/common/loading/GlobalLoader";
+import "@toast-ui/editor/dist/toastui-editor.css";
 
 
 export const metadata = {
