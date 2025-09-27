@@ -16,7 +16,7 @@ const menuGroups = [
     items: [
       { name: "이메일 인증", href: "/mypage/emailverify" },
       { name: "휴대폰 번호 수정", href: "/mypage/telmodify" },
-      { name: "소셜 연동 관리", href: "/mypage/sociallink" },
+      { name: "소셜 연동 관리", href: "/mypage/social" },
       { name: "회원정보 수정", href: "/mypage/usermodify" },
     ],
   },

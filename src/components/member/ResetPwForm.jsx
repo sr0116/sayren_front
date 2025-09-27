@@ -76,7 +76,7 @@ export default function ResetPwForm({token}) {
     })
   }
 
-  if (isLoading) return <div>검증 중...</div>;
+  if (isLoading) return <div></div>;
   if (isError) return <NotFound/>;
 
 
