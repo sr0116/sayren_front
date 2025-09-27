@@ -3,7 +3,7 @@
 import {Check, Circle, CircleCheck, Eye, EyeOff} from "lucide-react";
 import {useState} from "react";
 
-export function TextInput({value, onChange, placeholder, name, autoComplete, type = "text"}) {
+export function TextInput({value, onChange, placeholder, name, autoComplete, type = "text", disabled}) {
   return (
     <div className="flex flex-col w-full">
       <input
@@ -11,6 +11,7 @@ export function TextInput({value, onChange, placeholder, name, autoComplete, typ
         name={name}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         placeholder={placeholder}
         autoComplete={autoComplete}
         className="w-full border border-gray-300 rounded-md px-3 py-2
