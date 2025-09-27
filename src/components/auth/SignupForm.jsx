@@ -61,7 +61,6 @@ export default function SignupForm({ initialPrivacy, initialService, token }) {
               <h3>회원가입 성공</h3>
               <Button variant={"primary"} onClick={() => {
                 dispatch(closeModal());
-                setTimeout(() => router.push("/member/login"), 200);
               }}>
                 확인
               </Button>
@@ -69,6 +68,7 @@ export default function SignupForm({ initialPrivacy, initialService, token }) {
           )
         }
       ))
+      router.push("/member/login");
     },
     onError: (err) => {
       dispatch(openModal({
