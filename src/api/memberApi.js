@@ -5,10 +5,9 @@ export function useEmailSendMutation(options) {
   return useNoApiMutation("POST", "api/user/member/email-verify", { options });
 }
 
-export function useSignupNextMutation(options) {
-  return useNoApiMutation("POST", "api/user/member/signup-next", { options });
+export function useChangeNameMutation(options) {
+  return useApiMutation("PATCH", "api/user/member/change-name", {options});
 }
-
 
 
 
@@ -21,7 +20,7 @@ export function useFindPwMutation(options) {
 }
 
 export function useResetPwMutation(options) {
-  return useApiMutation("POST", "/api/user/member/reset-pw", { options });
+  return useApiMutation("PATCH", "/api/user/member/reset-pw", { options });
 }
 
 

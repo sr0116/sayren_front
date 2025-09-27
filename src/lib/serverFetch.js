@@ -95,7 +95,7 @@ async function buildResponse(res, newToken) {
 
   // AccessToken 재발급 시 쿠키 갱신
   if (newToken) {
-    const maxAgeSec = Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) * 60;
+    const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 1) * 60;
 
     response.cookies.set("SR_ACCESS", newToken, {
       httpOnly: true,
