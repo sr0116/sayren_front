@@ -51,25 +51,16 @@ export function useSocialSignupMutation(options) {
   return useNoApiMutation("POST", "api/auth/social-signup", { options });
 }
 
+export function useUserSocialLinkMutation(options) {
+  return useApiMutation("POST", "api/auth/social-link", { options });
+}
 
 // 소셜 계정 연동
 export function useSocialLinkMutation(options) {
   return useNoApiMutation("POST", "api/auth/social-link", { options });
 }
 
-// 소셜 연동 시작 (리다이렉트 URL 받아서 팝업 오픈)
-export const socialLinkHandler = async (provider) => {
-  try {
-    const res = await api.post(`/auth/link/${provider}/start`);
-    const { redirectUrl } = res.data;
+export function useSocialConnectMutation(options, provider) {
+  return useApiMutation("POST", `api/auth/link/${provider}/start`, { options });
+}
 
-    window.open(
-        redirectUrl,
-        `${provider}Login`,
-        "width=500,height=600"
-    );
-  } catch (err) {
-    console.error(`${provider} 연동 시작 실패:`, err);
-    throw err;
-  }
-};
