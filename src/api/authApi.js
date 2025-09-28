@@ -64,3 +64,10 @@ export function useSocialConnectMutation(options, provider) {
   return useApiMutation("POST", `api/auth/link/${provider}/start`, { options });
 }
 
+export function use2faRegisterMutation(options) {
+  return useApiMutation("POST", `api/auth/create-2fa`, { options });
+}
+
+export function useOtpCheckMutation(options) {
+ return useApiMutation("POST", `api/auth/check-2fa`, { options });
+}
