@@ -9,7 +9,13 @@ export async function GET() {
       return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
     }
 
-    return NextResponse.json(JSON.parse(products)); 
+    const parsed = JSON.parse(products);
+
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
+    }
+
+    return NextResponse.json(JSON.parse(products));
   } catch (err) {
     console.error("상품 조회 실패:", err);
     return NextResponse.json({ error: "서버 에러" }, { status: 500 });

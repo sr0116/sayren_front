@@ -14,11 +14,13 @@ export const updateReview = async (id, data) => {
   return res;
 };
 
-// 리뷰 목록 조회
-export const getReviews = async () => {
-  const res = await api.get("/api/user/reviews");
-  console.log("[리뷰 응답]", res);
-  return res;
+// 리뷰 목록 조회 (페이지네이션)
+export const getReviews = async (page = 1, size = 10) => {
+  const res = await api.get("/api/user/reviews/list", {
+    params: { page, size },
+  });
+  console.log("[리뷰 응답]", res.data);
+  return res; // PageResponseDTO 그대로 반환
 };
 
 // 리뷰 상세 조회

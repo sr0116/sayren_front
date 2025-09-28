@@ -1,21 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
-
-const dummyQnas = [
-  { id: 1, type: "일반", title: "제품 사용 방법이 궁금합니다.", createdAt: "2025-09-20", secret: false},
-  { id: 2, type: "AS", title: "설치 후 소음이 있습니다.", createdAt: "2025-09-21", secret: true },
-];
+import Pagination from "@/components/common/Pagination";
+import {qnaData} from "@/api/qnaApi";
 
 
 export default function QnaListPage() {
+    const [qnas, setQnas] = useState([]);
   const [filter, setFilter] = useState("전체");
 
+    // 페이징 상태
+    const [page, setPage] = useState(1);
+    const [size] = useState(10);
+    const [pageList, setPageList] = useState([]);
+    const [prev, setPrev] = useState(false);
+    const [next, setNext] = useState(false)
+
+    useEffect(() => {
+        qnaData(page, size).then((data) => {
+            setQnas(data.list);
+            setPage(data.page);
+            setPageList(data.pageList);
+            setPrev(data.prev);
+            setNext(data.next);
+        });
+    }, [page, size]);
+
+
   const filtered = filter === "전체"
-    ? dummyQnas
-    : dummyQnas.filter((q) => q.type === filter);
+    ? qnas
+    : qnas.filter((q) => q.type === filter);
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -94,6 +110,15 @@ export default function QnaListPage() {
           </Button>
         </Link>
       </div>
+
+        {/* 공통 페이지네이션 */}
+        <Pagination
+            page={page}
+            pageList={pageList}
+            prev={prev}
+            next={next}
+            setPage={setPage}
+        />
     </div>
   );
 }

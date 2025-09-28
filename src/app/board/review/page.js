@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import { getReviews } from "@/api/reviewApi";
+import Pagination from "@/components/common/Pagination";
 
 const categories = [
   "전체",
@@ -21,19 +22,31 @@ export default function ReviewListPage() {
   const [reviews, setReviews] = useState([]);   // 리뷰 데이터 상태
   const [filter, setFilter] = useState("전체"); // 필터 상태
 
+  // 페이징 상태
+  const [page, setPage] = useState(1);
+  const [size] = useState(10);
+  const [pageList, setPageList] = useState([]);
+  const [prev, setPrev] = useState(false);
+  const [next, setNext] = useState(false)
+
+
   // 리뷰 목록 불러오기
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getReviews(); // 백엔드 호출
-        setReviews(data);
+        const data = await getReviews(page, size); // PageResponseDTO
+        setReviews(data.list);        // 리뷰 배열
+        setPage(data.page);
+        setPageList(data.pageList);
+        setPrev(data.prev);
+        setNext(data.next);
       } catch (err) {
         console.error(err);
         window.toast("error", "리뷰 목록을 불러오는 데 실패했습니다.");
       }
     };
     fetchData();
-  }, []);
+  }, [page, size]);
 
   // 필터링
   const filteredReviews =
@@ -99,6 +112,14 @@ export default function ReviewListPage() {
         ))}
       </div>
 
+      {/* 공통 페이지네이션 */}
+      <Pagination
+          page={page}
+          pageList={pageList}
+          prev={prev}
+          next={next}
+          setPage={setPage}
+      />
     </div>
   );
 }
