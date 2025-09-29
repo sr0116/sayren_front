@@ -41,7 +41,7 @@ export default function ReviewListPage() {
         setPageList(data.pageList);
         setPrev(data.prev);
         setNext(data.next);
-        setTotal(data.total);
+        setTotal(data.total); // 후기 총 개수
       } catch (err) {
         console.error(err);
         window.toast("error", "리뷰 목록을 불러오는 데 실패했습니다.");
