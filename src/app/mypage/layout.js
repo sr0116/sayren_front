@@ -4,17 +4,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import MyMenu from "@/components/member/MyMenu";
 import LoadingSpinner from "@/components/common/loading/LoadingSpinner";
+import SectionLoader from "@/components/common/loading/SectionLoader";
 
 export default function Layout({ children }) {
-  const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
-// 로딩 스피너 따로 적용
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 400); // 전환 중 0.4초 표시
-    return () => clearTimeout(timer);
-  }, [pathname]);
-
   return (
       <div className="w-full flex flex-col md:flex-row gap-6 px-6">
         <aside className="w-full md:w-60 shrink-0">
@@ -22,15 +14,11 @@ export default function Layout({ children }) {
           <MyMenu />
         </aside>
 
-        {/* 오른쪽 콘텐츠 영역 */}
-        <section className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
-          {isLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                <LoadingSpinner size="lg" blockUI={false} />
-              </div>
-          ) : (
-              children
-          )}
+        {/* 공통 로딩 적용 */}
+        <section className="flex-grow border border-gray-200 rounded-lg bg-white shadow-sm relative">
+          <SectionLoader>
+            {children}
+          </SectionLoader>
         </section>
       </div>
   );
