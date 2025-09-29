@@ -1,15 +1,30 @@
 "use client";
 import { useState, useEffect } from "react";
 import { faqData } from "@/api/faqApi";
+import axios from "axios";
+import Pagination from "@/components/common/Pagination";
 
 export default function FaqPage() {
   const [faqs, setFaqs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const [filter, setFilter] = useState("전체");
 
-  useEffect(() => {
-    faqData().then(setFaqs);
-  }, []);
+    // 페이징 상태
+    const [page, setPage] = useState(1);
+    const [size] = useState(10);
+    const [pageList, setPageList] = useState([]);
+    const [prev, setPrev] = useState(false);
+    const [next, setNext] = useState(false)
+
+    useEffect(() => {
+        faqData(page, size).then((data) => {
+            setFaqs(data.list);
+            setPage(data.page);
+            setPageList(data.pageList);
+            setPrev(data.prev);
+            setNext(data.next);
+        });
+    }, [page, size]);
 
   const categories = ["전체", "가입/계약", "결제", "배송/설치", "해지/반품", "기타"];
   const filteredFaqs =
@@ -55,15 +70,15 @@ export default function FaqPage() {
               <span className="text-[#111827] font-medium cursor-pointer">{f.question}</span>
             </span>
 
-              {/* 토글 아이콘 */}
-              <span className="ml-2 text-xl">
+          {/* 토글 아이콘 */}
+          <span className="ml-2 text-xl">
           {openId === f.id ? (
             <span className="text-[#ff0066]">−</span>
           ) : (
             <span className="text-gray-400">+</span>
           )}
-        </span>
-            </button>
+         </span>
+        </button>
 
             {/* 답변 */}
             {openId === f.id && (
@@ -74,6 +89,15 @@ export default function FaqPage() {
           </div>
         ))}
       </div>
+
+        {/* 공통 페이지네이션 */}
+        <Pagination
+            page={page}
+            pageList={pageList}
+            prev={prev}
+            next={next}
+            setPage={setPage}
+        />
     </div>
   );
 }
