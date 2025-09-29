@@ -3,7 +3,7 @@
 import {Check, Circle, CircleCheck, Eye, EyeOff} from "lucide-react";
 import {useState} from "react";
 
-export function TextInput({value, onChange, placeholder, name, autoComplete, type = "text"}) {
+export function TextInput({value, onChange, placeholder, name, autoComplete, type = "text", disabled}) {
   return (
     <div className="flex flex-col w-full">
       <input
@@ -11,9 +11,10 @@ export function TextInput({value, onChange, placeholder, name, autoComplete, typ
         name={name}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="w-full border border-gray-300 rounded-md px-3 py-2
+        className="w-full border border-gray-300 rounded-md px-3 py-3
                    focus:outline-none focus:ring focus:ring-gray-900
                    placeholder:text-gray-500"
       />
@@ -32,7 +33,7 @@ export function PasswordInput({value, onChange, placeholder, name}) {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-md px-3 py-2
+        className="w-full border border-gray-300 rounded-md px-3 py-3
                    focus:outline-none focus:ring focus:ring-gray-900
                    placeholder:text-gray-500"
       />
@@ -77,7 +78,7 @@ export function NumberInput({ name, value, onChange, maxLength, placeholder, dis
           name={name}
           value={value}
           onChange={handleChange}
-          className="w-full h-full max-h-[48px] border border-gray-300 rounded-md px-3 py-2
+          className="w-full h-full max-h-[48px] border border-gray-300 rounded-md px-3 py-3
                    focus:outline-none focus:ring focus:ring-gray-900
                    placeholder:text-gray-500"
           maxLength={maxLength}

@@ -8,12 +8,14 @@ import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/navigation";
 import TelInfo from "@/components/member/TelInfo";
+import {queryClient} from "@/lib/queryClient";
 
 export default function TelModify(){
   const dispatch = useDispatch();
   const router = useRouter();
 
   const {user} = useSelector((state) => state.auth);
+
 
   const telmodifyMutation = useApiMutation("POST", "/api/user/member/modify-tel", {
     options: {
@@ -28,6 +30,7 @@ export default function TelModify(){
             </Button>
           </div>)}
         ));
+        queryClient.invalidateQueries("memberTel");
         router.push("/mypage");
       },
       onError: (err) => {

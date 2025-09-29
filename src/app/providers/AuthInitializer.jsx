@@ -25,7 +25,7 @@ export default function AuthInitializer() {
           const member = await res.json();
           dispatch(login({ data: member }));
         } else {
-          dispatch(logout());Q
+          dispatch(logout());
         }
       } catch (err) {
         console.error("유저 조회 실패:", err);

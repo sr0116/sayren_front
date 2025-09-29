@@ -20,7 +20,7 @@ export function middleware(req) {
     console.log("User from SR_ACCESS:", user);
 
     // 로그인 페이지 접근 제한
-    if (req.nextUrl.pathname.startsWith("/member/login") && user) {
+    if (req.nextUrl.pathname.startsWith("/member") && user) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
@@ -49,7 +49,7 @@ export function middleware(req) {
 // 체크할 url
 export const config = {
   matcher: [
-    "/member/login/:path*",
+    "/member/:path*",
     "/admin/:path*",
     "/mypage/:path*",
   ],
