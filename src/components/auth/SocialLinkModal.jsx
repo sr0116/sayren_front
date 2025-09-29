@@ -1,17 +1,19 @@
 "use client";
 
 import {useDispatch, useSelector} from "react-redux";
-import {useSocialLinkMutation} from "@/api/authApi";
+import {useSocialLinkMutation, useUserSocialLinkMutation} from "@/api/authApi";
 import {login} from "@/store/authSlice";
 import {closeModal} from "@/store/modalSlice";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {PasswordInput} from "@/components/common/Input";
 import {useFormInput} from "@/hooks/useFormInput";
+import {queryClient} from "@/lib/queryClient";
 
 export default function SocialLinkModal({socialUser}) {
   const dispatch = useDispatch();
   const router = useRouter();
   const currentUser = useSelector((state) => state.auth.user);
+  const pathname = usePathname();
 
   const { formData: socialLinkRequestDTO, handleChange } = useFormInput({
     socialUser: socialUser,
@@ -22,18 +24,41 @@ export default function SocialLinkModal({socialUser}) {
     onSuccess: (data) => {
       dispatch(login({ data }));
       dispatch(closeModal());
+
       router.push("/");
+
+      queryClient.invalidateQueries("social-list");
     },
     onError: () => {
-      alert("계정 연동에 실패했습니다.");
+      alert("비밀번호가 다릅니다.");
     },
   })
 
+  const userSocialLinkMutation = useUserSocialLinkMutation({
+    onSuccess: (data) => {
+      dispatch(login({ data }));
+      dispatch(closeModal());
+      queryClient.invalidateQueries("social-list");
+    },
+    onError: () => {
+      alert("비밀번호가 다릅니다.");
+    },
+  })
+
+
+
   const handleClick = (e) =>{
     e.preventDefault();
-    socialLinkMutation.mutate({
-      data: socialLinkRequestDTO,
-    })
+    if(currentUser){
+      userSocialLinkMutation.mutate({
+        data: socialLinkRequestDTO,
+      })
+    }
+    else {
+      socialLinkMutation.mutate({
+        data: socialLinkRequestDTO,
+      })
+    }
   }
 
   return (
@@ -43,7 +68,7 @@ export default function SocialLinkModal({socialUser}) {
       <p className="text-sm text-gray-600 mb-4 leading-relaxed">
         기존 회원이 있습니다. 연동하시려면{" "}
         <span className="font-semibold text-gray-900">
-          {currentUser?.email ?? socialUser.email}
+          {currentUser ? "현재 로그인한" : socialUser.email}
         </span>{" "}
         계정의 비밀번호를 입력해주세요.
       </p>

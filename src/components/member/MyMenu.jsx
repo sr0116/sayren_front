@@ -14,17 +14,19 @@ const menuGroups = [
   {
     title: "회원",
     items: [
-      { name: "이메일 인증", href: "/mypage/emailverify" },
+      { name: "이름 수정", href: "/mypage/namemodify" },
       { name: "휴대폰 번호 수정", href: "/mypage/telmodify" },
-      { name: "소셜 연동 관리", href: "/mypage/sociallink" },
-      { name: "회원정보 수정", href: "/mypage/usermodify" },
+      { name: "비밀번호 변경", href: "/mypage/pwmodify" },
+      { name: "소셜 연동 관리", href: "/mypage/social" },
     ],
   },
   {
     title: "구독 / 결제",
     items: [
-      { name: "주문 내역", href: "/mypage/orders" },
-      { name: "포인트/쿠폰", href: "/mypage/benefits" },
+      { name: "구독 내역", href: "/mypage/subscribe" },
+      { name: "주문 내역", href: "/mypage/order" },
+      { name: "결제 내역", href: "/mypage/payment" },
+      { name: "취소 내역", href: "/mypage/cansle" },
     ],
   },
   {
