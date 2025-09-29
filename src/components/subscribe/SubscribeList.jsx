@@ -18,7 +18,6 @@ export default function SubscribeList() {
   // React Query
   const { data, isLoading, isError } = useMySubscribesQuery();
 
-  // 응답이 배열이 아닐 수도 있으므로 안전하게 변환
   const subscribes = Array.isArray(data) ? data : data?.list ?? [];
 
   if (isLoading) return <div>로딩 중...</div>;
@@ -39,7 +38,6 @@ export default function SubscribeList() {
         />
     );
   }
-
   const handleClick = (subscribeId) => {
     dispatch(openModal({ content: <SubscribeDetail subscribeId={subscribeId} /> }));
   };
