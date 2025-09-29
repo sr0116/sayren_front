@@ -71,3 +71,7 @@ export function use2faRegisterMutation(options) {
 export function useOtpCheckMutation(options) {
  return useApiMutation("POST", `api/auth/check-2fa`, { options });
 }
+
+export function useOtpDeleteMutation(options) {
+  return useApiMutation("DELETE", "api/auth/delete-2fa", {options});
+}

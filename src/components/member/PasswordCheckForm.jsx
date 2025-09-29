@@ -42,13 +42,13 @@ export default function PasswordCheckForm({children}) {
   }
 
   return (
-    <div>
+    <div className="w-full">
       {isChecked ? (
         <div>
           {children}
         </div>
       ):(
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full">
           <PasswordInput placeholder="현재 비밀번호" name="password" value={passwordCheckDTO.password} onChange={handleChange} />
           <Button variant="primary" className="max-w-[120px]" disabled={passwordCheckDTO.password.trim().length < 8} type="button" onClick={handleClick}>비밀번호 인증</Button>
         </div>

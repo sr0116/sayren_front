@@ -40,7 +40,8 @@ export default function QRcode(){
           </Button>
         </div>)
       }))
-      queryClient.invalidateQueries({ queryKey: ["2fa"] });
+      queryClient.setQueryData(["2fa"], true);
+      queryClient.removeQueries({ queryKey: ["2faqr"] });
     },
     onError: () => {
       dispatch(openModal({

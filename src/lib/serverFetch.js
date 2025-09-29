@@ -19,7 +19,7 @@ export async function callSpringAPI(req, url, method = "GET") {
           "Content-Type": "application/json",
           ...(accessToken && {Authorization: `Bearer ${accessToken}`}),
         },
-        body: ["POST", "PUT", "PATCH"].includes(method)
+        body: ["POST", "PUT", "PATCH", "DELETE"].includes(method)
           ? JSON.stringify(await req.json().catch(() => null))
           : undefined,
         cache: "no-store",
@@ -94,7 +94,8 @@ async function buildResponse(res, newToken) {
 
   // AccessToken 재발급 시 쿠키 갱신
   if (newToken) {
-    const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 1) * 60;
+    console.log(newToken)
+    const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 2) * 60;
 
     response.cookies.set("SR_ACCESS", newToken, {
       httpOnly: true,
