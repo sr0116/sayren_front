@@ -1,10 +1,9 @@
-import SocialAccount from "@/components/member/SocialAccount";
-import SocialAuthHandler from "@/app/providers/SocialAuthHandler";
+import SubscribeList from "@/components/subscribe/SubscribeList";
 
 export default function SocialPage(){
   return (
     <div>
-     구독내역
+     <SubscribeList />
     </div>
   )
 }
