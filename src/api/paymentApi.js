@@ -42,10 +42,10 @@ export const refundPayment = async ({ paymentId }) => {
   }
 };
 
-// 최근 결제 내역 조회
+// 최근 결제 요약 조회
 export const getRecentPayments = async () => {
   try {
-    const data = await api.get("/api/payments/recent");
+    const data = await api.get("/api/user/payments/summaries");
     return data;
   } catch (err) {
     console.error("최근 결제 조회 실패:", err);
@@ -53,10 +53,10 @@ export const getRecentPayments = async () => {
   }
 };
 
-// 단일 결제 조회
+// 단일 결제 조회 (백엔드 엔드포인트 추가 필요)
 export const getPaymentById = async (paymentId) => {
   try {
-    const data = await api.get(`/api/payments/${paymentId}`);
+    const data = await api.get(`/api/user/payments/${paymentId}`);
     return data;
   } catch (err) {
     console.error("결제 조회 실패:", err);
@@ -64,33 +64,34 @@ export const getPaymentById = async (paymentId) => {
   }
 };
 
-// 결제 준비
+// React Query Hooks
 export function usePreparePaymentMutation(options) {
   return useApiMutation("POST", "/api/user/payments/prepare", { options });
 }
 
-// 결제 완료 검증
 export function useCompletePaymentMutation(paymentId, options) {
   return useApiMutation("POST", `/api/user/payments/${paymentId}/complete`, {
     options,
   });
 }
 
-// 환불 요청
 export function useRefundPaymentMutation(paymentId, options) {
-  return useApiMutation("POST", `/api/payments/${paymentId}/refund`, {
+  return useApiMutation("POST", `/api/user/payments/${paymentId}/refund`, {
     options,
   });
 }
 
-// 최근 결제 내역 조회
+// 최근 결제 요약 조회
 export function useRecentPaymentsQuery(options) {
-  return useApiQuery("recentPayments", "/api/payments/recent", { options });
+  return useApiQuery(
+      "recentPayments",
+      "/api/user/payments/summaries",
+      { options }
+  );
 }
 
-// 단일 결제 조회
 export function usePaymentByIdQuery(paymentId, options) {
-  return useApiQuery(["payment", paymentId], `/api/payments/${paymentId}`, {
+  return useApiQuery(["payment", paymentId], `/api/user/payments/${paymentId}`, {
     options,
   });
 }
