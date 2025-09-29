@@ -35,7 +35,6 @@ export default function ChangePwForm({token, buttonText}) {
         </div>)
       }))
       router.push("/mypage");
-
     },
     onError: () => {
       dispatch(openModal({

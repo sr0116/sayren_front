@@ -1,9 +1,9 @@
-import OtpOrPasswordCheck from "@/components/member/OtpOrPasswordCheck";
+import OtpOrPasswordCheckForm from "@/components/member/OtpOrPasswordCheckForm";
 
 export default function Page(){
   return (
-    <OtpOrPasswordCheck>
+    <OtpOrPasswordCheckForm>
       <p>안녕</p>
-    </OtpOrPasswordCheck>
+    </OtpOrPasswordCheckForm>
   )
 }

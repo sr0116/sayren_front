@@ -1,12 +1,12 @@
 import ChangePwForm from "@/components/member/ChangePwForm";
-import PasswordCheckForm from "@/components/member/PasswordCheckForm";
+import OtpOrPasswordCheckForm from "@/components/member/OtpOrPasswordCheckForm";
 
 export default function PwModifyPage(){
   return (
     <div>
-      <PasswordCheckForm>
+      <OtpOrPasswordCheckForm>
         <ChangePwForm buttonText={"비밀번호 변경"}/>
-      </PasswordCheckForm>
+      </OtpOrPasswordCheckForm>
     </div>
     )
 }

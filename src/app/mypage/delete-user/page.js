@@ -1,5 +1,8 @@
+import OtpOrPasswordCheckForm from "@/components/member/OtpOrPasswordCheckForm";
+
 export default function DeleteUserPage(){
   return (
-      <div></div>
+      <OtpOrPasswordCheckForm>
+      </OtpOrPasswordCheckForm>
   )
 }

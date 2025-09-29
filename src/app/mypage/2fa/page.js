@@ -1,12 +1,12 @@
-import PasswordCheckForm from "@/components/member/PasswordCheckForm";
 import Member2FARead from "@/components/member/Member2FARead";
+import OtpOrPasswordCheckForm from "@/components/member/OtpOrPasswordCheckForm";
 
 export default function Member2FAPage(){
   return (
     <div>
-      <PasswordCheckForm>
+      <OtpOrPasswordCheckForm>
         <Member2FARead/>
-      </PasswordCheckForm>
+      </OtpOrPasswordCheckForm>
     </div>
   )
 }
