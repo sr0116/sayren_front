@@ -31,11 +31,11 @@ export default function FaqPage() {
     filter === "전체" ? faqs : faqs.filter((f) => f.category === filter);
 
   return (
-    <div>
+    <div className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
       <h2 className="text-2xl font-bold mb-6">자주 묻는 질문</h2>
 
       {/* 카테고리 */}
-      <div className="flex gap-4 mb-6 border-b pb-2">
+      <div className="flex gap-4 mb-6 pb-2 ">
         {categories.map((c) => (
           <button
             key={c}
@@ -55,9 +55,9 @@ export default function FaqPage() {
       </div>
 
       {/* FAQ 리스트 */}
-      <div className="divide-y">
+      <div>
         {filteredFaqs.map((f) => (
-          <div key={f.id}>
+          <div key={f.id} className="border-b">
             <button
               onClick={() => setOpenId(openId === f.id ? null : f.id)}
               className="w-full flex items-center justify-between py-4 text-left"

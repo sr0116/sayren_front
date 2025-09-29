@@ -3,6 +3,15 @@ export const noticeData = async (page = 1, size = 10) => {
     { id: 1, title: "[9/17] 서버 점검 안내", date: "2025-09-15", views: 196 },
     { id: 2, title: "신규 상품 출시 안내", date: "2025-09-10", views: 132 },
     { id: 3, title: "추석 연휴 배송 안내", date: "2025-09-05", views: 88 },
+    { id: 4, title: "[9/17] 서버 점검 안내", date: "2025-09-15", views: 196 },
+    { id: 5, title: "신규 상품 출시 안내", date: "2025-09-10", views: 132 },
+    { id: 6, title: "추석 연휴 배송 안내", date: "2025-09-05", views: 88 },
+    { id: 7, title: "[9/17] 서버 점검 안내", date: "2025-09-15", views: 196 },
+    { id: 8, title: "신규 상품 출시 안내", date: "2025-09-10", views: 132 },
+    { id: 9, title: "추석 연휴 배송 안내", date: "2025-09-05", views: 88 },
+    { id: 10, title: "[9/17] 서버 점검 안내", date: "2025-09-15", views: 196 },
+    { id: 10, title: "신규 상품 출시 안내", date: "2025-09-10", views: 132 },
+    { id: 12, title: "추석 연휴 배송 안내", date: "2025-09-05", views: 88 },
   ];
 
   const startIdx = (page - 1) * size;

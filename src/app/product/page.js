@@ -43,7 +43,7 @@ export default function ProductListPage() {
               <Link
                   key={p.id}
                   href={`/product/${p.id}`}   // 상품 id별 상세 페이지로 이동
-                  className="border rounded p-3 text-center shadow hover:shadow-lg transition block"
+                  className="border border-gray-300 rounded p-3 text-center shadow hover:shadow-lg transition block"
               >
                 {/* 이미지 */}
                 {p.imageUrl ? (
@@ -59,12 +59,16 @@ export default function ProductListPage() {
                 )}
 
                 {/* 이름 */}
-                <h3 className="mt-2 text-sm font-bold">{p.name}</h3>
+                <h3 className="mt-2 text-sm font-bold">{p.productName}</h3>
 
-                {/* 설명 (태그 제거) */}
-                <p className="text-gray-500 text-xs mt-1">
-                  {p.description?.replace(/<[^>]*>?/g, "").slice(0, 40)}...
-                </p>
+                {/* 태그 한 줄 표시 */}
+                {p.tags && p.tags.length > 0 ? (
+                  <p className="text-gray-400 text-xs mt-1 truncate">
+                    {p.tags.join(" | ")}
+                  </p>
+                ) : (
+                  <p className="text-gray-300 text-xs mt-1 italic"></p>
+                )}
 
                 {/* 가격 */}
                 <p className="text-[#ff0066] font-bold mt-2">
