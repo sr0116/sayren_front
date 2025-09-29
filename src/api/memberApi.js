@@ -9,6 +9,9 @@ export function useChangeNameMutation(options) {
   return useApiMutation("PATCH", "api/user/member/change-name", {options});
 }
 
+export function useCheckPasswordMutation(options) {
+  return useApiMutation("POST", "api/user/member/check-pw", {options});
+}
 
 
 export function useFindIdMutation(options) {
@@ -23,6 +26,9 @@ export function useResetPwMutation(options) {
   return useApiMutation("PATCH", "/api/user/member/reset-pw", { options });
 }
 
+export function useNoResetPwMutation(options) {
+  return useNoApiMutation("PATCH", "/api/user/member/reset-pw", { options });
+}
 
 export function useSocialListQuery(options) {
   return useApiQuery("social-list", "/api/user/member/social-list", {

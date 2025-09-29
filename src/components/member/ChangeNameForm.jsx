@@ -62,7 +62,7 @@ export default function ChangeNameForm() {
     <div>
       <form className="flex gap-2" onSubmit={handleSubmit}>
         <TextInput name="name" placeholder={"이름"} value={nameDTO.name} onChange={handleChange} autoComplete="name"/>
-        <Button variant="primary" type="submit" className="max-w-[120px]" disabled={nameDTO.name === user?.name || nameDTO.name.trim().length < 2}>변경하기</Button>
+        <Button variant="primary" type="submit" className="max-w-[120px]" disabled={nameDTO.name === user?.name || nameDTO?.name?.trim().length < 2}>변경하기</Button>
       </form>
     </div>
   )

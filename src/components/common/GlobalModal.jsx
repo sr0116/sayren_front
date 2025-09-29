@@ -43,7 +43,6 @@ export default function GlobalModal() {
   return (
       // 배경 오버레이
       <div
-          onClick={handleClose}
           className={`fixed inset-0 z-50 flex items-center justify-center 
         bg-black/50 transition-opacity duration-200
         ${animate ? "opacity-100" : "opacity-0"}`}
