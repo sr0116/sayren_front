@@ -29,7 +29,7 @@ export default function NoticePage() {
   // }, []);
 
   return (
-    <div>
+    <div className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
       <h2 className="text-2xl font-bold mb-6">공지사항</h2>
       <table className="w-full border-t">
         <thead>
