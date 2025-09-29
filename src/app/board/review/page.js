@@ -21,6 +21,7 @@ const categories = [
 export default function ReviewListPage() {
   const [reviews, setReviews] = useState([]);   // 리뷰 데이터 상태
   const [filter, setFilter] = useState("전체"); // 필터 상태
+  const [total, setTotal] = useState(0); // 등록 글 수
 
   // 페이징 상태
   const [page, setPage] = useState(1);
@@ -40,6 +41,7 @@ export default function ReviewListPage() {
         setPageList(data.pageList);
         setPrev(data.prev);
         setNext(data.next);
+        setTotal(data.total);
       } catch (err) {
         console.error(err);
         window.toast("error", "리뷰 목록을 불러오는 데 실패했습니다.");
@@ -87,7 +89,7 @@ export default function ReviewListPage() {
       <p className="text-sm text-gray-600 mb-6">
         총{" "}
         <span className="font-semibold text-[#ff0066]">
-         {filteredReviews ? filteredReviews.length : 0}
+         {total}
         </span>{" "}
         개의 후기가 등록되어 있습니다.
       </p>
