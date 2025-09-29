@@ -8,6 +8,7 @@ import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
 import Header from "@/components/common/layout/Header";
 import GlobalLoader from "@/components/common/loading/GlobalLoader";
+import "react-quill/dist/quill.snow.css";
 
 
 export const metadata = {
@@ -25,7 +26,6 @@ export default function RootLayout({ children }) {
           <ScrollToTop/>
           <Header />
           <main className="flex-grow pt-24 md:pt-40  px-6 md:px-8 mb-28 max-w-7xl mx-auto w-full">{children}</main>
-          <GlobalLoader />
           <GlobalModal/>
           <Footer />
           <ToastContainer />

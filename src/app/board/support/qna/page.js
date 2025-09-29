@@ -1,49 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
-
-const dummyQnas = [
-  { id: 1, type: "일반", title: "제품 사용 방법이 궁금합니다.", createdAt: "2025-09-20", secret: false},
-  { id: 2, type: "AS", title: "설치 후 소음이 있습니다.", createdAt: "2025-09-21", secret: true },
-];
+import Pagination from "@/components/common/Pagination";
+import {qnaData} from "@/api/qnaApi";
 
 
 export default function QnaListPage() {
+    const [qnas, setQnas] = useState([]);
   const [filter, setFilter] = useState("전체");
 
+    // 페이징 상태
+    const [page, setPage] = useState(1);
+    const [size] = useState(10);
+    const [pageList, setPageList] = useState([]);
+    const [prev, setPrev] = useState(false);
+    const [next, setNext] = useState(false)
+
+    useEffect(() => {
+        qnaData(page, size).then((data) => {
+            setQnas(data.list);
+            setPage(data.page);
+            setPageList(data.pageList);
+            setPrev(data.prev);
+            setNext(data.next);
+        });
+    }, [page, size]);
+
+  const categories = ["전체", "일반문의", "AS문의"];
+
   const filtered = filter === "전체"
-    ? dummyQnas
-    : dummyQnas.filter((q) => q.type === filter);
+    ? qnas
+    : qnas.filter((q) => q.type === filter);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
       <h2 className="text-2xl font-bold mb-6">문의하기</h2>
 
-      {/* 탭 */}
-      <div className="flex gap-2 mb-4">
-        {["전체", "일반", "AS"].map((t) => (
-          <Button
-            key={t}
-            type="button"
-            onClick={() => setFilter(t)}
-            // 선택된 버튼은 primary, 아니면 outline 스타일
-            variant={filter === t ? "primary" : "outline"}
-            className="w-auto px-4 py-2"
+      {/* 카테고리 */}
+      <div className="flex gap-4 mb-6 pb-2 ">
+        {categories.map((c) => (
+          <button
+            key={c}
+            onClick={() => {
+              setFilter(c);
+              setOpenId(null);
+            }}
+            className={`pb-1 border-b-2 ${
+              filter === c
+                ? "border-[#ff0066] text-[#ff0066] font-bold"
+                : "border-transparent text-gray-500"
+            } cursor-pointer`}
           >
-            {t}문의
-          </Button>
+            {c}
+          </button>
         ))}
       </div>
 
       {/* 목록 */}
-      <ul className="divide-y border rounded">
+      <ul className="divide-y border-t border-b">
         {filtered.map((q) => {
               const isSecret = q.secret;          // secret 여부
               const isOwnerOrAdmin = false;       // 로그인 사용자 정보로 체크 (더미 상태)
 
           return (
+
           <li key={q.id} className="p-3 flex justify-between items-center">
             {isSecret && !isOwnerOrAdmin ? (
           // 비밀글 (클릭 불가)
@@ -70,12 +92,12 @@ export default function QnaListPage() {
                       ? "bg-gray-100 text-blue-600"
                       : "bg-gray-100 text-gray-600"}`}
                   >
-          {q.type}
-        </span>
+                    {q.type}
+                 </span>
 
-              {/* 제목 */}
-              <span>{q.title}</span>
-            </Link>
+            {/* 제목 */}
+            <span>{q.title}</span>
+          </Link>
         )}
 
             {/* 작성일 */}
@@ -94,6 +116,15 @@ export default function QnaListPage() {
           </Button>
         </Link>
       </div>
+
+        {/* 공통 페이지네이션 */}
+        <Pagination
+            page={page}
+            pageList={pageList}
+            prev={prev}
+            next={next}
+            setPage={setPage}
+        />
     </div>
   );
 }

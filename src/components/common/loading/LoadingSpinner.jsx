@@ -28,7 +28,9 @@ export default function LoadingSpinner({
                 blockUI ? "" : "pointer-events-none"
             }`}
         >
-          <div className="pointer-events-auto">{spinner}</div>
+          <div className="pointer-events-auto -translate-x-[120px]">
+            {spinner}
+          </div>
         </div>
     );
   }

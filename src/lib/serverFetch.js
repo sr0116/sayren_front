@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
 
@@ -17,11 +17,11 @@ export async function callSpringAPI(req, url, method = "GET") {
         method,
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+          ...(accessToken && {Authorization: `Bearer ${accessToken}`}),
         },
-        body: ["POST", "PUT", "PATCH"].includes(method)
-            ? JSON.stringify(await req.json().catch(() => null))
-            : undefined,
+        body: ["POST", "PUT", "PATCH", "DELETE"].includes(method)
+          ? JSON.stringify(await req.json().catch(() => null))
+          : undefined,
         cache: "no-store",
         credentials: "include",
       });
@@ -30,21 +30,20 @@ export async function callSpringAPI(req, url, method = "GET") {
     // refresh 토큰으로 새 access 발급
     const tryRefresh = async () => {
       if (!refreshToken) return null;
-
-      const refreshRes = await fetch(`${BASE_URL}/api/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `SR_REFRESH=${refreshToken}`, // ✅ name=value 형식만
-        },
-        credentials: "include",
-      });
-
+      const refreshRes = await
+        fetch(`${BASE_URL}/api/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `SR_REFRESH=${refreshToken}`,
+          },
+          credentials: "include",
+        });
       if (!refreshRes.ok) return null;
-
-      const refreshData = await refreshRes.json(); // { accessToken }
+      const refreshData = await refreshRes.json();
       return refreshData.accessToken;
     };
+
 
     // 토큰이 없고 refreshToken만 있는 경우 → 바로 refresh
     if (!token && refreshToken) {
@@ -54,7 +53,7 @@ export async function callSpringAPI(req, url, method = "GET") {
         const retryRes = await doFetch(token);
         return await buildResponse(retryRes, token);
       } else {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({error: "Unauthorized"}, {status: 401});
       }
     }
 
@@ -67,9 +66,9 @@ export async function callSpringAPI(req, url, method = "GET") {
       if (newToken) {
         token = newToken;
         const retryRes = await doFetch(token);
-        return await buildResponse(retryRes, token);
+        return await buildResponse(retryRes, newToken);
       } else {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({error: "Unauthorized"}, {status: 401});
       }
     }
 
@@ -79,8 +78,8 @@ export async function callSpringAPI(req, url, method = "GET") {
   } catch (err) {
     console.error(`Spring API 호출 실패: [${method}] ${url}`, err);
     return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
+      {error: "Internal Server Error"},
+      {status: 500}
     );
   }
 }
@@ -88,14 +87,15 @@ export async function callSpringAPI(req, url, method = "GET") {
 async function buildResponse(res, newToken) {
   const contentType = res.headers.get("content-type");
   const data = contentType?.includes("application/json")
-      ? await res.json()
-      : await res.text();
+    ? await res.json()
+    : await res.text();
 
-  const response = NextResponse.json(data, { status: res.status });
+  const response = NextResponse.json(data, {status: res.status});
 
   // AccessToken 재발급 시 쿠키 갱신
   if (newToken) {
-    const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 1) * 60;
+    console.log(newToken)
+    const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 2) * 60;
 
     response.cookies.set("SR_ACCESS", newToken, {
       httpOnly: true,

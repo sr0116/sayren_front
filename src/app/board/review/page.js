@@ -1,42 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
 import Link from "next/link";
-
-// 더미 데이터
-const dummyReviews = [
-  {
-    id: 1,
-    productName: "SAYREN 퓨리케어 오브제컬렉션 정수기",
-    category: "정수기",
-    rating: 5,
-    content: "성능 좋고 편리해요.",
-    writer: "이수*",
-    createdAt: "2025-09-23",
-    image: "/sample1.jpg",
-  },
-  {
-    id: 2,
-    productName: "SAYREN 오브제컬렉션 정수기",
-    category: "정수기",
-    rating: 5,
-    content: "정말 맘에 들어요.",
-    writer: "김은*",
-    createdAt: "2025-09-23",
-    image: "/sample2.jpg",
-  },
-  {
-    id: 3,
-    productName: "SAYREN 퓨리케어 냉장고",
-    category: "냉장고",
-    rating: 4,
-    content: "깔끔한 디자인 마음에 듦.",
-    writer: "하영*",
-    createdAt: "2025-09-23",
-    image: "/sample3.jpg",
-  },
-];
+import { getReviews } from "@/api/reviewApi";
+import Pagination from "@/components/common/Pagination";
 
 const categories = [
   "전체",
@@ -51,18 +19,48 @@ const categories = [
 ];
 
 export default function ReviewListPage() {
-  const [filter, setFilter] = useState("전체");
+  const [reviews, setReviews] = useState([]);   // 리뷰 데이터 상태
+  const [filter, setFilter] = useState("전체"); // 필터 상태
+  const [total, setTotal] = useState(0); // 등록 글 수
 
+  // 페이징 상태
+  const [page, setPage] = useState(1);
+  const [size] = useState(10);
+  const [pageList, setPageList] = useState([]);
+  const [prev, setPrev] = useState(false);
+  const [next, setNext] = useState(false)
+
+
+  // 리뷰 목록 불러오기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getReviews(page, size); // PageResponseDTO
+        setReviews(data.list);        // 리뷰 배열
+        setPage(data.page);
+        setPageList(data.pageList);
+        setPrev(data.prev);
+        setNext(data.next);
+        setTotal(data.total); // 후기 총 개수
+      } catch (err) {
+        console.error(err);
+        window.toast("error", "리뷰 목록을 불러오는 데 실패했습니다.");
+      }
+    };
+    fetchData();
+  }, [page, size]);
+
+  // 필터링
   const filteredReviews =
     filter === "전체"
-      ? dummyReviews
-      : dummyReviews.filter((r) => r.category === filter);
+      ? reviews
+      : reviews.filter((r) => r.productName.includes(filter));
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6">후기 게시판</h2>
+      <h2 className="text-2xl font-bold mb-6">후기 게시판</h2>
 
-      {/* 카테고리 + 작성 버튼 한 줄 정렬 */}
+      {/* 카테고리 + 작성 버튼 */}
       <div className="flex items-center justify-between mb-6">
         {/* 카테고리 탭 */}
         <div className="flex flex-wrap gap-2">
@@ -89,35 +87,41 @@ export default function ReviewListPage() {
 
       {/* 후기 개수 */}
       <p className="text-sm text-gray-600 mb-6">
-        총 <span className="font-semibold text-[#ff0066]">{filteredReviews.length}</span> 개의 후기가 등록되어 있습니다.
+        총{" "}
+        <span className="font-semibold text-[#ff0066]">
+         {total}
+        </span>{" "}
+        개의 후기가 등록되어 있습니다.
       </p>
-
 
       {/* 리뷰 카드 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredReviews.map((r) => (
+        {(filteredReviews || []).map((r) => (
           <Link
-            key={r.id}
-            href={`/board/review/${r.id}`}
+            key={r.boardId}
+            href={`/board/review/${r.boardId}`}
             className="border rounded p-4 shadow-sm bg-white hover:shadow-md transition cursor-pointer block"
           >
-            <img
-              src={r.image}
-              alt={r.productName}
-              className="w-full h-48 object-cover mb-3 rounded"
-            />
-            <div className="text-red-500 text-sm mb-1">
-              {"★".repeat(r.rating)}
-            </div>
-            <h3 className="font-bold mb-1">{r.productName}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">{r.content}</p>
+            <h3 className="font-bold mb-1">{r.title}</h3>
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {r.content.replace(/<[^>]*>/g, "")}
+            </p>
             <div className="flex justify-between mt-3 text-xs text-gray-500">
-              <span>{r.writer}</span>
-              <span>{r.createdAt}</span>
+              <span>익명</span>
+              <span>{new Date(r.regDate).toLocaleDateString()}</span>
             </div>
           </Link>
         ))}
       </div>
+
+      {/* 공통 페이지네이션 */}
+      <Pagination
+          page={page}
+          pageList={pageList}
+          prev={prev}
+          next={next}
+          setPage={setPage}
+      />
     </div>
   );
 }
