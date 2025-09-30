@@ -2,16 +2,34 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import {noticeData} from "@/api/noticeApi";
+import Pagination from "@/components/common/Pagination";
 
 export default function NoticePage() {
   const [notices, setNotices] = useState([]);
 
+  // 페이징 상태
+  const [page, setPage] = useState(1);
+  const [size] = useState(10);
+  const [pageList, setPageList] = useState([]);
+  const [prev, setPrev] = useState(false);
+  const [next, setNext] = useState(false)
+
   useEffect(() => {
-    noticeData().then(setNotices);
-  }, []);
+    noticeData(page, size).then((data) => {
+      setNotices(data.list);
+      setPage(data.page);
+      setPageList(data.pageList);
+      setPrev(data.prev);
+      setNext(data.next);
+    });
+  }, [page, size]);
+
+  // useEffect(() => {
+  //   noticeData().then(setNotices);
+  // }, []);
 
   return (
-    <div>
+    <div className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
       <h2 className="text-2xl font-bold mb-6">공지사항</h2>
       <table className="w-full border-t">
         <thead>
@@ -37,6 +55,15 @@ export default function NoticePage() {
         ))}
         </tbody>
       </table>
+
+      {/* 공통 페이지네이션 */}
+      <Pagination
+          page={page}
+          pageList={pageList}
+          prev={prev}
+          next={next}
+          setPage={setPage}
+      />
     </div>
   );
 }

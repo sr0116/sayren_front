@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {closeModal, openModal} from "@/store/modalSlice";
 import Button from "@/components/common/Button";
 import React from "react";
+import {queryClient} from "@/lib/queryClient";
 
 // 로그인 여부에 따라 표시되는 영역
 // isAuthenticated=true → 사용자 이름 + 마이페이지 + 로그아웃
@@ -25,6 +26,9 @@ export default function AuthNav({ isAuthenticated, user }) {
     onSuccess: () => {
       dispatch(logout());
       router.push("/");
+      queryClient.removeQueries({ queryKey: ["2fa"] });
+      queryClient.removeQueries({ queryKey: ["2fa-check"] });
+      queryClient.removeQueries({ queryKey: ["2faqr"] });
     },
     onError: () => {
       dispatch(openModal({

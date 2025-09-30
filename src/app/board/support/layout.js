@@ -16,7 +16,7 @@ export default function SupportLayout({ children }) {
   return (
     <div className="flex max-w-6xl mx-auto py-8">
       {/* 사이드바 */}
-      <aside className="w-48 pr-6 pl-3 border-r text-center">
+      <aside className="w-48 pr-6 pl-3 text-center">
         <h2 className="text-2xl font-bold mb-6">고객지원</h2>
         <nav className="space-y-2">
           {menus.map((menu) => (

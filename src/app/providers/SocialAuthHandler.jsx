@@ -7,6 +7,8 @@ import { login } from "@/store/authSlice";
 import { openModal, closeModal } from "@/store/modalSlice";
 import SocialSignupModal from "@/components/auth/SocialSignupModal";
 import SocialLinkModal from "@/components/auth/SocialLinkModal";
+import {queryClient} from "@/lib/queryClient";
+import {api} from "@/lib/axios";
 
 export default function SocialAuthHandler() {
   const dispatch = useDispatch();
@@ -19,6 +21,17 @@ export default function SocialAuthHandler() {
 
       if (data && data.id) {
         dispatch(login({ data }));
+        queryClient
+            .fetchQuery({
+              queryKey: ["2fa"],
+              queryFn: () => api.get("/api/auth/read-2fa"),
+            })
+            .then(() => {
+              queryClient.setQueryData(["2fa"], true);
+            })
+            .catch(() => {
+              queryClient.setQueryData(["2fa"], false);
+            });
         router.push("/");
       } else if (data.error === "SIGNUP_REQUIRED") {
         dispatch(openModal({content: <SocialSignupModal socialUser={data.socialUser} />}));
