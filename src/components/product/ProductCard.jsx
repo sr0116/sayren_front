@@ -50,14 +50,14 @@ export default function ProductCard({ product }) {
           </div>
 
           <div className="mt-3">
-            <span className="text-red-600 font-bold mr-2">{discount}%</span>
+            <span className="text-[#ff0066] font-bold mr-2">{discount}%</span>
             <span className="text-gray-400 line-through text-sm">
             {originalPrice}원
           </span>
             <p className="text-lg font-bold text-gray-800 line-clamp-1">
               {price}원
             </p>
-            <p className="text-sm text-red-500 line-clamp-1">
+            <p className="text-sm text-[#ff0066] line-clamp-1">
               최대혜택가 {benefit}원
             </p>
           </div>

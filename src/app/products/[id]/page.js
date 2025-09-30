@@ -94,13 +94,16 @@ export default async function ProductDetailPage({ params }) {
       </div>
 
       {/* 하단: 상세 설명 */}
-      <div>
-        <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: product.description }}
-        />
-      </div>
-    </div>
+  <div>
+    {/* 구분선 */}
+    <hr className="my-8 border-t border-gray-200" />
+
+    <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
+    <div
+      className="prose max-w-none"
+      dangerouslySetInnerHTML={{ __html: product.description }}
+    />
+  </div>
+</div>
   );
 }

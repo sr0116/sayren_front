@@ -34,46 +34,48 @@ export default async function ProductListPage({ searchParams }) {
         {category ? `${category} 상품` : "전체 상품"}
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {filtered.map((p) => (
           <Link
             key={p.id}
-            href={`/products/${p.productId}`} // 상세 페이지 이동
-            className="border border-gray-300 rounded p-3 text-center shadow hover:shadow-lg transition block"
+            href={`/products/${p.productId}`}
+            className="bg-white rounded-2xl shadow-sm hover:shadow-xl overflow-hidden cursor-pointer transition-shadow block"
           >
             {/* 이미지 */}
-            {p.thumbnailUrl ? (
-              <img
-                src={p.thumbnailUrl}
-                alt={p.productName}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="w-full h-64 object-cover rounded"
-              />
-            ) : (
-              <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                No Image
-              </div>
-            )}
+            <div className="relative w-full h-64">
+              {p.thumbnailUrl ? (
+                <img
+                  src={p.thumbnailUrl}
+                  alt={p.productName}
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                  No Image
+                </div>
+              )}
+            </div>
 
-            {/* 이름 */}
-            <h3 className="mt-2 text-sm font-bold">{p.productName}</h3>
+            {/* 내용 */}
+            <div className="p-4">
+              <h3 className="font-semibold text-base">{p.productName}</h3>
 
-            {/* 태그 */}
-            {p.tags && p.tags.length > 0 ? (
-              <p className="text-gray-400 text-xs mt-1 truncate">
-                {p.tags.join(" | ")}
+              {p.tags && p.tags.length > 0 ? (
+                <p className="text-gray-400 text-xs mt-1 truncate">
+                  {p.tags.join(" | ")}
+                </p>
+              ) : (
+                <p className="text-gray-300 text-xs mt-1 italic"></p>
+              )}
+
+              <p className="mt-2 font-bold text-[#ff0066]">
+                {p.price?.toLocaleString()}원
               </p>
-            ) : (
-              <p className="text-gray-300 text-xs mt-1 italic"></p>
-            )}
-
-            {/* 가격 */}
-            <p className="text-[#ff0066] font-bold mt-2">
-              {p.price?.toLocaleString()}원
-            </p>
+            </div>
           </Link>
         ))}
       </div>
     </div>
+
   );
 }
