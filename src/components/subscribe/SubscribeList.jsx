@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { useMySubscribesQuery } from "@/api/subscribeApi";
-import Pagination from "@/components/common/Pagination";
 import StatusBadge from "@/components/common/StatusBadge";
 import EmptyState from "@/components/common/EmptyState";
 import { openModal } from "@/store/modalSlice";
@@ -12,8 +10,6 @@ import dayjs from "dayjs";
 
 export default function SubscribeList() {
   const dispatch = useDispatch();
-  const [page, setPage] = useState(1);
-  const size = 5; // 한 페이지당 5개
 
   // React Query
   const { data, isLoading, isError } = useMySubscribesQuery();
@@ -23,14 +19,7 @@ export default function SubscribeList() {
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>구독 내역을 불러오는 중 오류가 발생했습니다.</div>;
 
-  const totalPages = Math.ceil(subscribes.length / size) || 1;
-  const pageList = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const prev = page > 1;
-  const next = page < totalPages;
-
-  const pageSubscribes = subscribes.slice((page - 1) * size, page * size);
-
-  if (pageSubscribes.length === 0) {
+  if (subscribes.length === 0) {
     return (
         <EmptyState
             title="구독 내역이 없습니다"
@@ -38,6 +27,7 @@ export default function SubscribeList() {
         />
     );
   }
+
   const handleClick = (subscribeId) => {
     dispatch(openModal({ content: <SubscribeDetail subscribeId={subscribeId} /> }));
   };
@@ -48,7 +38,7 @@ export default function SubscribeList() {
 
         <div className="flex flex-col flex-1">
           <div className="flex-1 space-y-4 overflow-y-auto">
-            {pageSubscribes.map((s) => (
+            {subscribes.map((s) => (
                 <div
                     key={s.subscribeId}
                     onClick={() => handleClick(s.subscribeId)}
@@ -72,16 +62,6 @@ export default function SubscribeList() {
                   <StatusBadge type="SubscribeStatus" status={s.status} />
                 </div>
             ))}
-          </div>
-
-          <div className="mt-6 flex justify-center pt-4">
-            <Pagination
-                page={page}
-                pageList={pageList}
-                prev={prev}
-                next={next}
-                setPage={setPage}
-            />
           </div>
         </div>
       </div>

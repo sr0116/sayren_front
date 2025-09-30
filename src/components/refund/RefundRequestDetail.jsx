@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { useRefundRequestByIdQuery } from "@/api/RefundRequestApi";
+import { useRefundRequestByIdQuery } from "@/api/refundRequestApi";
 
 export default function RefundRequestDetail({ refundRequestId }) {
   const {

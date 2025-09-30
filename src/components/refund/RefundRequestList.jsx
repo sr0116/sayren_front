@@ -41,7 +41,7 @@ export default function RefundRequestList() {
             >
               <div>
                 <div className="font-semibold text-gray-800">
-                  주문 번호 #{req.orderItemId}
+                  환불 요청 번호 #{req.refundRequestId}
                 </div>
                 <div className="text-sm text-gray-500">
                   요청일: {dayjs(req.regDate).format("YYYY-MM-DD HH:mm")}
