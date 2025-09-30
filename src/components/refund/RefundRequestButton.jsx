@@ -3,6 +3,7 @@ import {useDispatch} from "react-redux";
 import {useQueryClient} from "@tanstack/react-query";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import Button from "@/components/common/Button";
+import {openModal} from "@/store/modalSlice";
 
 export default function RefundRequestButton({
                                               paymentId,
@@ -39,10 +40,14 @@ export default function RefundRequestButton({
 
   const handleRefund = () => {
     createRefundMutation.mutate({
-      paymentId,
-      reasonCode: "USER_REQUEST",
+      data: {
+        paymentId,
+        reasonCode: "USER_REQUEST",
+      },
     });
   };
+
+
 
   const handleClick = () => {
     dispatch(

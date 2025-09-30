@@ -33,7 +33,7 @@ export default function RefundProcessDialog({ request, onProcessed }) {
       params: {
         id: request.refundRequestId,
         status,
-        reasonCode: request.reasonCode,
+        reasonCode: request.reasonCode || "USER_REQUEST",
       },
     });
     setLoading(false);

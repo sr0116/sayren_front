@@ -45,7 +45,9 @@ export default function PaymentDetail({ paymentId }) {
         <RefundRequestButton
             paymentId={payment.paymentId}
             paymentStatus={payment.paymentStatus}
-            refundStatus={payment.refundStatus} />
+            refundStatus={payment.refundStatus}
+        />
+
       </div>
   );
 }
