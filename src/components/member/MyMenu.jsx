@@ -28,7 +28,7 @@ const menuGroups = [
       { name: "구독 내역", href: "/mypage/subscribe" },
       { name: "주문 내역", href: "/mypage/order" },
       { name: "결제 내역", href: "/mypage/payment" },
-      { name: "취소 내역", href: "/mypage/cansle" },
+      { name: "취소 내역", href: "/mypage/refund" },
     ],
   },
   {

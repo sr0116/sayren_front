@@ -25,7 +25,6 @@ export default function IndexContainer() {
       <>
         <HeroSection />
         <CategorySection />
-        <PaymentPage />
 
         {/* 정수기 카테고리 */}
         {products["정수기"] && (

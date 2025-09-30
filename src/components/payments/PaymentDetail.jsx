@@ -2,6 +2,7 @@
 
 import { useApiQuery } from "@/hooks/useApi";
 import dayjs from "dayjs";
+import RefundRequestButton from "@/components/refund/RefundRequestButton"; // 버튼 컴포넌트 import
 
 export default function PaymentDetail({ paymentId }) {
   // 결제 상세 조회 (PaymentResponseDTO 반환)
@@ -39,6 +40,12 @@ export default function PaymentDetail({ paymentId }) {
               </a>
             </p>
         )}
+
+        {/* 환불 요청 버튼 */}
+        <RefundRequestButton
+            paymentId={payment.paymentId}
+            paymentStatus={payment.paymentStatus}
+        />
       </div>
   );
 }

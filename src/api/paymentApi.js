@@ -3,11 +3,10 @@ import { useApiMutation, useApiQuery } from "@/hooks/useApi";
 
 
 // 결제 준비 (결제창 열기 전 호출)
-export const preparePayment = async ({ orderItemId, paymentType }) => {
+export const preparePayment = async ({ orderItemId}) => {
   try {
     const data = await api.post("/api/user/payments/prepare", {
       orderItemId,
-      paymentType,
     });
     return data;
   } catch (err) {

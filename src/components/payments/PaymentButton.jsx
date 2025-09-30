@@ -12,7 +12,6 @@ export default function PaymentButton({ orderItemId }) {
 
       const paymentData = await preparePayment({
         orderItemId: 3,
-        paymentType: "CARD",
       });
 
       console.log("결제 준비 응답:", paymentData); //  확인
