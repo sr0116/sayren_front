@@ -47,6 +47,13 @@ export const statusColorMap = {
     TOSS: "bg-blue-100 text-blue-800",
     CARD: "bg-indigo-100 text-indigo-800",
   },
+  // 환불 요청
+  RefundRequestStatus: {
+    PENDING: "bg-yellow-100 text-yellow-800",   // 환불 요청됨
+    APPROVED: "bg-green-100 text-green-800",   // 환불 승인됨
+    REJECTED: "bg-red-100 text-red-800",       // 환불 거절됨
+    CANCELED: "bg-gray-100 text-gray-800",     // 사용자가 취소
+  },
 
   // 주문 (Order)
   OrderStatus: {

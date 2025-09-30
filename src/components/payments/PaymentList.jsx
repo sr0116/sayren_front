@@ -53,7 +53,18 @@ export default function PaymentList() {
                     금액: {p.amount?.toLocaleString()}원
                   </p>
                 </div>
-                <StatusBadge type="PaymentStatus" status={p.paymentStatus} />
+
+                {/* 상태 뱃지 그룹 */}
+                <div className="flex items-center gap-3">
+                  <StatusBadge type="PaymentStatus" status={p.paymentStatus} />
+                  {/* 환불 요청 상태가 있을 때만 출력 */}
+                  {p.refundStatus && (
+                      <StatusBadge
+                          type="RefundRequestStatus"
+                          status={p.refundStatus}
+                      />
+                  )}
+                </div>
               </div>
           ))}
         </div>

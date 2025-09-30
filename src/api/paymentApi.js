@@ -31,15 +31,15 @@ export const completePayment = async ({ paymentId, impUid }) => {
 };
 
 // 환불 요청
-export const refundPayment = async ({ paymentId }) => {
-  try {
-    const data = await api.post(`/api/payments/${paymentId}/refund`, {});
-    return data;
-  } catch (err) {
-    console.error("환불 요청 실패:", err);
-    throw err;
-  }
-};
+// export const refundPayment = async ({ paymentId }) => {
+//   try {
+//     const data = await api.post(`/api/payments/${paymentId}/refund`, {});
+//     return data;
+//   } catch (err) {
+//     console.error("환불 요청 실패:", err);
+//     throw err;
+//   }
+// };
 
 // 최근 결제 요약 조회
 export const getRecentPayments = async () => {
@@ -74,11 +74,11 @@ export function useCompletePaymentMutation(paymentId, options) {
   });
 }
 
-export function useRefundPaymentMutation(paymentId, options) {
-  return useApiMutation("POST", `/api/user/payments/${paymentId}/refund`, {
-    options,
-  });
-}
+// export function useRefundPaymentMutation(paymentId, options) {
+//   return useApiMutation("POST", `/api/user/payments/${paymentId}/refund`, {
+//     options,
+//   });
+// }
 
 // 최근 결제 요약 조회
 export function useRecentPaymentsQuery(options) {
