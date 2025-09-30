@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { faqData } from "@/api/faqApi";
 import axios from "axios";
 import Pagination from "@/components/common/Pagination";
+import {useApiQuery} from "@/hooks/useApi";
 
 export default function FaqPage() {
   const [faqs, setFaqs] = useState([]);
@@ -16,15 +17,28 @@ export default function FaqPage() {
     const [prev, setPrev] = useState(false);
     const [next, setNext] = useState(false)
 
-    useEffect(() => {
-        faqData(page, size).then((data) => {
-            setFaqs(data.list);
-            setPage(data.page);
-            setPageList(data.pageList);
-            setPrev(data.prev);
-            setNext(data.next);
-        });
-    }, [page, size]);
+  const { data, isLoading, isError } = useApiQuery(
+    ["reviews"],
+    "/api/user/reviews/list",
+    {
+      params: { page: 1, size: 10 },
+      options: { staleTime: 1000 * 60 }
+    }
+  );
+
+  useEffect(() => {
+    if(data == null) return;
+
+    setReviews(data.list);        // 리뷰 배열
+    setPage(data.page);
+    setPageList(data.pageList);
+    setPrev(data.prev);
+    setNext(data.next);
+    setTotal(data.total);
+  }, [data])
+
+  if(isLoading) return (<div>로딩중...</div>)
+  if(isError) return (<div>데이터 불러오기 실패</div>)
 
   const categories = ["전체", "가입/계약", "결제", "배송/설치", "해지/반품", "기타"];
   const filteredFaqs =

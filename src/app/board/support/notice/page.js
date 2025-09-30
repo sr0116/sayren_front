@@ -14,19 +14,29 @@ export default function NoticePage() {
   const [prev, setPrev] = useState(false);
   const [next, setNext] = useState(false)
 
-  useEffect(() => {
-    noticeData(page, size).then((data) => {
-      setNotices(data.list);
-      setPage(data.page);
-      setPageList(data.pageList);
-      setPrev(data.prev);
-      setNext(data.next);
-    });
-  }, [page, size]);
+  const { data, isLoading, isError } = useApiQuery(
+    ["reviews"],
+    "/api/user/reviews/list",
+    {
+      params: { page: 1, size: 10 },
+      options: { staleTime: 1000 * 60 }
+    }
+  );
 
-  // useEffect(() => {
-  //   noticeData().then(setNotices);
-  // }, []);
+  useEffect(() => {
+    if(data == null) return;
+
+    setReviews(data.list);        // 리뷰 배열
+    setPage(data.page);
+    setPageList(data.pageList);
+    setPrev(data.prev);
+    setNext(data.next);
+    setTotal(data.total);
+  }, [data])
+
+  if(isLoading) return (<div>로딩중...</div>)
+  if(isError) return (<div>데이터 불러오기 실패</div>)
+
 
   return (
     <div className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm relative">
