@@ -16,8 +16,10 @@ const menuGroups = [
     items: [
       { name: "이름 수정", href: "/mypage/namemodify" },
       { name: "휴대폰 번호 수정", href: "/mypage/telmodify" },
-      { name: "비밀번호 변경", href: "/mypage/pwmodify" },
       { name: "소셜 연동 관리", href: "/mypage/social" },
+      { name: "2차인증 관리", href: "/mypage/2fa" },
+      { name: "비밀번호 변경", href: "/mypage/pwmodify" },
+      { name: "회원탈퇴", href: "/mypage/delete-user" },
     ],
   },
   {

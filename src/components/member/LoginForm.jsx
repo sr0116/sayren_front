@@ -10,6 +10,8 @@ import {useDispatch} from "react-redux";
 import {useLoginMutation} from "@/api/authApi";
 import {login} from "@/store/authSlice";
 import {closeModal, openModal} from "@/store/modalSlice";
+import {queryClient} from "@/lib/queryClient";
+import {api} from "@/lib/axios";
 
 export default function LoginForm(){
   const { formData: loginRequestDTO, handleChange } = useFormInput({
@@ -25,6 +27,17 @@ export default function LoginForm(){
   const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       dispatch(login({ data }));
+      queryClient
+          .fetchQuery({
+            queryKey: ["2fa"],
+            queryFn: () => api.get("/api/auth/read-2fa"),
+          })
+          .then(() => {
+            queryClient.setQueryData(["2fa"], true);
+          })
+          .catch(() => {
+            queryClient.setQueryData(["2fa"], false);
+          });
       router.push("/");
     },
     onError: (err) => {
@@ -43,7 +56,6 @@ export default function LoginForm(){
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(loginRequestDTO);
     loginMutation.mutate({
       data: loginRequestDTO
     });

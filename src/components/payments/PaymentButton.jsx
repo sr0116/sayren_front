@@ -52,7 +52,7 @@ export default function PaymentButton({ orderItemId }) {
             impUid: rsp.imp_uid,
           });
 
-          if (rsp.success) {
+          if (result.paymentStatus=== "PAID") { // 백엔드 기준
             alert("결제 성공: " + JSON.stringify(result));
           } else {
             alert("결제 실패 또는 취소: " + JSON.stringify(result));

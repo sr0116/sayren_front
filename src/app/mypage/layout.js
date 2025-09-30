@@ -1,7 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import MyMenu from "@/components/member/MyMenu";
 import LoadingSpinner from "@/components/common/loading/LoadingSpinner";
 import SectionLoader from "@/components/common/loading/SectionLoader";
