@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
 import redis from "@/lib/redis";
 
+export const revalidate = false;
 export async function GET(request, { params }) {
     try {
         const products = await redis.get("PRODUCTS");
+        console.log("raw redis value:", products);
 
         if (!products) {
             return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
         }
 
         const parsed = JSON.parse(products);
-        const product = parsed.find((p) => String(p.id) === params.id);
+        console.log("parsed array length:", parsed.length);
+        console.log("sample product: ", parsed[0]);
+        const product = parsed.find((p) => String(p.productId) === String(params.id));
 
         if (!product) {
             return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
