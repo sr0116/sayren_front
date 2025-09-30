@@ -1,31 +1,7 @@
-import Image from "next/image";
+"use client";
 import Button from "@/components/common/Button";
 
-export const revalidate = false;
-
-async function getProduct(id) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${id}`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) return null;
-
-  const data = await res.json();
-  data.cleanDescription = data.description;
-  return data;
-}
-
-export default async function ProductDetailPage({ params }) {
-  const product = await getProduct(params.id);
-
-  if (!product) {
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <p className="text-gray-500">상품 정보를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
-
+export default function ProductDetail({ product }) {
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* 상단: 썸네일 + 상품 정보 */}
@@ -63,7 +39,7 @@ export default async function ProductDetailPage({ params }) {
 
           {/* 카테고리 & 모델명 */}
           <p className="text-sm text-gray-500">
-            카테고리: {product.productCategory} | 모델명: {product.modelName}
+            {product.productCategory} | {product.modelName}
           </p>
 
           {/* 무료배송 */}
@@ -76,8 +52,8 @@ export default async function ProductDetailPage({ params }) {
             <p className="text-lg font-semibold text-gray-800">
               총 금액:{" "}
               <span className="text-[#ff0066]">
-        {product.price?.toLocaleString()}원
-      </span>
+                {product.price?.toLocaleString()}원
+              </span>
             </p>
           </div>
 
@@ -94,16 +70,14 @@ export default async function ProductDetailPage({ params }) {
       </div>
 
       {/* 하단: 상세 설명 */}
-  <div>
-    {/* 구분선 */}
-    <hr className="my-8 border-t border-gray-200" />
-
-    <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
-    <div
-      className="prose max-w-none"
-      dangerouslySetInnerHTML={{ __html: product.description }}
-    />
-  </div>
-</div>
+      <div>
+        <hr className="my-8 border-t border-gray-200" />
+        <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
+      </div>
+    </div>
   );
 }
