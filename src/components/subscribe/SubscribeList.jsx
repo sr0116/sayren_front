@@ -46,7 +46,10 @@ export default function SubscribeList() {
                     <p className="font-semibold">구독 ID: {s.subscribeId}</p>
                     <p className="text-sm text-gray-500">
                       기간:{" "}
-                      {s.startDate ? dayjs(s.startDate).format("YYYY-MM-DD") : "-"} ~{" "}
+                      {s.startDate
+                          ? dayjs(s.startDate).format("YYYY-MM-DD")
+                          : "-"}{" "}
+                      ~{" "}
                       {s.endDate ? dayjs(s.endDate).format("YYYY-MM-DD") : "-"}
                     </p>
                     <p className="text-sm text-gray-500">
@@ -57,7 +60,9 @@ export default function SubscribeList() {
                       원
                     </p>
                   </div>
-                  <StatusBadge type="SubscribeStatus" status={s.status} />
+
+                  {/* 상태 뱃지 */}
+                  <StatusBadge type="SubscribeStatus" value={s.status} />
                 </div>
             ))}
           </div>
