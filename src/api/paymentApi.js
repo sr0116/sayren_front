@@ -15,6 +15,27 @@ export const preparePayment = async ({ orderItemId}) => {
   }
 };
 
+// 회차 결제 준비
+export const prepareRoundPayment = async (subscribeRoundId) => {
+  try {
+    const data = await api.post(`/api/user/payments/prepare/round/${subscribeRoundId}`);
+    return data;
+  } catch (err) {
+    console.error("회차 결제 준비 실패:", err);
+    throw err;
+  }
+};
+
+export function usePrepareRoundPaymentMutation(options) {
+  return useApiMutation(
+      "POST",
+      ({ subscribeRoundId }) => `/api/user/payments/prepare/round/${subscribeRoundId}`,
+      { options }
+  );
+}
+
+
+
 // 결제 완료 검증 (PortOne imp_uid → 백엔드 검증)
 export const completePayment = async ({ paymentId, impUid }) => {
   try {
@@ -51,6 +72,8 @@ export const getRecentPayments = async () => {
     throw err;
   }
 };
+
+
 
 // 단일 결제 조회 (백엔드 엔드포인트 추가 필요)
 export const getPaymentById = async (paymentId) => {

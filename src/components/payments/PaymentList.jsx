@@ -56,12 +56,12 @@ export default function PaymentList() {
 
                 {/* 상태 뱃지 그룹 */}
                 <div className="flex items-center gap-3">
-                  <StatusBadge type="PaymentStatus" status={p.paymentStatus} />
-                  {/* 환불 요청 상태가 있을 때만 출력 */}
+                  <StatusBadge type="PaymentStatus" value={p.paymentStatus} />
+                  {/* 환불 요청 상태가 있을 때만 */}
                   {p.refundStatus && (
                       <StatusBadge
                           type="RefundRequestStatus"
-                          status={p.refundStatus}
+                          value={p.refundStatus}
                       />
                   )}
                 </div>

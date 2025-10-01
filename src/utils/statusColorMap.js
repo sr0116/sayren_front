@@ -1,12 +1,8 @@
-// utils/statusColorMap.js
 // 상태(enum) → Tailwind 색상 매핑
-// 규칙: Green(성공), Yellow/Blue(대기/진행), Red(실패/거절), Gray(종료/만료), Orange(특수)
+// 규칙: Green(성공/정상), Yellow(대기), Blue(진행), Red(실패/거절), Gray(종료/만료), Orange(특수/사용자 요청)
 
 export const statusColorMap = {
-
-
-  // 공통 (Common)
-
+  // 공통
   CommonStatus: {
     ACTIVE: "bg-green-100 text-green-800",
     DISABLED: "bg-red-100 text-red-800",
@@ -15,7 +11,7 @@ export const statusColorMap = {
   ActorType: {
     SYSTEM: "bg-gray-200 text-gray-800",
     USER: "bg-blue-100 text-blue-800",
-    ADMIN: "bg-indigo-100 text-indigo-800",
+    ADMIN: "bg-blue-200 text-blue-900",
   },
   ReasonCode: {
     NONE: "bg-gray-100 text-gray-800",
@@ -24,16 +20,16 @@ export const statusColorMap = {
     PRODUCT_DEFECT: "bg-orange-100 text-orange-800",
     DELIVERY_ISSUE: "bg-orange-100 text-orange-800",
     OUT_OF_STOCK: "bg-orange-100 text-orange-800",
+    CONTRACT_CANCEL: "bg-orange-200 text-orange-900",
+    OTHER: "bg-gray-200 text-gray-800",
     SERVICE_ERROR: "bg-red-100 text-red-800",
     SYSTEM_ERROR: "bg-red-200 text-red-900",
     PAYMENT_FAILURE: "bg-red-100 text-red-800",
     CANCEL_REJECTED: "bg-red-200 text-red-900",
-    CONTRACT_CANCEL: "bg-orange-200 text-orange-900",
     EXPIRED: "bg-gray-100 text-gray-800",
-    OTHER: "bg-gray-200 text-gray-800",
   },
-  // 결제 (Payment)
 
+  // 결제
   PaymentStatus: {
     PENDING: "bg-yellow-100 text-yellow-800",        // 결제 대기
     PAID: "bg-green-100 text-green-800",             // 결제 완료
@@ -47,15 +43,16 @@ export const statusColorMap = {
     TOSS: "bg-blue-100 text-blue-800",
     CARD: "bg-indigo-100 text-indigo-800",
   },
+
   // 환불 요청
   RefundRequestStatus: {
     PENDING: "bg-yellow-100 text-yellow-800",   // 환불 요청됨
-    APPROVED: "bg-green-100 text-green-800",   // 환불 승인됨
-    REJECTED: "bg-red-100 text-red-800",       // 환불 거절됨
-    CANCELED: "bg-gray-100 text-gray-800",     // 사용자가 취소
+    APPROVED: "bg-green-100 text-green-800",    // 환불 승인됨
+    REJECTED: "bg-red-100 text-red-800",        // 환불 거절됨
+    CANCELED: "bg-gray-100 text-gray-800",      // 사용자 취소
   },
 
-  // 주문 (Order)
+  // 주문
   OrderStatus: {
     PENDING: "bg-yellow-100 text-yellow-800",   // 결제 대기
     PAID: "bg-green-100 text-green-800",        // 결제 완료
@@ -68,7 +65,7 @@ export const statusColorMap = {
     RENTAL: "bg-blue-100 text-blue-800",
   },
 
-  // 구독 (Subscribe)
+  // 구독
   SubscribeStatus: {
     PENDING_PAYMENT: "bg-yellow-100 text-yellow-800", // 결제 대기
     PREPARING: "bg-blue-100 text-blue-800",           // 준비 중
@@ -79,8 +76,7 @@ export const statusColorMap = {
     FAILED: "bg-red-200 text-red-900",                // 실패
   },
 
-  // 회원 (Member)
-  // 회원 (Member)
+  // 회원
   MemberStatus: {
     READY: "bg-yellow-100 text-yellow-800",   // 가입 대기
     ACTIVE: "bg-green-100 text-green-800",    // 정상 회원
