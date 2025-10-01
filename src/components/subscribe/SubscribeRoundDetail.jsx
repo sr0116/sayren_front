@@ -1,5 +1,5 @@
 "use client";
-
+import { X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import {useSubscribeRoundDetailQuery} from "@/api/subscribeApi";
@@ -15,13 +15,15 @@ export default function SubscribeRoundDetailPage() {
 
   return (
       <div className="space-y-3">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">{round.roundNo}회차 상세</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-gray-800">
+            구독 {subscribeId} 회차 목록
+          </h2>
           <button
-              onClick={() => router.back()}
-              className="text-sm text-blue-600 hover:underline"
+              onClick={() => router.push("/mypage/subscribe")}
+              className="ml-auto text-gray-500 hover:text-gray-700 cursor-pointer"
           >
-            돌아가기
+            <X size={20} />
           </button>
         </div>
 

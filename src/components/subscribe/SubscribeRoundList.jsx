@@ -7,6 +7,7 @@ import { prepareRoundPayment, completePayment } from "@/api/paymentApi";
 import Button from "@/components/common/Button";
 import StatusBadge from "@/components/common/StatusBadge";
 import { useState, useEffect } from "react";
+import {X} from "lucide-react";
 
 export default function SubscribeRoundList() {
   const { id: subscribeId } = useParams();
@@ -87,13 +88,12 @@ export default function SubscribeRoundList() {
           <h2 className="text-xl font-bold text-gray-800">
             구독 {subscribeId} 회차 목록
           </h2>
-          <Button
-              variant="outline"
+          <button
               onClick={() => router.push("/mypage/subscribe")}
-              className="px-3 py-1 text-sm w-auto"
+              className="ml-auto text-gray-500 hover:text-gray-700 cursor-pointer"
           >
-            구독 목록으로
-          </Button>
+            X
+          </button>
         </div>
 
         {rounds.length === 0 ? (

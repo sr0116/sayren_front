@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts} from "@/store/productSlice";
 import PaymentButton from "@/components/payments/PaymentButton";
 import PaymentPage from "@/components/payments/PaymentPage";
+import RentalHighlight from "@/components/index/RentalHighlight";
 
 export default function IndexContainer() {
 
@@ -25,6 +26,7 @@ export default function IndexContainer() {
       <>
         <HeroSection />
         <CategorySection />
+        <RentalHighlight />
 
         {/* 정수기 카테고리 */}
         {products["정수기"] && (
@@ -36,7 +38,7 @@ export default function IndexContainer() {
         )}
 
         <PlanOverview />
-        <ReviewSection />
+
 
         {/* TV 카테고리 */}
         {products["TV"] && (
@@ -56,6 +58,7 @@ export default function IndexContainer() {
             />
         )}
 
+        <ReviewSection />
         <QnASection />
       </>
   );
