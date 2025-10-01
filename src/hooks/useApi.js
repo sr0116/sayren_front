@@ -9,8 +9,8 @@ function resolveUrl(url, params) {
 export function useApiQuery(key, url, { params, options } = {}) {
   return useQuery({
     queryKey: Array.isArray(key)
-        ? [...key, ...(params ? Object.entries(params) : [])]
-        : [key, ...(params ? Object.entries(params) : [])],
+      ? [...key, ...(params ? Object.entries(params) : [])]
+      : [key, ...(params ? Object.entries(params) : [])],
     queryFn: () => api.get(resolveUrl(url, params), { params }),
     ...(options || {}),
   });
