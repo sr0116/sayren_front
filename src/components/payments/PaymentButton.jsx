@@ -11,7 +11,7 @@ export default function PaymentButton({ orderItemId }) {
       setLoading(true);
 
       const paymentData = await preparePayment({
-        orderItemId: 5,
+        orderItemId: 3,
       });
 
       console.log("결제 준비 응답:", paymentData); //  확인
