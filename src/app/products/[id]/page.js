@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Button from "@/components/common/Button";
+import AddToCartButton from "@/components/order/AddToCartButton";
 
 export const revalidate = false;
 
@@ -83,6 +84,7 @@ export default async function ProductDetailPage({ params }) {
 
           {/* 버튼 영역 */}
           <div className="flex gap-3 mt-2">
+            <AddToCartButton productId={params.id} planId={1}/>
             <Button className="bg-gray-800 text-white px-6 py-2 rounded">
               장바구니 담기
             </Button>
