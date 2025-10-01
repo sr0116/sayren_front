@@ -120,7 +120,7 @@ export default function SubscribeRoundList() {
 
                     <div className="flex items-center gap-3">
                       <StatusBadge type="PaymentStatus" value={r.payStatus} />
-                      {r.payStatus === "PENDING" && (
+                      {r.payStatus?.toUpperCase() === "PENDING" && (
                           <button
                               onClick={(e) => {
                                 e.stopPropagation(); // 클릭 이벤트 버블링 막기 (상세 페이지 이동 방지)
