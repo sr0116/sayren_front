@@ -5,6 +5,7 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { getReviews } from "@/api/reviewApi";
 import Pagination from "@/components/common/Pagination";
+import {useApiQuery} from "@/hooks/useApi";
 
 const categories = [
   "전체",
@@ -31,24 +32,28 @@ export default function ReviewListPage() {
   const [next, setNext] = useState(false)
 
 
-  // 리뷰 목록 불러오기
+  const { data, isLoading, isError } = useApiQuery(
+    ["reviews"],
+    "/api/user/reviews/list",
+    {
+      params: { page: 1, size: 10 },
+      options: { staleTime: 1000 * 60 }
+    }
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getReviews(page, size); // PageResponseDTO
-        setReviews(data.list);        // 리뷰 배열
-        setPage(data.page);
-        setPageList(data.pageList);
-        setPrev(data.prev);
-        setNext(data.next);
-        setTotal(data.total); // 후기 총 개수
-      } catch (err) {
-        console.error(err);
-        window.toast("error", "리뷰 목록을 불러오는 데 실패했습니다.");
-      }
-    };
-    fetchData();
-  }, [page, size]);
+    if(data == null) return;
+
+    setReviews(data.list);        // 리뷰 배열
+    setPage(data.page);
+    setPageList(data.pageList);
+    setPrev(data.prev);
+    setNext(data.next);
+    setTotal(data.totalPages);
+  }, [data])
+
+  if(isLoading) return (<div>로딩중...</div>)
+  if(isError) return (<div>데이터 불러오기 실패</div>)
 
   // 필터링
   const filteredReviews =
@@ -59,6 +64,8 @@ export default function ReviewListPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">후기 게시판</h2>
+      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
+      {/*들어오는 값 확인*/}
 
       {/* 카테고리 + 작성 버튼 */}
       <div className="flex items-center justify-between mb-6">
@@ -115,13 +122,13 @@ export default function ReviewListPage() {
       </div>
 
       {/* 공통 페이지네이션 */}
-      <Pagination
-          page={page}
-          pageList={pageList}
-          prev={prev}
-          next={next}
-          setPage={setPage}
-      />
+      {/*<Pagination*/}
+      {/*    page={page}*/}
+      {/*    pageList={pageList}*/}
+      {/*    prev={prev}*/}
+      {/*    next={next}*/}
+      {/*    setPage={setPage}*/}
+      {/*/>*/}
     </div>
   );
 }
