@@ -7,8 +7,8 @@ import Link from "next/link";
 // layout="vertical" → 모바일 드롭다운용
 
 const navItems = [
-  { label: "Product", href: "/products/purchase", hasMegaMenu: true },
-  { label: "Rental", href: "/products/rental" },
+  { label: "Product", href: "/products?type=PURCHASE", hasMegaMenu: true },
+  { label: "Rental", href: "/products?type=RENTAL", hasMegaMenu: true },
   { label: "Review", href: "/board/review" },
   { label: "Support", href: "/board/support" },
   { label: "B2B", href: "#" },

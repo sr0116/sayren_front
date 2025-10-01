@@ -77,7 +77,11 @@ export default function ProductDetail({ product }) {
         <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
         <div
           className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: product.description }}
+          dangerouslySetInnerHTML={{
+            __html: product.description
+              ? product.description.replace(/<video[^>]*>.*?<\/video>/g, "").replace(/<source[^>]*>/g, "")
+              : "",
+          }}
         />
       </div>
     </div>
