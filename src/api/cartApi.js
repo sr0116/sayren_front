@@ -1,29 +1,43 @@
-import axios from "@/lib/axios";
+import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import { useQueryClient } from "@tanstack/react-query";
 
-// 장바구니 담기
-export const addCartItem = async ({ productId, planId, quantity }) => {
-  const res = await axios.post("/api/proxy/api/user/cart", {
-    productId,
-    planId,
-    quantity,
+//  장바구니 담기
+export function useAddCartItemMutation(options) {
+  const queryClient = useQueryClient();
+  return useApiMutation("POST", "/api/user/cart/add-item", {
+    ...options,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries(["cart"]); // 장바구니 최신화
+      options?.onSuccess?.(data, variables, context);
+    },
   });
-  return res.data;
-};
+}
 
-// 장바구니 조회
-export const getCartItems = async () => {
-  const res = await axios.get("/api/proxy/api/user/cart");
-  return res.data;
-};
+//  장바구니 조회
+export function useCartItemsQuery(options) {
+  return useApiQuery(["cart"], "/api/user/cart", { options });
+}
 
-// 단일 아이템 삭제
-export const removeCartItem = async (cartItemId) => {
-  const res = await axios.delete(`/api/proxy/api/user/cart/item/${cartItemId}`);
-  return res.data;
-};
+//  장바구니 단일 삭제
+export function useRemoveCartItemMutation(cartItemId, options) {
+  const queryClient = useQueryClient();
+  return useApiMutation("DELETE", `/api/user/cart/delete-item/${cartItemId}`, {
+    ...options,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries(["cart"]);
+      options?.onSuccess?.(data, variables, context);
+    },
+  });
+}
 
 // 장바구니 전체 비우기
-export const clearCart = async () => {
-  const res = await axios.delete("/api/proxy/api/user/cart/clear");
-  return res.data;
-};
+export function useClearCartMutation(options) {
+  const queryClient = useQueryClient();
+  return useApiMutation("DELETE", "/api/user/cart/clear-item", {
+    ...options,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries(["cart"]);
+      options?.onSuccess?.(data, variables, context);
+    },
+  });
+}
