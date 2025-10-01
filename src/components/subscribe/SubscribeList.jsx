@@ -3,22 +3,20 @@
 import { useMySubscribesQuery } from "@/api/subscribeApi";
 import StatusBadge from "@/components/common/StatusBadge";
 import EmptyState from "@/components/common/EmptyState";
-import { openModal } from "@/store/modalSlice";
-import { useDispatch } from "react-redux";
-import SubscribeDetail from "@/components/subscribe/SubscribeDetail";
+import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
 export default function SubscribeList() {
-  const dispatch = useDispatch();
+  const router = useRouter();
 
-  // React Query
+  // 내 구독 목록 API 호출
   const { data, isLoading, isError } = useMySubscribesQuery();
-
   const subscribes = Array.isArray(data) ? data : data?.list ?? [];
 
-  if (isLoading) return <div>로딩 중...</div>;
+  if (isLoading) return <div>불러오는 중...</div>;
   if (isError) return <div>구독 내역을 불러오는 중 오류가 발생했습니다.</div>;
 
+  // 빈 상태
   if (subscribes.length === 0) {
     return (
         <EmptyState
@@ -29,7 +27,7 @@ export default function SubscribeList() {
   }
 
   const handleClick = (subscribeId) => {
-    dispatch(openModal({ content: <SubscribeDetail subscribeId={subscribeId} /> }));
+    router.push(`/mypage/subscribe/${subscribeId}`);
   };
 
   return (
@@ -48,7 +46,10 @@ export default function SubscribeList() {
                     <p className="font-semibold">구독 ID: {s.subscribeId}</p>
                     <p className="text-sm text-gray-500">
                       기간:{" "}
-                      {s.startDate ? dayjs(s.startDate).format("YYYY-MM-DD") : "-"} ~{" "}
+                      {s.startDate
+                          ? dayjs(s.startDate).format("YYYY-MM-DD")
+                          : "-"}{" "}
+                      ~{" "}
                       {s.endDate ? dayjs(s.endDate).format("YYYY-MM-DD") : "-"}
                     </p>
                     <p className="text-sm text-gray-500">
@@ -59,7 +60,9 @@ export default function SubscribeList() {
                       원
                     </p>
                   </div>
-                  <StatusBadge type="SubscribeStatus" status={s.status} />
+
+                  {/* 상태 뱃지 */}
+                  <StatusBadge type="SubscribeStatus" value={s.status} />
                 </div>
             ))}
           </div>

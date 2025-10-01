@@ -76,3 +76,21 @@ export function useCancelSubscribeMutation(id, options) {
     options,
   });
 }
+
+// 구독 회차 리스트
+export function useSubscribeRoundsQuery(subscribeId, options) {
+  return useApiQuery(
+      ["subscribeRounds", subscribeId],
+      `/api/user/subscribes/${subscribeId}/rounds`,
+      { options }
+  );
+}
+
+// 구독 회차 단건 상세
+export function useSubscribeRoundDetailQuery(subscribeId, roundNo, options) {
+  return useApiQuery(
+      ["subscribeRound", subscribeId, roundNo],
+      `/api/user/subscribes/${subscribeId}/rounds/${roundNo}`,
+      { options }
+  );
+}
