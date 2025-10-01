@@ -55,7 +55,7 @@ export default function RefundRequestList() {
                   사유 코드: {req.reasonCode}
                 </div>
               </div>
-              <StatusBadge status={req.status} />
+              <StatusBadge type="RefundRequestStatus"  value={req.status} />
             </div>
         ))}
       </div>
