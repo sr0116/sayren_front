@@ -2,6 +2,8 @@
 import Link from "next/link";
 import ProductCardPurchase from "@/components/product/ProductCardPurchase";
 import ProductCardRental from "@/components/product/ProductCardRental";
+import CategorySection from "@/components/index/CategorySection";
+import ProductListCategory from "@/components/product/ProductListCategory";
 
 async function getProducts(type) {
   const url = type
@@ -21,31 +23,49 @@ async function getProducts(type) {
   return res.json();
 }
 
+const categoryMap = {
+    "청소기" : "가전",
+    "공기청정기" : "가전",
+    "세탁기" : "가전제품",
+    "스타일러": "신발관리기",
+};
+
 export default async function ProductListPage({ searchParams }) {
   const category = searchParams?.category || null;
   const type = searchParams?.type || null;
   const products = await getProducts(type);
 
-  // 카테고리 필터
-  const filtered = category
-    ? products.filter((p) => p.productCategory === category)
-    : products;
+  // ✅ 카테고리 필터
+  const filtered =
+      category && category !== "전체"
+          ? products.filter((p) => {
+            const mapped = categoryMap[category] || category;
+            return p.productCategory === mapped;
+          })
+          : products;
 
-  if (!products || products.length === 0) {
-    return <p className="p-6">상품이 없습니다.</p>;
-  }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-      {products.map((p) => (
-        <Link key={p.productId} href={`/products/${p.productId}`}>
-          {type === "RENTAL" ? (
-          <ProductCardRental product={p} />
-          ):(
-          <ProductCardPurchase product={p} />
-          )}
-        </Link>
-      ))}
-    </div>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* 카테고리 섹션은 항상 보이도록 */}
+        <ProductListCategory selected={category} />
+
+        {/* 상품 없어도 나오도록 */}
+        {filtered.length === 0 ? (
+            <p className="p-6">상품이 없습니다.</p>
+        ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {filtered.map((p) => (
+                  <Link key={p.productId} href={`/products/${p.productId}`}>
+                    {type === "RENTAL" ? (
+                        <ProductCardRental product={p} />
+                    ) : (
+                        <ProductCardPurchase product={p} />
+                    )}
+                  </Link>
+              ))}
+            </div>
+        )}
+      </div>
   );
 }
