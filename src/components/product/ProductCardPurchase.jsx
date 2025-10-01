@@ -1,6 +1,6 @@
 "use client";
 
-export default function ProductCard({ product }) {
+export default function ProductCardPurchase({ product }) {
   const {
     thumbnailUrl,
     productCategory,
@@ -39,7 +39,7 @@ export default function ProductCard({ product }) {
             <p className="text-xs text-gray-500 mb-2">#{tags.join(" #")}</p>
           )}
 
-          <h3 className="font-semibold text-base line-clamp-1 mt-2">{productName}</h3>
+          <h3 className="font-semibold text-base line-clamp-1">{productName}</h3>
           <span className=" text-sm text-gray-600 mt-1">{modelName}</span>
         </div>
 
