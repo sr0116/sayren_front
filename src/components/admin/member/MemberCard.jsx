@@ -5,11 +5,14 @@ import {TextInput} from "@/components/common/Input";
 import Select from "@/components/common/Select";
 import dayjs from "dayjs";
 import TelInput from "@/components/auth/TelInput";
+import MemberNameChange from "@/components/admin/member/MemberNameChange";
+import MemberTelChange from "@/components/admin/member/MemberTelChange";
+import MemberStatusChange from "@/components/admin/member/MemberStatusChange";
+import MemberRoleChange from "@/components/admin/member/MemberRoleChange";
 
-export default function MemberCard({ member }) {
+export default function MemberCard({ member, memberId }) {
   if (!member) return null;
 
-  const roles = member.roles.join(",");
 
 
   return (
@@ -17,7 +20,8 @@ export default function MemberCard({ member }) {
         {/* 이름 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">이름</p>
-          <TextInput name="name" value={member.name} className="flex-1" />
+          <MemberNameChange name={member.name} memberId={memberId} />
+          {/*<TextInput name="name" value={member.name} className="flex-1" />*/}
         </div>
 
         {/* 이메일 */}
@@ -29,24 +33,19 @@ export default function MemberCard({ member }) {
         {/* 전화번호 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">전화번호</p>
-          <TelInput name="tel" value={member.tel || "전화번호 없음"} className="flex-1" />
+          <MemberTelChange tel={member.tel} memberId={memberId} />
         </div>
 
         {/* 상태 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">상태</p>
-          <Select name="status" value={member.status} className="flex-1">
-            <option value="READY">READY</option>
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="DISABLED">DISABLED</option>
-            <option value="DELETE">DELETE</option>
-          </Select>
+          <MemberStatusChange status={member.status} memberId={memberId} />
         </div>
 
         {/* 권한 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">권한</p>
-          <TextInput name="roles" value={roles} className="flex-1" />
+          <MemberRoleChange roles={member.roles} memberId={memberId}/>
         </div>
 
         {/* 가입일 + 수정일 */}

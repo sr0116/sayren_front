@@ -29,16 +29,16 @@ export default function MemberDetail({memberId}){
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">유저</h2>
-      <MemberCard member={data.memberDTO} />
+      <MemberCard member={data.memberDTO} memberId={memberId}/>
       <div className="border-b border-gray-300 my-8" />
       <h2 className="text-lg font-semibold text-gray-900 mb-4">약관 동의</h2>
       <MemberTermAgree terms={data.termList} />
       <div className="border-b border-gray-300 my-8" />
       <h2 className="text-lg font-semibold text-gray-900 mb-4">소셜 연동</h2>
-      <MemberProvider providers={data.providerList} />
+      <MemberProvider providers={data.providerList} memberId={memberId} />
       <div className="border-b border-gray-300 my-8" />
       <h2 className="text-lg font-semibold text-gray-900 mb-4">2차 인증</h2>
-      <Member2FA tfa={data.tfa} />
+      <Member2FA tfa={data.tfa} memberId={memberId}/>
       <div className="border-b border-gray-300 my-8" />
       <h2 className="text-lg font-semibold text-gray-900 mb-4">로그인 내역</h2>
       <MemberLoginList memberId={memberId}/>
