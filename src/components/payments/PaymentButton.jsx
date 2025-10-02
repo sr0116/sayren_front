@@ -1,35 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { preparePayment, completePayment } from "@/api/paymentApi";
 
 export default function PaymentButton({ orderItemId }) {
   const [loading, setLoading] = useState(false);
 
-  //  SDK 로드 보장
-  useEffect(() => {
-    if (!window.IMP) {
-      const script = document.createElement("script");
-      script.src = "https://cdn.iamport.kr/v1/iamport.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
   const handleClick = async () => {
     try {
       setLoading(true);
 
-      const paymentData = await preparePayment({ orderItemId });
-      console.log("결제 준비 응답:", paymentData);
+      const paymentData = await preparePayment({
+        orderItemId: 1,
+      });
 
-      if (!paymentData?.merchantUid) {
+      console.log("결제 준비 응답:", paymentData); //  확인
+
+      if (!paymentData) {
+        throw new Error("결제 준비 응답이 비어있습니다.");
+      }
+      if (!paymentData.merchantUid) {
         throw new Error("merchantUid 없음: " + JSON.stringify(paymentData));
       }
 
       const IMP = window.IMP;
       if (!IMP) {
-        alert("PortOne SDK가 아직 로드되지 않았습니다.");
+        alert("PortOne SDK가 로드되지 않았습니다.");
         return;
       }
 
@@ -55,7 +51,7 @@ export default function PaymentButton({ orderItemId }) {
             impUid: rsp.imp_uid,
           });
 
-          if (result.paymentStatus === "PAID") {
+          if (result.paymentStatus=== "PAID") { // 백엔드 기준
             alert("결제 성공: " + JSON.stringify(result));
           } else {
             alert("결제 실패 또는 취소: " + JSON.stringify(result));
@@ -73,11 +69,12 @@ export default function PaymentButton({ orderItemId }) {
     }
   };
 
+
   return (
       <button
           onClick={handleClick}
           disabled={loading}
-          className="px-4 py-2 bg-gray-500 text-white rounded"
+          className="px-4 py-2 bg-blue-500 text-white rounded"
       >
         {loading ? "결제 진행중..." : "결제하기"}
       </button>

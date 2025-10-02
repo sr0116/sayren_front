@@ -48,32 +48,33 @@ export default function SubscribeRoundList() {
 
       const paymentRequest = {
         pg: "nice_v2",
+        pay_method: "card",
         merchant_uid: paymentData.merchantUid,
         name: `구독 ${subscribeId} - ${round.roundNo}회차`,
         amount: paymentData.amount,
+        buyer_email: "test@example.com",  //
+        buyer_name: "홍길동",
+        buyer_tel: "010-1234-5678",
       };
-
+      // 지금 paymentButton하고 내용 다름
       IMP.request_pay(paymentRequest, async (rsp) => {
-        if (rsp.success && rsp.imp_uid) {
-          try {
-            const result = await completePayment({
-              paymentId: paymentData.paymentId,
-              impUid: rsp.imp_uid,
-            });
+        try {
+          const result = await completePayment({
+            paymentId: paymentData.paymentId,
+            impUid: rsp.imp_uid,
+          });
 
-            if (result.paymentStatus === "PAID") {
-              alert(`${round.roundNo}회차 결제 성공!`);
-            } else {
-              alert(`${round.roundNo}회차 결제 실패 또는 취소`);
-            }
-          } catch (err) {
-            console.error("결제 검증 실패:", err);
-            alert("결제 검증 실패: " + err.message);
+          if (result.paymentStatus === "PAID") {
+            alert(`${round.roundNo}회차 결제 성공!`);
+          } else {
+            alert(`${round.roundNo}회차 결제 실패/취소`);
           }
-        } else {
-          alert("사용자 결제 취소 또는 실패: " + rsp.error_msg);
+        } catch (err) {
+          console.error("결제 검증 실패:", err);
+          alert("결제 검증 실패: " + err.message);
         }
       });
+
     } catch (err) {
       console.error("결제 처리 중 오류:", err);
       alert("결제 오류: " + err.message);
@@ -120,7 +121,7 @@ export default function SubscribeRoundList() {
 
                     <div className="flex items-center gap-3">
                       <StatusBadge type="PaymentStatus" value={r.payStatus} />
-                      {r.payStatus === "PENDING" && (
+                      {r.payStatus?.toUpperCase() === "PENDING" && (
                           <button
                               onClick={(e) => {
                                 e.stopPropagation(); // 클릭 이벤트 버블링 막기 (상세 페이지 이동 방지)

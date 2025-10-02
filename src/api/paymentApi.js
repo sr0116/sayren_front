@@ -18,7 +18,7 @@ export const preparePayment = async ({ orderItemId}) => {
 // 회차 결제 준비
 export const prepareRoundPayment = async (subscribeRoundId) => {
   try {
-    const data = await api.post(`/api/user/payments/prepare/round/${subscribeRoundId}`);
+    const data = await api.post(`/api/user/payments/prepare/round/${subscribeRoundId}`)
     return data;
   } catch (err) {
     console.error("회차 결제 준비 실패:", err);
