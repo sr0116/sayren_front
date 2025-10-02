@@ -2,7 +2,7 @@
 import Button from "@/components/common/Button";
 import AddToCartButton from "@/components/order/AddToCartButton";
 
-export default function ProductDetail({ product }) {
+export default function ProductDetail({ product, productId }) {
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* 상단: 썸네일 + 상품 정보 */}
@@ -60,7 +60,7 @@ export default function ProductDetail({ product }) {
 
           {/* 버튼 영역 */}
           <div className="flex gap-3 mt-2">
-            <AddToCartButton productId={params.id} planId={1}/>
+            <AddToCartButton productId={product.productId} planId={1}/>
             <Button className="bg-gray-800 text-white px-6 py-2 rounded">
               장바구니 담기
             </Button>
