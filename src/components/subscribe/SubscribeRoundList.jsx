@@ -8,6 +8,7 @@ import Button from "@/components/common/Button";
 import StatusBadge from "@/components/common/StatusBadge";
 import { useState, useEffect } from "react";
 import {X} from "lucide-react";
+import {queryClient} from "@/lib/queryClient";
 
 export default function SubscribeRoundList() {
   const { id: subscribeId } = useParams();
@@ -66,6 +67,7 @@ export default function SubscribeRoundList() {
 
           if (result.paymentStatus === "PAID") {
             alert(`${round.roundNo}회차 결제 성공!`);
+            queryClient.invalidateQueries("subscribeRounds");
           } else {
             alert(`${round.roundNo}회차 결제 실패/취소`);
           }
@@ -121,19 +123,39 @@ export default function SubscribeRoundList() {
 
                     <div className="flex items-center gap-3">
                       <StatusBadge type="PaymentStatus" value={r.payStatus} />
+
                       {r.payStatus?.toUpperCase() === "PENDING" && (
-                          <button
-                              onClick={(e) => {
-                                e.stopPropagation(); // 클릭 이벤트 버블링 막기 (상세 페이지 이동 방지)
-                                handlePay(r);
-                              }}
-                              disabled={loadingRoundId === r.subscribeRoundId}
-                              className="px-3 py-1 bg-gray-500 text-white rounded text-sm"
-                          >
-                            {loadingRoundId === r.subscribeRoundId ? "결제중..." : "결제하기"}
-                          </button>
+                          (() => {
+                            const isWithin3Days = dayjs(r.dueDate).isBefore(dayjs().add(3, "day"), "day");
+
+                            return (
+                                <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (isWithin3Days) {
+                                        handlePay(r);
+                                      }
+                                    }}
+                                    disabled={loadingRoundId === r.subscribeRoundId || !isWithin3Days}
+                                    className={`px-3 py-1 rounded text-sm ${
+                                        isWithin3Days
+                                            ? "bg-gray-500 text-white hover:bg-gray-700"
+                                            : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                    }`}
+                                >
+                                  {loadingRoundId === r.subscribeRoundId
+                                      ? "결제중..."
+                                      : isWithin3Days
+                                          ? r.roundNo > 1
+                                              ? "원클릭 결제"
+                                              : "결제하기"
+                                          : "결제 예정"}
+                                </button>
+                            );
+                          })()
                       )}
                     </div>
+
                   </li>
               ))}
             </ul>
