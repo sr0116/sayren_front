@@ -97,6 +97,14 @@ async function buildResponse(res, newToken) {
     console.log(newToken)
     const maxAgeSec = (Number(process.env.NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE) - 2) * 60;
 
+    response.cookies.set("SR_ACCESS", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 0,
+      sameSite: "lax",
+    });
+
     response.cookies.set("SR_ACCESS", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -104,6 +112,7 @@ async function buildResponse(res, newToken) {
       maxAge: maxAgeSec,
       sameSite: "lax",
     });
+
   }
 
   return response;

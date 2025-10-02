@@ -1,8 +1,12 @@
+import MemberDetail from "@/components/admin/member/MemberDetail";
+
 export default function MemberDetailPage({params}){
   const {memberId} = params;
+
+
   return (
       <div>
-        {memberId}
+        <MemberDetail memberId={memberId}/>
       </div>
   )
 }
