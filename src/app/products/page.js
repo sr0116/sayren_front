@@ -47,8 +47,12 @@ export default async function ProductListPage({ searchParams }) {
 
   return (
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* 카테고리 섹션은 항상 보이도록 */}
-        <ProductListCategory selected={category} />
+        {/* 카테고리*/}
+        <div className="flex justify-between items-center mb-6">
+          <div className="inline-flex flex-wrap items-center gap-2">
+            <ProductListCategory selected={category} />
+          </div>
+        </div>
 
         {/* 상품 없어도 나오도록 */}
         {filtered.length === 0 ? (

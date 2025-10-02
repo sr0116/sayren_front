@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Button from "@/components/common/Button";
-import ProductDetail from "@/components/product/ProductDetail";
+import ProductDetailPurchase from "@/components/product/ProductDetailPurchase";
 
 export const revalidate = false;
 
@@ -17,7 +17,8 @@ async function getProduct(id) {
 }
 
 export default async function ProductDetailPage({ params }) {
-  const product = await getProduct(params.id);
+  const productId = params.id;
+  const product = await getProduct(productId);
 
   if (!product) {
     return (
@@ -28,7 +29,7 @@ export default async function ProductDetailPage({ params }) {
   }
 
   return (
-    <ProductDetail product={product}/>
+    <ProductDetailPurchase product={product} productId={productId} />
 //     <div className="max-w-6xl mx-auto p-6">
 //       {/* 상단: 썸네일 + 상품 정보 */}
 //       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-12">
