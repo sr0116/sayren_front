@@ -35,7 +35,7 @@ export default async function ProductListPage({ searchParams }) {
   const type = searchParams?.type || null;
   const products = await getProducts(type);
 
-  // ✅ 카테고리 필터
+  // 카테고리 필터
   const filtered =
       category && category !== "전체"
           ? products.filter((p) => {

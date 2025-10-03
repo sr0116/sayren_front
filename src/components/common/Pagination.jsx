@@ -25,6 +25,7 @@ export default function Pagination({ data }) {
         {/* 처음으로 */}
         <Link
             href={createPageLink(1)}
+            scroll={false}
             className={`w-8 h-8 border rounded flex items-center justify-center ${
                 page === 1
                     ? "text-gray-300 pointer-events-none"
@@ -37,6 +38,7 @@ export default function Pagination({ data }) {
         {/* 이전 */}
         <Link
             href={createPageLink(page - 1)}
+            scroll={false}
             className={`w-8 h-8 border rounded flex items-center justify-center ${
                 !hasPrev
                     ? "text-gray-300 pointer-events-none"
@@ -51,6 +53,7 @@ export default function Pagination({ data }) {
           {/* 페이지 번호 */}
           {pageList.map((num) => (
               <Link
+                  scroll={false}
                   key={num}
                   href={createPageLink(num)}
                   className={`w-8 h-8 flex items-center justify-center rounded text-sm ${
@@ -66,6 +69,7 @@ export default function Pagination({ data }) {
         {/* 다음 */}
         <Link
             href={createPageLink(page + 1)}
+            scroll={false}
             className={`w-8 h-8 border rounded flex items-center justify-center ${
                 !hasNext
                     ? "text-gray-300 pointer-events-none"
@@ -78,6 +82,7 @@ export default function Pagination({ data }) {
         {/* 마지막으로 */}
         <Link
             href={createPageLink(totalPages)}
+            scroll={false}
             className={`w-8 h-8 border rounded flex items-center justify-center ${
                 page === totalPages
                     ? "text-gray-300 pointer-events-none"
