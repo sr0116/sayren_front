@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import RefundRequestButton from "@/components/refund/RefundRequestButton";
 
 export default function PaymentDetail({ paymentId }) {
-  // 결제 상세 조회 (PaymentResponseDTO 반환)
   const { data: payment, isLoading, isError } = useApiQuery(
       ["paymentDetail", paymentId],
       `/api/user/payments/${paymentId}`
@@ -13,6 +12,8 @@ export default function PaymentDetail({ paymentId }) {
 
   if (isLoading) return <div>불러오는 중...</div>;
   if (isError) return <div>결제 상세 조회 실패</div>;
+
+  const isRental = payment.orderPlanType === "RENTAL";
 
   return (
       <div className="space-y-3">
@@ -41,13 +42,18 @@ export default function PaymentDetail({ paymentId }) {
             </p>
         )}
 
-        {/* 환불 요청 버튼 */}
-        <RefundRequestButton
-            paymentId={payment.paymentId}
-            paymentStatus={payment.paymentStatus}
-            refundStatus={payment.refundStatus}
-        />
-
+        {/* 환불 요청 버튼 or 안내 */}
+        {isRental ? (
+            <p className="text-sm text-gray-500">
+              구독(렌탈) 결제는 환불 요청이 불가합니다. 구독 내역에서 확인 부탁드립니다.
+            </p>
+        ) : (
+            <RefundRequestButton
+                paymentId={payment.paymentId}
+                paymentStatus={payment.paymentStatus}
+                refundStatus={payment.refundStatus}
+            />
+        )}
       </div>
   );
 }

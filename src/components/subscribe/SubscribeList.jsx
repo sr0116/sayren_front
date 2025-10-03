@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 
 export default function SubscribeList() {
   const router = useRouter();
-
+ // key로 설정 해두면 key를 삭제해 버리면 얘가 다시 불러와짐
   // 내 구독 목록 API 호출
   const { data, isLoading, isError } = useMySubscribesQuery();
   const subscribes = Array.isArray(data) ? data : data?.list ?? [];
