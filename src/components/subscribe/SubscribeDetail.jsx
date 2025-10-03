@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useApiQuery } from "@/hooks/useApi";
+import { useCancelSubscribeMutation } from "@/api/subscribeApi";
 import Button from "@/components/common/Button";
 import dayjs from "dayjs";
 
@@ -13,14 +14,29 @@ export default function SubscribeDetail({ subscribeId }) {
       `/api/user/subscribes/${subscribeId}`
   );
 
+  const cancelMutation = useCancelSubscribeMutation(subscribeId, {
+    onSuccess: () => {
+      alert("구독 취소 요청이 접수되었습니다.");
+      router.push("/mypage/subscribe");
+    },
+    onError: () => alert("구독 취소 요청에 실패했습니다."),
+  });
+
   if (isLoading) return <div>불러오는 중...</div>;
   if (isError) return <div>구독 상세 조회 실패</div>;
+
+  const handleCancel = () => {
+    if (confirm("정말로 구독 취소를 요청하시겠습니까?")) {
+      cancelMutation.mutate({});
+    }
+  };
+
+  const isActive = subscribe.status === "ACTIVE";
 
   return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold">구독 상세</h2>
-
         </div>
 
         <p>구독 ID: {subscribe.subscribeId}</p>
@@ -39,14 +55,26 @@ export default function SubscribeDetail({ subscribeId }) {
         <Button
             variant="primary"
             onClick={() => router.push(`/mypage/subscribe/${subscribeId}/rounds`)}
+            disabled={subscribe.status === "FAILED"} //  FAILED 상태면 비활성화
         >
-          회차 보기
+          {subscribe.status === "FAILED" ? "회차 조회 불가(구독 실패)" : "회차 보기"}
         </Button>
+
+
+        {/* 구독 취소 요청 버튼 */}
+        <Button
+            variant="secondary"
+            onClick={handleCancel}
+            disabled={!isActive} // ACTIVE일 때만 활성화
+        >
+          {isActive ? "구독 취소 요청" : "구독 취소 불가(구독 활성화 시만 가능)"}
+        </Button>
+
         {/* 뒤로가기 버튼 */}
         <Button
             variant="outline"
             onClick={() => router.push("/mypage/subscribe")}
-            className="w-auto px-4 py-2 text-sm"
+            className="w-auto px-4 py-2 "
         >
           구독 목록으로
         </Button>

@@ -74,7 +74,7 @@ export default function PaymentButton({ orderItemId }) {
       <button
           onClick={handleClick}
           disabled={loading}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-red-500 text-white rounded"
       >
         {loading ? "결제 진행중..." : "결제하기"}
       </button>
