@@ -3,14 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 //  장바구니 담기
 export function useAddCartItemMutation(options) {
-  const queryClient = useQueryClient();
-  return useApiMutation("POST", "/api/user/cart/add-item", {
-    ...options,
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries(["cart"]); // 장바구니 최신화
-      options?.onSuccess?.(data, variables, context);
-    },
-  });
+  return useApiMutation("POST", "/api/user/cart/add-item", { options });
 }
 
 //  장바구니 조회

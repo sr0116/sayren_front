@@ -3,7 +3,7 @@
 import { useCartItemsQuery } from "@/api/cartApi";
 import ClearCartButton from "@/components/order/ClearCartButton";
 
-export default function CartPage() {
+export default function Page() {
   // 장바구니 데이터 불러오기
   const { data: items = [], isLoading, isError } = useCartItemsQuery();
 
