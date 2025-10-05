@@ -24,7 +24,7 @@ const menuGroups = [
       { name: "구독 내역", href: "/admin/subscribe/list" },
       { name: "결제 내역", href: "/admin/payments/list" },
       { name: "환불 요청 관리", href: "/admin/refund/list" },
-      { name: "정기결제 회차 관리", href: "/admin/subscribe/rounds" },
+      { name: "구독 취소 요청 관리", href: "/admin/subscribe/cancel" },
     ],
   },
   {
