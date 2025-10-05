@@ -51,17 +51,6 @@ export const completePayment = async ({ paymentId, impUid }) => {
   }
 };
 
-// 환불 요청
-// export const refundPayment = async ({ paymentId }) => {
-//   try {
-//     const data = await api.post(`/api/payments/${paymentId}/refund`, {});
-//     return data;
-//   } catch (err) {
-//     console.error("환불 요청 실패:", err);
-//     throw err;
-//   }
-// };
-
 // 최근 결제 요약 조회
 export const getRecentPayments = async () => {
   try {
@@ -116,4 +105,9 @@ export function usePaymentByIdQuery(paymentId, options) {
   return useApiQuery(["payment", paymentId], `/api/user/payments/${paymentId}`, {
     options,
   });
+}
+
+// 관리자: 전체 결제 내역 조회
+export function useAllPaymentsForAdminQuery(options) {
+  return useApiQuery("allPayments", "/api/admin/payments", { options });
 }

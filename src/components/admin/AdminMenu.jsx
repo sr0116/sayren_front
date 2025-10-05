@@ -19,12 +19,12 @@ const menuGroups = [
     ],
   },
   {
-    title: "구독 / 결제",
+    title: "구독 / 결제 관리",
     items: [
-      { name: "구독 내역", href: "/mypage/subscribe" },
-      { name: "주문 내역", href: "/mypage/order" },
-      { name: "결제 내역", href: "/mypage/payment" },
-      { name: "취소 내역", href: "/mypage/cansle" },
+      { name: "구독 내역", href: "/admin/subscribe/list" },
+      { name: "결제 내역", href: "/admin/payments/list" },
+      { name: "환불 요청 관리", href: "/admin/refund/list" },
+      { name: "정기결제 회차 관리", href: "/admin/subscribe/rounds" },
     ],
   },
   {
