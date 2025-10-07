@@ -65,19 +65,13 @@ export default function SubscribeDetail({ subscribeId }) {
     if (status === "FAILED") {
       if (reasonCode === "PAYMENT_FAILURE") return "결제 실패 - 취소 불가";
       if (reasonCode === "PAYMENT_TIMEOUT") return "결제 시간 초과 - 취소 불가";
-      return "구독 실패 - 취소 불가";
+      return "구독 실패 - 구독 불가";
     }
 
     if (status === "OVERDUE") {
       if (reasonCode === "PAYMENT_FAILURE") return "연체 중 - 결제 후 복구 가능";
       return "연체 중";
     }
-
-    if (status === "PREPARING") {
-      if (reasonCode === "USER_REQUEST") return "배송 전 취소 요청 중";
-      return "배송 준비 중 - 취소 요청 가능";
-    }
-
     return "취소 불가 상태";
   };
 

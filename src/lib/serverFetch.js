@@ -20,8 +20,8 @@ export async function callSpringAPI(req, url, method = "GET") {
           ...(accessToken && {Authorization: `Bearer ${accessToken}`}),
         },
         body: ["POST", "PUT", "PATCH", "DELETE"].includes(method)
-          ? JSON.stringify(await req.json().catch(() => null))
-          : undefined,
+            ? JSON.stringify(await req.json().catch(() => null))
+            : undefined,
         cache: "no-store",
         credentials: "include",
       });
@@ -31,14 +31,14 @@ export async function callSpringAPI(req, url, method = "GET") {
     const tryRefresh = async () => {
       if (!refreshToken) return null;
       const refreshRes = await
-        fetch(`${BASE_URL}/api/auth/refresh`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `SR_REFRESH=${refreshToken}`,
-          },
-          credentials: "include",
-        });
+          fetch(`${BASE_URL}/api/auth/refresh`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Cookie: `SR_REFRESH=${refreshToken}`,
+            },
+            credentials: "include",
+          });
       if (!refreshRes.ok) return null;
       const refreshData = await refreshRes.json();
       return refreshData.accessToken;
@@ -78,8 +78,8 @@ export async function callSpringAPI(req, url, method = "GET") {
   } catch (err) {
     console.error(`Spring API 호출 실패: [${method}] ${url}`, err);
     return NextResponse.json(
-      {error: "Internal Server Error"},
-      {status: 500}
+        {error: "Internal Server Error"},
+        {status: 500}
     );
   }
 }
@@ -87,8 +87,8 @@ export async function callSpringAPI(req, url, method = "GET") {
 async function buildResponse(res, newToken) {
   const contentType = res.headers.get("content-type");
   const data = contentType?.includes("application/json")
-    ? await res.json()
-    : await res.text();
+      ? await res.json()
+      : await res.text();
 
   const response = NextResponse.json(data, {status: res.status});
 
