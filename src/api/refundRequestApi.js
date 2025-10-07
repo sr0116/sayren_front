@@ -44,7 +44,7 @@ export function useMyRefundRequestsQuery(options) {
 export function useAllRefundRequestsQuery(options) {
   return useApiQuery(
       "allRefundRequests",
-      "/api/user/admin/refunds/requests",
+      "/api/admin/refunds/requests",
       { options }
   );
 }
@@ -54,7 +54,7 @@ export function useProcessRefundRequestMutation(options) {
   return useApiMutation(
       "POST",
       (params) =>
-          `/api/user/admin/refunds/requests/${params.id}/process?status=${params.status}&reasonCode=${params.reasonCode}`,
+          `/api/admin/refunds/requests/${params.id}/process?status=${params.status}&reasonCode=${params.reasonCode}`,
       {
         invalidateKeys: ["allRefundRequests"],
         options,
