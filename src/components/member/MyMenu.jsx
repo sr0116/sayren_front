@@ -32,8 +32,9 @@ const menuGroups = [
     ],
   },
   {
-    title: "문의 / 댓글",
+    title: "문의 / 댓글 / 알림",
     items: [
+      { name: "알림", href: "/mypage/notification" },
       { name: "문의 내역", href: "/mypage/posts" },
       { name: "내 댓글", href: "/mypage/replies" },
     ],
