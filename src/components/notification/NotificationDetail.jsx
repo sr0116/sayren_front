@@ -11,7 +11,7 @@ export default function NotificationDetail() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  //  PortOne SDK 로드 (한 번만 실행)
+  // SDK 로드
   useEffect(() => {
     if (!window.IMP) {
       const script = document.createElement("script");
@@ -21,27 +21,23 @@ export default function NotificationDetail() {
     }
   }, []);
 
-  //  React Query 기반 단일 알림 조회
-  const {
-    data: notification,
-    isLoading,
-    isError,
-  } = useNotificationDetailQuery(id);
+  const { data: notification, isLoading, isError } = useNotificationDetailQuery(id);
 
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError || !notification)
-    return <div>알림 정보를 불러올 수 없습니다.</div>;
+  if (isError || !notification) return <div>알림 정보를 불러올 수 없습니다.</div>;
 
-  //  원클릭 결제 로직
+  //  타입 분기 로직
+  const isPaymentNotice = notification.type === "SUBSCRIBE";
+  const isDeliveryNotice = notification.type === "DELIVERY";
+  const isRefundNotice = notification.type === "PAYMENT";
+
+  //  원클릭 결제 처리
   const handleQuickPay = async () => {
     try {
       setLoading(true);
 
-      // 예: linkUrl = "/mypage/subscribe/266"
       const roundId = parseInt(notification.linkUrl.split("/").pop(), 10);
-      if (isNaN(roundId)) {
-        throw new Error("linkUrl에서 회차 ID를 찾을 수 없습니다.");
-      }
+      if (isNaN(roundId)) throw new Error("linkUrl에서 회차 ID를 찾을 수 없습니다.");
 
       const paymentData = await prepareRoundPayment(roundId);
       const IMP = window.IMP;
@@ -90,19 +86,41 @@ export default function NotificationDetail() {
     }
   };
 
+  //  이동 (기본 알림용)
+  const handleNavigate = () => {
+    if (notification.linkUrl) {
+      router.push(notification.linkUrl);
+    } else {
+      router.push("/mypage/notification");
+    }
+  };
+
   return (
-      <div className="max-w-lg mx-auto space-y-4">
+      <div className="max-w-lg mx-auto space-y-5">
         <h2 className="text-xl font-semibold">{notification.title}</h2>
-        <p className="text-gray-700">{notification.message}</p>
+        <p className="text-gray-700 whitespace-pre-line">{notification.message}</p>
 
-        <button
-            onClick={() => router.back()}
-            className="text-sm text-gray-600 underline"
-        >
-          ← 목록으로 돌아가기
-        </button>
+        {/* 기본 버튼 */}
+        <div className="flex items-center justify-between">
+          <button
+              onClick={() => router.back()}
+              className="text-sm text-gray-600 underline"
+          >
+            ← 목록으로 돌아가기
+          </button>
 
-        {notification.type === "SUBSCRIBE" && (
+          {!isPaymentNotice && (
+              <button
+                  onClick={handleNavigate}
+                  className="text-sm text-gray-600 underline"
+              >
+                관련 페이지로 이동 →
+              </button>
+          )}
+        </div>
+
+        {/*  구독 결제용 (원클릭 결제 버튼) */}
+        {isPaymentNotice && (
             <button
                 disabled={loading}
                 onClick={handleQuickPay}
@@ -113,6 +131,14 @@ export default function NotificationDetail() {
               {loading ? "결제 중..." : "원클릭 결제"}
             </button>
         )}
+
+        {/*  배송 완료 등 단순 알림용 */}
+        {isDeliveryNotice && (
+            <div className="mt-4 text-sm text-gray-600">
+              상품 배송 또는 회수와 관련된 알림입니다.
+            </div>
+        )}
+
       </div>
   );
 }
