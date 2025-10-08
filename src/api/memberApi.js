@@ -43,5 +43,36 @@ export function useSocialDisconnectMutation(options) {
   return useApiMutation("POST", "api/user/member/social-disconnect", { options });
 }
 
+// ========================================== 관리자 기능 ===============================================
 
+// 이름 변경
+export function useAdminNameChangeMutation(options) {
+  return useApiMutation("PATCH", "api/admin/member/modify-name", { options });
+}
+
+// 전화번호 변경
+export function useAdminTelChangeMutation(options) {
+  return useApiMutation("PATCH", "api/admin/member/modify-tel", { options });
+}
+
+// 권한 변경
+export function useAdminRoleChangeMutation(options) {
+  return useApiMutation("PATCH", "api/admin/member/modify-role", { options });
+}
+
+export function useAdminStatusChangeMutation(options) {
+  return useApiMutation("PATCH", "api/admin/member/modify-status", { options });
+}
+
+
+
+// 소셜 연동 제거
+export function useAdminProviderDeleteMutation(options) {
+  return useApiMutation("DELETE", "api/admin/member/delete-provider", { options });
+}
+
+// 2fa 연동 제거
+export function useAdmin2faDeleteMutation(options) {
+  return useApiMutation("DELETE", "api/admin/member/delete-2fa", { options });
+}
 

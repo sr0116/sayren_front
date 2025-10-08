@@ -13,14 +13,14 @@ import MemberRoleChange from "@/components/admin/member/MemberRoleChange";
 export default function MemberCard({ member, memberId }) {
   if (!member) return null;
 
-
+  const disable = member.status === "DELETED";
 
   return (
       <div className="w-full flex flex-col gap-4">
         {/* 이름 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">이름</p>
-          <MemberNameChange name={member.name} memberId={memberId} />
+          <MemberNameChange name={member.name} memberId={memberId} disabled={disable} />
           {/*<TextInput name="name" value={member.name} className="flex-1" />*/}
         </div>
 
@@ -33,7 +33,7 @@ export default function MemberCard({ member, memberId }) {
         {/* 전화번호 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">전화번호</p>
-          <MemberTelChange tel={member.tel} memberId={memberId} />
+          <MemberTelChange tel={member.tel} memberId={memberId} disabled={disable} />
         </div>
 
         {/* 상태 */}
@@ -45,7 +45,7 @@ export default function MemberCard({ member, memberId }) {
         {/* 권한 */}
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
           <p className="w-[120px] font-medium text-gray-500 shrink-0">권한</p>
-          <MemberRoleChange roles={member.roles} memberId={memberId}/>
+          <MemberRoleChange roles={member.roles} memberId={memberId} disabled={disable}/>
         </div>
 
         {/* 가입일 + 수정일 */}
