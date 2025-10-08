@@ -6,7 +6,6 @@ import SortableHeader from "@/components/common/SortableHeader";
 
 export default function MemberTable({members}) {
 
-
   return (
       <div className="w-full">
         {/* Desktop Table */}
@@ -32,7 +31,7 @@ export default function MemberTable({members}) {
             </tr>
             </thead>
             <tbody>
-            {members.map((m) => (
+            {members && members.map((m) => (
                 <tr key={m.id}>
                   <td className="px-4 py-2 border-b">
                     <Link href={`/admin/member/detail/${m.id}`} className="hover:underline">
@@ -65,7 +64,7 @@ export default function MemberTable({members}) {
 
         {/* Mobile Cards */}
         <div className="block md:hidden space-y-4">
-          {members.map((m) => (
+          {members && members.map((m) => (
               <div
                   key={m.id}
                   className="border rounded-lg p-4 shadow-sm bg-white"
