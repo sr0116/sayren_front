@@ -19,6 +19,7 @@ export default function SortableHeader({ column, label }) {
   return (
       <Link
           href={`?${params.toString()}`}
+          scroll={false}
           className="flex items-center space-x-1 hover:underline"
       >
         <span>{label}</span>

@@ -7,8 +7,8 @@ import {useApiQuery} from "@/hooks/useApi";
 export default function MemberListPage(){
   const { pageParams } = usePageParams();
   const { data, isLoading, isError } = useApiQuery(
-      ["members"],
-      `/api/admin/member/get-list`,
+      ["delete-members"],
+      `/api/admin/member/get-deletelist`,
       {
         params: pageParams,
         options: {
