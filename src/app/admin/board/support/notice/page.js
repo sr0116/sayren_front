@@ -8,7 +8,17 @@ export default function NoticePage() {
   const [notices, setNotices] = useState([]);
 
 
+  const { data, isLoading, isError } = useApiQuery(
+    ["reviews"],
+    "/api/user/reviews/list",
+    {
+      params: { page: 1, size: 10 },
+      options: { staleTime: 1000 * 60 }
+    }
+  );
 
+  if(isLoading) return (<div>로딩중...</div>)
+  if(isError) return (<div>데이터 불러오기 실패</div>)
 
 
   return (

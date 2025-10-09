@@ -48,8 +48,8 @@ export default function ProductCardRental({ product }) {
         </div>
 
         <div className="mt-3">
-          <span className="text-gray-400 line-through text-sm">{price?.toLocaleString()}원</span>
-          <p className="text-lg font-bold text-[#ff0066] line-clamp-1">월 {rentalPrice?.toLocaleString()}원 (24개월)</p>
+          {/*<span className="text-gray-400 line-through text-sm">{price?.toLocaleString()}원</span>*/}
+          <p className="text-lg font-bold text-[#ff0066] line-clamp-1">월 {rentalPrice?.toLocaleString()}원 </p>
         </div>
       </div>
     </div>
