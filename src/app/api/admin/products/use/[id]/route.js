@@ -19,4 +19,5 @@ export async function POST(req, { params }) {
         console.error("프록시 에러:", err);
         return NextResponse.json({ error: "서버 에러" }, { status: 500 });
     }
+
 }
