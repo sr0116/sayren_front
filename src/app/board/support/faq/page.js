@@ -10,12 +10,6 @@ export default function FaqPage() {
   const [openId, setOpenId] = useState(null);
   const [filter, setFilter] = useState("전체");
 
-    // 페이징 상태
-    const [page, setPage] = useState(1);
-    const [size] = useState(10);
-    const [pageList, setPageList] = useState([]);
-    const [prev, setPrev] = useState(false);
-    const [next, setNext] = useState(false)
 
   const { data, isLoading, isError } = useApiQuery(
     ["reviews"],
@@ -25,17 +19,6 @@ export default function FaqPage() {
       options: { staleTime: 1000 * 60 }
     }
   );
-
-  useEffect(() => {
-    if(data == null) return;
-
-    setReviews(data.list);        // 리뷰 배열
-    setPage(data.page);
-    setPageList(data.pageList);
-    setPrev(data.prev);
-    setNext(data.next);
-    setTotal(data.total);
-  }, [data])
 
   if(isLoading) return (<div>로딩중...</div>)
   if(isError) return (<div>데이터 불러오기 실패</div>)
@@ -104,14 +87,6 @@ export default function FaqPage() {
         ))}
       </div>
 
-        {/* 공통 페이지네이션 */}
-        <Pagination
-            page={page}
-            pageList={pageList}
-            prev={prev}
-            next={next}
-            setPage={setPage}
-        />
     </div>
   );
 }
