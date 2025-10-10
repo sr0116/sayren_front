@@ -43,9 +43,28 @@ export default function ProductDetail({ product, productId }) {
             {product.productCategory} | {product.modelName}
           </p>
 
-          {/* 무료배송 */}
-          <div className="border-t border-b border-gray-200 py-3">
-            <span className="font-medium text-gray-700">무료배송</span>
+          {/* 계약기간 */}
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">계약기간</p>
+            <div className="flex gap-2">
+              {[24, 36, 48].map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setContractMonths(m)}
+                  className={`px-4 py-2 border rounded 
+                    ${contractMonths === m ? "border-black font-bold" : "border-gray-300"}`}
+                >
+                  {m}개월
+                </button>
+              ))}
+            </div>
+          </div>
+
+
+          {/* 렌탈 금액 */}
+          <div className="mt-3">
+            <span className="text-gray-400 line-through text-sm">{price?.toLocaleString()}원</span>
+            <p className="text-lg font-bold text-[#ff0066] line-clamp-1">월 {rentalPrice?.toLocaleString()}원 (24개월)</p>
           </div>
 
           {/* 총 금액 */}
@@ -65,7 +84,7 @@ export default function ProductDetail({ product, productId }) {
               장바구니 담기
             </Button>
             <Button className="bg-[#ff0066] text-white px-6 py-2 rounded">
-              바로 구매
+              구독 신청
             </Button>
           </div>
         </div>

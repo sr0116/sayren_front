@@ -121,14 +121,6 @@ export default function ReviewListPage() {
         ))}
       </div>
 
-      {/* 공통 페이지네이션 */}
-      {/*<Pagination*/}
-      {/*    page={page}*/}
-      {/*    pageList={pageList}*/}
-      {/*    prev={prev}*/}
-      {/*    next={next}*/}
-      {/*    setPage={setPage}*/}
-      {/*/>*/}
     </div>
   );
 }
