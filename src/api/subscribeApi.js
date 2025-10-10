@@ -94,3 +94,23 @@ export function useSubscribeRoundDetailQuery(subscribeId, roundNo, options) {
       { options }
   );
 }
+
+// 관리자: 전체 구독 조회
+export function useAllSubscribesForAdminQuery(options) {
+  return useApiQuery("allSubscribes", "/api/admin/subscribes", { options });
+}
+
+// 관리자: 구독 취소 승인/거절 처리
+export function useProcessSubscribeCancelMutation(options) {
+  return useApiMutation(
+      "POST",
+      (params) =>
+          `/api/admin/subscribes/${params.id}/cancel?status=${params.status}&reasonCode=${params.reasonCode}`,
+      {
+        invalidateKeys: ["allSubscribes"],
+        options,
+      }
+  );
+}
+
+
