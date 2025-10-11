@@ -5,12 +5,10 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import AddToCartButton from "@/components/order/AddToCartButton";
 import { useRouter } from "next/navigation";
-import ProductDetailDescription from "@/components/product/ProductDetailDescription";
 
 export default function ProductDetailPage({ params }) {
   const router = useRouter();
   const [product, setProduct] = useState(null);
-
 
   // 클라이언트에서 fetch
   useEffect(() => {
@@ -85,9 +83,6 @@ export default function ProductDetailPage({ params }) {
           </div>
         </div>
       </div>
-
-      {/* 상세 설명 */}
-      <ProductDetailDescription html={product.cleanDescription} />
     </div>
   );
 }
