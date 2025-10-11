@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import AddToCartButton from "@/components/order/AddToCartButton";
 import { useRouter } from "next/navigation";
+import ProductDetailDescription from "@/components/product/ProductDetailDescription";
 
 export default function ProductDetailPage({ params }) {
   const router = useRouter();
@@ -86,41 +87,7 @@ export default function ProductDetailPage({ params }) {
       </div>
 
       {/* 상세 설명 */}
-      <div className="border-t border-gray-200 pt-8">
-        <h2 className="text-3xl font-bold mb-35 text-gray-900 tracking-tigh">상품 상세정보</h2>
-
-        <div
-            className="
-              space-y-20
-              [&_p]:text-center [&_p]:text-gray-900 [&_p]:font-semibold
-              [&_p]:text-[21px] [&_p]:leading-[1.8] [&_p]:tracking-tight
-              [&_p]:max-w-4xl [&_p]:mx-auto [&_p]:my-10
-              [&_img]:rounded-2xl [&_img]:my-14 [&_img]:mx-auto [&_img]:shadow-sm
-              [&_img]:w-full [&_img]:max-w-[900px]
-            "
-        >
-          {(() => {
-            // <p>태그랑 <img>태그 따로 뽑기
-            const paragraphs =
-                product.cleanDescription?.match(/<p>.*?<\/p>/gs) || [];
-            const images =
-                product.cleanDescription?.match(/<img.*?>/gs) || [];
-
-            // 글과 이미지를 번갈아 섞기
-            const merged = [];
-            const max = Math.max(paragraphs.length, images.length);
-            for (let i = 0; i < max; i++) {
-              if (paragraphs[i]) merged.push(paragraphs[i]);
-              if (images[i]) merged.push(images[i]);
-            }
-
-            // 섞은 결과 렌더링
-            return merged.map((html, idx) => (
-                <div key={idx} dangerouslySetInnerHTML={{ __html: html }} />
-            ));
-          })()}
-        </div>
-      </div>
+      <ProductDetailDescription html={product.cleanDescription} />
     </div>
   );
 }
