@@ -7,55 +7,73 @@ import { openModal, closeModal } from "@/store/modalSlice";
 import { queryClient } from "@/lib/queryClient";
 import Button from "@/components/common/Button";
 import { useCreateOrderMutation } from "@/api/orderApi";
+import AddressModal from "@/components/address/AddressModal";
 
 export default function CheckoutPage() {
     const router = useRouter();
-    const { id } = useParams(); // 상품 ID
+    const { id } = useParams();
     const searchParams = useSearchParams();
     const planId = searchParams.get("planId");
-
     const dispatch = useDispatch();
 
-    // 배송 입력값
     const [receiverName, setReceiverName] = useState("");
     const [receiverTel, setReceiverTel] = useState("");
     const [zipcode, setZipcode] = useState("");
     const [detail, setDetail] = useState("");
     const [memo, setMemo] = useState("");
 
+    //  배송지 선택 시 자동 입력 처리
+    const handleSelectAddress = (addr) => {
+        if (!addr) return;
+        dispatch(closeModal());
+        setReceiverName(addr.name || "");
+        setReceiverTel(addr.tel || "");
+        setZipcode(addr.zipcode || "");
+        setDetail(addr.address || "");
+        setMemo(addr.memo || "");
+    };
+
     // 주문 생성 Mutation
     const createOrderMutation = useCreateOrderMutation({
         onSuccess: (res) => {
-            dispatch(openModal({
-                content: (
-                    <div className="flex flex-col justify-center items-center gap-4">
-                        <p>주문이 정상적으로 생성되었습니다.</p>
-                        <Button variant="primary" onClick={() => {
-                            dispatch(closeModal());
-                            router.push(`/order/history/${res.orderId}`);
-                        }}>
-                            주문 내역 보기
-                        </Button>
-                    </div>
-                )
-            }));
+            dispatch(
+                openModal({
+                    content: (
+                        <div className="flex flex-col justify-center items-center gap-4">
+                            <p>주문이 정상적으로 생성되었습니다.</p>
+                            <Button
+                                variant="primary"
+                                onClick={() => {
+                                    dispatch(closeModal());
+                                    router.push(`/order/history/${res.orderId}`);
+                                }}
+                            >
+                                주문 내역 보기
+                            </Button>
+                        </div>
+                    ),
+                })
+            );
             queryClient.invalidateQueries(["orders"]);
         },
         onError: (err) => {
             console.error("주문 생성 실패:", err);
-            dispatch(openModal({
-                content: (
-                    <div className="flex flex-col justify-center items-center gap-4">
-                        <p>주문 생성에 실패했습니다.</p>
-                        <Button variant="primary" onClick={() => dispatch(closeModal())}>
-                            확인
-                        </Button>
-                    </div>
-                )
-            }));
+            dispatch(
+                openModal({
+                    content: (
+                        <div className="flex flex-col justify-center items-center gap-4">
+                            <p>주문 생성에 실패했습니다.</p>
+                            <Button variant="primary" onClick={() => dispatch(closeModal())}>
+                                확인
+                            </Button>
+                        </div>
+                    ),
+                })
+            );
         },
     });
 
+    // 주문 버튼 클릭 시
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -66,7 +84,6 @@ export default function CheckoutPage() {
 
         createOrderMutation.mutate({
             data: {
-                addressId: 1, // 기본주소 (나중에 선택 UI 연동)
                 receiverName,
                 receiverTel,
                 zipcode,
@@ -87,6 +104,24 @@ export default function CheckoutPage() {
                 <p>요금제: {planId === "1" ? "구매" : "렌탈"}</p>
             </div>
 
+            {/*  배송지 선택 버튼 */}
+            <div className="mb-6">
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() =>
+                        dispatch(
+                            openModal({
+                                content: <AddressModal onSelect={handleSelectAddress} />,
+                            })
+                        )
+                    }
+                >
+                    배송지를 선택해주세요
+                </Button>
+            </div>
+
+            {/*  주문 폼 */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label>수령인 *</label>
@@ -96,6 +131,7 @@ export default function CheckoutPage() {
                         className="border rounded w-full p-2"
                     />
                 </div>
+
                 <div>
                     <label>연락처 *</label>
                     <input
@@ -104,6 +140,7 @@ export default function CheckoutPage() {
                         className="border rounded w-full p-2"
                     />
                 </div>
+
                 <div>
                     <label>우편번호 *</label>
                     <input
@@ -112,6 +149,7 @@ export default function CheckoutPage() {
                         className="border rounded w-full p-2"
                     />
                 </div>
+
                 <div>
                     <label>상세 주소 *</label>
                     <input
@@ -120,6 +158,7 @@ export default function CheckoutPage() {
                         className="border rounded w-full p-2"
                     />
                 </div>
+
                 <div>
                     <label>배송 메모</label>
                     <input
