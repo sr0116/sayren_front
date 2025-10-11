@@ -11,7 +11,7 @@ import StatusBadge from "@/components/common/StatusBadge";
 import EmptyState from "@/components/common/EmptyState";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 
-export default function AdminSubscribeCancelList() {
+export default function AdminSubscribeCancel() {
   const { data: subscribes = [], isLoading, isError } =
       useAllSubscribesForAdminQuery();
   const dispatch = useDispatch();

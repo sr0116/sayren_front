@@ -4,14 +4,16 @@ import {useQueryClient} from "@tanstack/react-query";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import Button from "@/components/common/Button";
 import {openModal} from "@/store/modalSlice";
+import {useRef, useState} from "react";
+import {getEnumOptions} from "@/utils/enumOptions";
+import RefundReasonForm from "@/components/refund/RefundReasonForm";
 
-export default function RefundRequestButton({
-                                              paymentId,
-                                              paymentStatus,
-                                              refundStatus,
-                                            }) {
+export default function RefundRequestButton({paymentId, paymentStatus, refundStatus,}) {
+
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const [selectedReason, setSelectedReason] = useState("USER_REQUEST");
+  const reasonOptions = getEnumOptions("ReasonCode");
 
   const createRefundMutation = useCreateRefundRequestMutation({
     onSuccess: () => {
@@ -37,17 +39,15 @@ export default function RefundRequestButton({
       );
     },
   });
-
+  // 환불 요청
   const handleRefund = () => {
     createRefundMutation.mutate({
-      data: {
-        paymentId,
-        reasonCode: "USER_REQUEST",
-      },
+      data: { paymentId, reasonCode: selectedReason },
     });
   };
 
-
+  // 모달
+  const reasonRef = useRef(null);
 
   const handleClick = () => {
     dispatch(
@@ -55,13 +55,18 @@ export default function RefundRequestButton({
           content: (
               <ConfirmDialog
                   title="환불 요청"
-                  message="이 결제 건에 대해 환불을 요청하시겠습니까?"
-                  onConfirm={handleRefund}
+                  message={<RefundReasonForm ref={reasonRef} />}
+                  onConfirm={() => {
+                    const selected = reasonRef.current?.getSelectedReason();
+                    setSelectedReason(selected);
+                    handleRefund();
+                  }}
               />
           ),
         })
     );
   };
+
 
   // 버튼 상태 분기
   let disabled = false;

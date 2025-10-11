@@ -1,103 +1,159 @@
 "use client";
 
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { useApiQuery } from "@/hooks/useApi";
 import { useCancelSubscribeMutation } from "@/api/subscribeApi";
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/common/Button";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { openModal } from "@/store/modalSlice";
 import dayjs from "dayjs";
+import SubscribeCancelForm from "@/components/subscribe/SubscribeCancelForm";
 
 export default function SubscribeDetail({ subscribeId }) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const reasonRef = useRef(null);
 
+  //  구독 상세 조회
   const { data: subscribe, isLoading, isError } = useApiQuery(
       ["subscribeDetail", subscribeId],
       `/api/user/subscribes/${subscribeId}`
   );
 
+  //  구독 취소 요청 Mutation
   const cancelMutation = useCancelSubscribeMutation(subscribeId, {
     onSuccess: () => {
-      alert("구독 취소 요청이 접수되었습니다.");
-      // 캐시 즉시 갱신
       queryClient.invalidateQueries(["subscribeDetail", subscribeId]);
       queryClient.invalidateQueries(["mySubscribes"]);
+
+      dispatch(
+          openModal({
+            content: (
+                <ConfirmDialog
+                    title="취소 요청 완료"
+                    message="구독 취소 요청이 정상적으로 접수되었습니다."
+                    hideCancel
+                />
+            ),
+          })
+      );
     },
     onError: (error) => {
       const msg =
-          error?.response?.data?.message || "구독 취소 요청 중 오류가 발생했습니다.";
+          error?.response?.data?.message ||
+          "구독 취소 요청 중 오류가 발생했습니다.";
       alert(msg);
     },
   });
 
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError) return <div>구독 상세 조회 실패</div>;
+  if (isError || !subscribe) return <div>구독 상세 조회 실패</div>;
 
+  //  취소 가능 조건 (status + reasonCode 기반)
+  const isCancelable =
+      subscribe.status === "ACTIVE" &&
+      ![
+        "USER_REQUEST",     // 이미 사용자 취소 요청 중
+        "RETURN_REQUEST",   // 회수 요청 중
+        "RETURN_DELAY",     // 회수 지연
+        "RETURN_FAILED",    // 회수 실패
+      ].includes(subscribe.reasonCode) &&
+      !cancelMutation.isLoading;
+
+  //  구독 취소 버튼 클릭 시
   const handleCancel = () => {
-    if (cancelMutation.isLoading) return;
-    if (!confirm("정말로 구독 취소를 요청하시겠습니까?")) return;
-    cancelMutation.mutate({});
+    // 이미 취소 요청/회수 중인 경우
+    if (["USER_REQUEST", "RETURN_REQUEST"].includes(subscribe.reasonCode)) {
+      dispatch(
+          openModal({
+            content: (
+                <ConfirmDialog
+                    title="취소 요청 불가"
+                    message="이미 취소 또는 회수 요청이 진행 중입니다."
+                    hideCancel
+                />
+            ),
+          })
+      );
+      return;
+    }
+
+    // 정상 구독 상태 → 취소 사유 모달
+    if (isCancelable) {
+      dispatch(
+          openModal({
+            content: (
+                <ConfirmDialog
+                    title="구독 취소 요청"
+                    message={<SubscribeCancelForm ref={reasonRef} />}
+                    onConfirm={() => {
+                      const reasonCode = reasonRef.current?.getSelectedReason();
+                      cancelMutation.mutate({ data: { reasonCode } });
+                    }}
+                />
+            ),
+          })
+      );
+    } else {
+      // 그 외 취소 불가 상태
+      dispatch(
+          openModal({
+            content: (
+                <ConfirmDialog
+                    title="취소 불가 상태"
+                    message="현재 구독은 취소가 불가능한 상태입니다. 관리자에게 문의해주세요."
+                    hideCancel
+                />
+            ),
+          })
+      );
+    }
   };
 
-  // 상태 + 사유 기반 안내문
+  //  버튼 문구 처리
   const getCancelButtonLabel = () => {
-    if (cancelMutation.isLoading) return "요청 중...";
-
     const { status, reasonCode } = subscribe;
 
-    if (status === "ACTIVE") {
-      if (reasonCode === "USER_REQUEST") return "취소 요청 처리 중";
-      if (reasonCode === "RETURN_REQUEST") return "회수 요청 처리 중";
-      return "구독 취소 요청";
-    }
+    if (cancelMutation.isLoading) return "요청 중...";
+    if (status === "CANCELED") return "구독이 취소되었습니다";
+    if (status === "ENDED") return "구독이 종료되었습니다";
+    if (status === "OVERDUE") return "연체 중 (결제 후 복구 가능)";
+    if (["USER_REQUEST", "RETURN_REQUEST"].includes(reasonCode))
+      return "취소 요청 처리 중";
+    if (["RETURN_DELAY", "RETURN_FAILED"].includes(reasonCode))
+      return "회수 진행 중";
+    if (["CANCEL_REJECTED"].includes(reasonCode))
+      return "취소 거절됨 (재요청 가능)";
+    if (status === "ACTIVE") return "구독 취소 요청";
 
-    if (status === "CANCELED") {
-      if (reasonCode === "CONTRACT_CANCEL") return "계약이 해지된 구독입니다";
-      if (reasonCode === "ADMIN_FORCE_END") return "관리자에 의해 종료된 구독입니다";
-      return "구독이 취소되었습니다";
-    }
-
-    if (status === "ENDED") {
-      if (reasonCode === "EXPIRED") return "구독이 만료되었습니다";
-      return "종료된 구독입니다";
-    }
-
-    if (status === "FAILED") {
-      if (reasonCode === "PAYMENT_FAILURE") return "결제 실패 - 취소 불가";
-      if (reasonCode === "PAYMENT_TIMEOUT") return "결제 시간 초과 - 취소 불가";
-      return "구독 실패 - 구독 불가";
-    }
-
-    if (status === "OVERDUE") {
-      if (reasonCode === "PAYMENT_FAILURE") return "연체 중 - 결제 후 복구 가능";
-      return "연체 중";
-    }
     return "취소 불가 상태";
   };
 
-  const isCancelable =
-      subscribe.status === "ACTIVE" &&
-      subscribe.reasonCode !== "USER_REQUEST" &&
-      !cancelMutation.isLoading;
-
+  //  화면 렌더링
   return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold">구독 상세</h2>
         </div>
 
-        <p>구독 ID: {subscribe.subscribeId}</p>
-        <p>주문 아이템 ID: {subscribe.orderItemId}</p>
-        <p>상태: {subscribe.status}</p>
-        <p>사유 코드: {subscribe.reasonCode}</p>
-        <p>월 렌탈료: {subscribe.monthlyFeeSnapshot?.toLocaleString()}원</p>
-        <p>보증금: {subscribe.depositSnapshot?.toLocaleString()}원</p>
-        <p>총 기간: {subscribe.totalMonths}개월</p>
-        <p>신청일: {dayjs(subscribe.regDate).format("YYYY-MM-DD HH:mm")}</p>
-        <p>
-          기간: {dayjs(subscribe.startDate).format("YYYY-MM-DD")} ~{" "}
-          {dayjs(subscribe.endDate).format("YYYY-MM-DD")}
-        </p>
+        <div className="space-y-1 text-sm text-gray-700">
+          <p>구독 ID: {subscribe.subscribeId}</p>
+          <p>주문 아이템 ID: {subscribe.orderItemId}</p>
+          <p>상태: {subscribe.status}</p>
+          <p>사유 코드: {subscribe.reasonCode}</p>
+          <p>월 렌탈료: {subscribe.monthlyFeeSnapshot?.toLocaleString()}원</p>
+          <p>보증금: {subscribe.depositSnapshot?.toLocaleString()}원</p>
+          <p>총 기간: {subscribe.totalMonths}개월</p>
+          <p>신청일: {dayjs(subscribe.regDate).format("YYYY-MM-DD HH:mm")}</p>
+          <p>
+            기간: {dayjs(subscribe.startDate).format("YYYY-MM-DD")} ~{" "}
+            {dayjs(subscribe.endDate).format("YYYY-MM-DD")}
+          </p>
+        </div>
 
         {/* 회차 보기 버튼 */}
         <Button
@@ -119,6 +175,7 @@ export default function SubscribeDetail({ subscribeId }) {
           {getCancelButtonLabel()}
         </Button>
 
+        {/* 목록으로 */}
         <Button
             variant="outline"
             onClick={() => router.push("/mypage/subscribe")}
