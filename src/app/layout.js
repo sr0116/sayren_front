@@ -8,6 +8,7 @@ import Footer from "@/components/common/layout/Footer";
 import ToastContainer from "@/components/common/layout/ToastContainer";
 import Header from "@/components/common/layout/Header";
 import GlobalLoader from "@/components/common/loading/GlobalLoader";
+import Script from "next/script";
 import "react-quill/dist/quill.snow.css";
 
 
@@ -19,6 +20,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
       <html lang="ko">
+
+      <head>
+          {/*카카오 주소 API */}
+          <Script
+              src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+              strategy="beforeInteractive"
+          />
+      </head>
       <body className="flex flex-col min-h-screen font-sans">
       <ReduxProvider>
         <ReactQueryProvider>
