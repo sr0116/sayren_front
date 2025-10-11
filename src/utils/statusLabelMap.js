@@ -58,10 +58,11 @@ export const statusLabelMap = {
 
   // 환불 요청 상태
   RefundRequestStatus: {
-    PENDING: "환불 요청됨",
-    APPROVED: "환불 승인됨",
+    PENDING: "환불 요청",
+    AUTO_REFUND: "자동 환불",
+    APPROVED: "환불 승인",
     APPROVED_WAITING_RETURN: "회수 대기 중",
-    REJECTED: "환불 거절됨",
+    REJECTED: "환불 거절",
     CANCELED: "사용자 취소",
   },
 
