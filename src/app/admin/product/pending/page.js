@@ -47,7 +47,7 @@ export default function AdminPendingPage() {
                 }
             );
 
-            alert("승인 처리되었습니다");
+            alert("상품이 등록(활성화) 되었습니다");
             router.push("/admin/product/approved");
         } catch (err) {
             console.error("승인 처리 중 오류:", err);
