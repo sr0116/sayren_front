@@ -1,10 +1,9 @@
-import ChangePwForm from "@/components/member/ChangePwForm";
-import OtpOrPasswordCheckForm from "@/components/member/OtpOrPasswordCheckForm";
+import OrderPage from "@/components/order/OrderPage";
 
-export default function PwModifyPage(){
-  return (
-    <div>
-     주문창
-    </div>
-    )
+export default function Page() {
+    return (
+        <div>
+            <OrderPage />
+        </div>
+    );
 }
