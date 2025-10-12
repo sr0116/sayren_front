@@ -11,7 +11,7 @@ import AddressModal from "@/components/address/AddressModal";
 
 export default function CheckoutPage() {
     const router = useRouter();
-    const { id } = useParams();
+    const { id } = useParams(); // 상품 ID
     const searchParams = useSearchParams();
     const planId = searchParams.get("planId");
     const dispatch = useDispatch();
@@ -22,7 +22,9 @@ export default function CheckoutPage() {
     const [detail, setDetail] = useState("");
     const [memo, setMemo] = useState("");
 
-    //  배송지 선택 시 자동 입력 처리
+    /**
+     * ✅ 배송지 선택 시 자동 입력 처리
+     */
     const handleSelectAddress = (addr) => {
         if (!addr) return;
         dispatch(closeModal());
@@ -33,7 +35,9 @@ export default function CheckoutPage() {
         setMemo(addr.memo || "");
     };
 
-    // 주문 생성 Mutation
+    /**
+     * ✅ 주문 생성 Mutation
+     */
     const createOrderMutation = useCreateOrderMutation({
         onSuccess: (res) => {
             dispatch(
@@ -63,7 +67,10 @@ export default function CheckoutPage() {
                     content: (
                         <div className="flex flex-col justify-center items-center gap-4">
                             <p>주문 생성에 실패했습니다.</p>
-                            <Button variant="primary" onClick={() => dispatch(closeModal())}>
+                            <Button
+                                variant="primary"
+                                onClick={() => dispatch(closeModal())}
+                            >
                                 확인
                             </Button>
                         </div>
@@ -73,7 +80,9 @@ export default function CheckoutPage() {
         },
     });
 
-    // 주문 버튼 클릭 시
+    /**
+     * ✅ 주문하기 핸들러
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -104,7 +113,7 @@ export default function CheckoutPage() {
                 <p>요금제: {planId === "1" ? "구매" : "렌탈"}</p>
             </div>
 
-            {/*  배송지 선택 버튼 */}
+            {/* ✅ 배송지 선택 버튼 */}
             <div className="mb-6">
                 <Button
                     type="button"
@@ -112,7 +121,9 @@ export default function CheckoutPage() {
                     onClick={() =>
                         dispatch(
                             openModal({
-                                content: <AddressModal onSelect={handleSelectAddress} />,
+                                content: (
+                                    <AddressModal onSelect={handleSelectAddress} />
+                                ),
                             })
                         )
                     }
@@ -121,7 +132,7 @@ export default function CheckoutPage() {
                 </Button>
             </div>
 
-            {/*  주문 폼 */}
+            {/* ✅ 주문 폼 */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label>수령인 *</label>

@@ -24,25 +24,27 @@ export default function AddressModal({ onSelect }) {
         isDefault: true,
     });
 
-   // 배송지 목록 조회
-
+    /**
+     * ✅ 배송지 목록 조회 (조장님 axios 구조 대응)
+     * 반드시 ()=>addressApi.getAll() 로 감싸야 함!
+     */
     const {
         data: addresses = [],
         isFetching,
         refetch,
     } = useQuery({
         queryKey: ["addresses"],
-        queryFn: addressApi.getAll,
+        queryFn: () => addressApi.getAll(),
     });
 
-        //배송지 등록 Mutation
-      //등록 완료 시 → Alert → 목록 새로고침
-
+    /**
+     * ✅ 신규 배송지 등록 Mutation
+     * 완료 시 invalidate + refetch
+     */
     const createAddress = useMutation({
         mutationFn: (data) => addressApi.create(data),
         onSuccess: () => {
             alert("배송지가 등록되었습니다!");
-            // 주소 목록 invalidate + refetch (리렌더링)
             queryClient.invalidateQueries({ queryKey: ["addresses"] });
             refetch();
             setShowForm(false);
@@ -53,9 +55,9 @@ export default function AddressModal({ onSelect }) {
         },
     });
 
-
-    // 카카오 주소 선택 핸들러
-
+    /**
+     * ✅ 카카오 주소 선택 핸들러
+     */
     const handleSelectAddress = (data) => {
         setForm({
             ...form,
@@ -65,11 +67,11 @@ export default function AddressModal({ onSelect }) {
         setShowPostcode(false);
     };
 
-
-      //배송지 선택 시 checkout 페이지로 값 전달
-
+    /**
+     * ✅ 배송지 선택 시 CheckoutPage로 값 전달
+     */
     const handleSelect = (addr) => {
-        if (onSelect) onSelect(addr);
+        if (onSelect) onSelect(addr); // 부모로 전달
         dispatch(closeModal());
     };
 
