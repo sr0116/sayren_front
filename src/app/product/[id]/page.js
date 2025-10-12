@@ -16,7 +16,7 @@ export default function ProductDetailPage({ params }) {
   useEffect(() => {
     const fetchProduct = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${params.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product/${params.id}`,
         { cache: "no-store" }
       );
       if (res.ok) {
