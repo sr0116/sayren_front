@@ -1,72 +1,69 @@
 "use client";
 
-import { useMySubscribesQuery } from "@/api/subscribeApi";
-import StatusBadge from "@/components/common/StatusBadge";
-import EmptyState from "@/components/common/EmptyState";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { useSubscribeRoundsQuery } from "@/api/subscribeApi";
+import StatusBadge from "@/components/common/StatusBadge";
+import { X } from "lucide-react";
+import RoundPaymentButton from "@/components/subscribe/RoundPaymentButton";
 
-export default function SubscribeList() {
+export default function SubscribeRoundList() {
+  const { id: subscribeId } = useParams();
   const router = useRouter();
- // key로 설정 해두면 key를 삭제해 버리면 얘가 다시 불러와짐
-  // 내 구독 목록 API 호출
-  const { data, isLoading, isError } = useMySubscribesQuery();
-  const subscribes = Array.isArray(data) ? data : data?.list ?? [];
+
+  const { data: rounds = [], isLoading, isError } =
+      useSubscribeRoundsQuery(subscribeId);
 
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError) return <div>구독 내역을 불러오는 중 오류가 발생했습니다.</div>;
-
-  // 빈 상태
-  if (subscribes.length === 0) {
-    return (
-        <EmptyState
-            title="구독 내역이 없습니다"
-            message="아직 구독하신 상품이 없습니다."
-        />
-    );
-  }
-
-  const handleClick = (subscribeId) => {
-    router.push(`/mypage/subscribe/${subscribeId}`);
-  };
+  if (isError) return <div>회차 목록 조회 실패</div>;
 
   return (
-      <div className="flex flex-col h-full">
-        <h2 className="text-xl font-semibold mb-6">구독 내역</h2>
-
-        <div className="flex flex-col flex-1">
-          <div className="flex-1 space-y-4 overflow-y-auto">
-            {subscribes.map((s) => (
-                <div
-                    key={s.subscribeId}
-                    onClick={() => handleClick(s.subscribeId)}
-                    className="border border-gray-300 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 cursor-pointer"
-                >
-                  <div>
-                    <p className="font-semibold">구독 ID: {s.subscribeId}</p>
-                    <p className="text-sm text-gray-500">
-                      기간:{" "}
-                      {s.startDate
-                          ? dayjs(s.startDate).format("YYYY-MM-DD")
-                          : "-"}{" "}
-                      ~{" "}
-                      {s.endDate ? dayjs(s.endDate).format("YYYY-MM-DD") : "-"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      월 렌탈료:{" "}
-                      {s.monthlyFeeSnapshot
-                          ? s.monthlyFeeSnapshot.toLocaleString()
-                          : 0}
-                      원
-                    </p>
-                  </div>
-
-                  {/* 상태 뱃지 */}
-                  <StatusBadge type="SubscribeStatus" value={s.status} />
-                </div>
-            ))}
-          </div>
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-gray-800">
+            구독 {subscribeId} 회차 목록
+          </h2>
+          <button
+              onClick={() => router.push("/mypage/subscribe")}
+              className="ml-auto text-gray-500 hover:text-gray-700 cursor-pointer"
+          >
+            <X />
+          </button>
         </div>
+
+        {rounds.length === 0 ? (
+            <p className="text-gray-500 text-center">회차 정보가 없습니다.</p>
+        ) : (
+            <ul className="divide-y divide-gray-200">
+              {rounds.map((r) => (
+                  <li
+                      key={r.subscribeRoundId}
+                      className="py-4 px-2 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+                      onClick={() =>
+                          router.push(`/mypage/subscribe/${subscribeId}/rounds/${r.roundNo}`)
+                      }
+                  >
+                    <div>
+                      <p className="font-semibold text-gray-800">{r.roundNo}회차</p>
+                      <p className="text-sm text-gray-500">
+                        월 렌탈 금액: {r.amount?.toLocaleString()}원
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        예정일: {dayjs(r.dueDate).format("YYYY-MM-DD")}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <StatusBadge type="PaymentStatus" value={r.payStatus} />
+
+                      {r.payStatus?.toUpperCase() === "PENDING" && (
+                          <RoundPaymentButton round={r} subscribeId={subscribeId} />
+                      )}
+                    </div>
+                  </li>
+              ))}
+            </ul>
+        )}
       </div>
   );
 }

@@ -11,7 +11,7 @@ export default function PaymentPage() {
         />
         <div className="p-4">
           <h1 className="text-xl font-bold mb-4">결제 테스트 페이지</h1>
-          <PaymentButton orderItemId={1} />
+          <PaymentButton orderItemId={2} />
 
         </div>
       </>
