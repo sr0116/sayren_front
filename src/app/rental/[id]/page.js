@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import AddToCartButton from "@/components/order/AddToCartButton";
 import { useRouter } from "next/navigation";
+import ProductDetailDescription from "@/components/product/ProductDetailDescription";
 
 export default function RentalDetailPage({ params }) {
   const router = useRouter();
@@ -85,15 +86,7 @@ export default function RentalDetailPage({ params }) {
         </div>
 
         {/* 상세 설명 */}
-        <div className="border-t border-gray-200 pt-8">
-          <h2 className="text-xl font-semibold mb-4">상품 상세정보</h2>
-          <div
-              className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
-              dangerouslySetInnerHTML={{
-                __html: product.cleanDescription || "상세 설명이 없습니다.",
-              }}
-          />
-        </div>
+        <ProductDetailDescription html={product.cleanDescription} />
       </div>
   );
 }
