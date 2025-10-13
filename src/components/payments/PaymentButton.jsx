@@ -2,79 +2,68 @@
 
 import { useState } from "react";
 import { preparePayment, completePayment } from "@/api/paymentApi";
+import { requestPortOnePayment } from "@/lib/portone";
 
-export default function PaymentButton({ orderItemId }) {
+export default function PaymentButton({ orderItemId = 2 }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
     try {
       setLoading(true);
+      console.log("결제 시작 - orderItemId:", orderItemId);
 
-      const paymentData = await preparePayment({
-        orderItemId: 2,
+      //  결제 준비 요청
+      const paymentData = await preparePayment({ orderItemId });
+      console.log("결제 준비 응답:", paymentData);
+
+      // 데이터 유효성 검증
+      if (!paymentData || !paymentData.merchantUid) {
+        throw new Error("결제 준비 데이터가 올바르지 않습니다.");
+      }
+
+      //  PortOne SDK 호출
+      const rsp = await requestPortOnePayment(paymentData);
+      console.log("PortOne 응답:", rsp);
+
+      // PortOne 응답 확인
+      if (!rsp || !rsp.imp_uid) {
+        throw new Error("PortOne 결제 응답이 올바르지 않습니다.");
+      }
+
+      //  백엔드 검증 요청
+      const result = await completePayment({
+        paymentId: paymentData.paymentId,
+        impUid: rsp.imp_uid,
       });
+      console.log("백엔드 결제 검증 결과:", result);
 
-      console.log("결제 준비 응답:", paymentData); //  확인
-
-      if (!paymentData) {
-        throw new Error("결제 준비 응답이 비어있습니다.");
+      // 결제 상태 확인 및 알림 처리
+      if (result.paymentStatus === "PAID") {
+        alert("결제가 정상적으로 완료되었습니다.");
+      } else if (result.paymentStatus === "FAILED") {
+        alert("결제에 실패했습니다. 다시 시도해주세요.");
+      } else if (result.paymentStatus === "CANCELED") {
+        alert("결제가 취소되었습니다.");
+      } else {
+        alert(`결제 상태를 확인할 수 없습니다: ${result.paymentStatus}`);
       }
-      if (!paymentData.merchantUid) {
-        throw new Error("merchantUid 없음: " + JSON.stringify(paymentData));
-      }
-
-      const IMP = window.IMP;
-      if (!IMP) {
-        alert("PortOne SDK가 로드되지 않았습니다.");
-        return;
-      }
-
-      IMP.init(process.env.NEXT_PUBLIC_IMP_CODE);
-
-      const paymentRequest = {
-        pg: "nice_v2",
-        pay_method: "card",
-        merchant_uid: paymentData.merchantUid,
-        name: "테스트 결제",
-        amount: paymentData.amount,
-        buyer_email: "test@example.com",
-        buyer_name: "홍길동",
-        buyer_tel: "010-1234-5678",
-      };
-
-      IMP.request_pay(paymentRequest, async (rsp) => {
-        console.log("PortOne 응답:", rsp);
-
-        try {
-          const result = await completePayment({
-            paymentId: paymentData.paymentId,
-            impUid: rsp.imp_uid,
-          });
-
-          if (result.paymentStatus=== "PAID") { // 백엔드 기준
-            alert("결제 성공: " + JSON.stringify(result));
-          } else {
-            alert("결제 실패 또는 취소: " + JSON.stringify(result));
-          }
-        } catch (err) {
-          console.error("결제 검증 실패:", err);
-          alert("결제 검증 실패: " + err.message);
-        }
-      });
     } catch (err) {
+      // 예외 처리 (프론트 로직, PortOne 오류, 백엔드 오류 등)
       console.error("결제 처리 중 오류:", err);
-      alert("결제 처리 중 오류 발생: " + err.message);
+      alert("결제 중 오류가 발생했습니다: " + err.message);
     } finally {
+      // 로딩 상태 해제
       setLoading(false);
     }
   };
-
 
   return (
       <button
           onClick={handleClick}
           disabled={loading}
-          className="px-4 py-2 bg-red-500 text-white rounded"
+          className={`px-4 py-2 rounded text-white transition ${
+              loading ? "bg-gray-400" : "bg-red-500 hover:bg-red-600"
+          }`}
       >
         {loading ? "결제 진행중..." : "결제하기"}
       </button>

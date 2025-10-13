@@ -6,33 +6,32 @@ import { useDispatch } from "react-redux";
 import { openModal, closeModal } from "@/store/modalSlice";
 import { useRouter } from "next/navigation";
 import React from "react";
-import {queryClient} from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
-export default function AddToCartButton({ productId, planId }) {
+export default function AddToCartButton({ productId, type, month }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const addCartItemMutation = useAddCartItemMutation({
     onSuccess: () => {
       dispatch(openModal({
-        content: (<div className="flex flex-col justify-center items-center gap-2">
-          <p>장바구니에 상품을 담았습니다.</p>
-          <div className="flex gap-2 w-full">
-            <Button variant={"primary"} onClick={() => {
-              router.push("/order/cart");
-              dispatch(closeModal());
-            }}>
-              장바구니 이동
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => dispatch(closeModal())}
-            >
-              쇼핑 계속하기
-            </Button>
+        content: (
+          <div className="flex flex-col justify-center items-center gap-2">
+            <p>장바구니에 상품을 담았습니다.</p>
+            <div className="flex gap-2 w-full">
+              <Button variant={"primary"} onClick={() => {
+                router.push("/order/cart");
+                dispatch(closeModal());
+              }}>
+                장바구니 이동
+              </Button>
+              <Button variant="secondary" onClick={() => dispatch(closeModal())}>
+                쇼핑 계속하기
+              </Button>
+            </div>
           </div>
-        </div>)}
-      ));
+        )
+      }));
       queryClient.invalidateQueries(["cart"]);
     },
     onError: (err) => {
@@ -41,10 +40,11 @@ export default function AddToCartButton({ productId, planId }) {
   });
 
   const handleAdd = () => {
-    addCartItemMutation.mutate(
-      { data: { productId, planId } },
-    );
+    addCartItemMutation.mutate({
+      data: { productId, type, month },
+    });
   };
+
   return (
     <Button
       className="bg-gray-800 text-white px-6 py-2 rounded"
