@@ -1,53 +1,155 @@
+"use client"
+import {useState, useEffect} from "react";
 import Link from "next/link";
 import ProductCardRental from "@/components/product/ProductCardRental";
 import ProductListCategory from "@/components/product/ProductListCategory";
+import axios from "axios";
+import {usePageParams} from "@/hooks/usePageParams";
+import SearchBar from "@/components/common/SearchBar";
 
-async function getProducts() {
-    // type 고정: RENTAL
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?type=RENTAL`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-}
+export default function RentalListPage({ searchParams }) {
+  // 전체 상품
+  const [products, setProducts] = useState(null);
+  // 필터링된 상품
+  const [productList, setProductList] = useState(null);
+  const [search, setSearch] = useState("");
 
-const categoryMap = {
-    "청소기": "가전",
-    "공기청정기": "가전",
-    "세탁기": "가전제품",
-    "스타일러": "신발관리기",
-};
+  const { page,
+    size,
+    type,
+    keyword,
+    sortBy,
+    direction,
+  } = usePageParams();
 
-export default async function RentalListPage({ searchParams }) {
-    const category = searchParams?.category || null;
-    const products = await getProducts();
+  const category = searchParams?.category || "전체";
 
-    const filtered =
-        category && category !== "전체"
-            ? products.filter((p) => {
-                const mapped = categoryMap[category] || category;
-                return p.productCategory === mapped;
-            })
-            : products;
+  const [tags, setTags] = useState([]);
+  const fetchProducts = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-    return (
-        <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="flex justify-between items-center mb-6">
-                <div className="inline-flex flex-wrap items-center gap-2">
-                    <ProductListCategory selected={category} />
-                </div>
-            </div>
+      const url = `${baseUrl}/api/product`;
 
-            {filtered.length === 0 ? (
-                <p className="p-6">상품이 없습니다.</p>
-            ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {filtered.map((p) => (
-                        <Link key={p.productId} href={`/rental/${p.productId}`}>
-                            <ProductCardRental product={p} />
-                        </Link>
-                    ))}
-                </div>
-            )}
+      const res = await axios.get(url, { headers: { "Cache-Control": "no-store" } });
+      setProducts(res.data);
+    } catch (err) {
+      console.error("상품 조회 실패:", err);
+      setProducts([]);
+    }
+  };
+
+  function filterProducts(products) {
+    let filtered = products?.filter((item) => {
+      const safeKeyword = keyword?.trim() || "";
+      const keywordMatch =
+        safeKeyword.length === 0 ||
+        item.productName?.toLowerCase().includes(safeKeyword.toLowerCase()) ||
+        item.modelName?.toLowerCase().includes(safeKeyword.toLowerCase());
+
+      console.log("keyword", keywordMatch);
+      // 카테고리 필터
+      const categoryMatch = category === "전체" || item.category === category;
+      console.log("category", categoryMatch);
+      // 태그 필터
+      const tagMatch =
+        tags.length === 0 || tags.some((t) => item.tags?.includes(t));
+      console.log("tag", tagMatch);
+      // status 필터
+      const statusMatch = item.status === "ACTIVE";
+
+
+      // 각 조건 모두 통과해야 true 반환
+      return keywordMatch && categoryMatch && tagMatch && statusMatch;
+    })
+
+    if (sortBy) {
+      filtered = [...filtered].sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+
+        // null/undefined 방어
+        if (valA == null || valB == null) return 0;
+
+        // 숫자형 정렬 (price, deposit 등)
+        if (typeof valA === "number" && typeof valB === "number") {
+          return direction === "desc" ? valB - valA : valA - valB;
+        }
+
+        // 날짜형 정렬 (createdAt 등)
+        if (!isNaN(Date.parse(valA)) && !isNaN(Date.parse(valB))) {
+          return direction === "desc"
+            ? new Date(valB) - new Date(valA)
+            : new Date(valA) - new Date(valB);
+        }
+
+        // 문자열 정렬 (productName, modelName 등)
+        if (typeof valA === "string" && typeof valB === "string") {
+          return direction === "desc"
+            ? valB.localeCompare(valA)
+            : valA.localeCompare(valB);
+        }
+
+        // 기타 자료형은 그대로
+        return 0;
+      });
+    }
+
+    return filtered;
+  }
+
+  // 최초에 불러오는 거
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // 필터
+  useEffect(() => {
+    if(products !== null){
+      setProductList(filterProducts(products));
+    }
+  }, [
+    category,
+    page,
+    size,
+    tags,
+    keyword,
+    sortBy,
+    direction,
+    products
+  ]);
+
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="flex flex-col justify-between items-center mb-6 gap-4">
+        {/* 카테고리 필터 */}
+        <ProductListCategory selected={category} />
+
+        {/* 검색 입력창 */}
+        <div className="flex items-center gap-2 w-full">
+          <SearchBar keyword={keyword} />
         </div>
-    );
+      </div>
+      <pre>{JSON.stringify(products, null, 2)}</pre>
+      상품 리스트
+      {
+        productList ? (
+          <div>
+            {productList?.length === 0 ? (
+              <p className="p-6 text-gray-500 text-center">상품이 없습니다.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {productList.map((p) => (
+                  <Link key={p.productId} href={`/product/${p.productId}`}>
+                    <ProductCardRental product={p} />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (<p className="p-6 text-gray-500 text-center">상품을 불러오는 중입니다.</p> )
+      }
+    </div>
+  );
 }

@@ -1,22 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import Link from "next/link";
 import ProductCardPurchase from "@/components/product/ProductCardPurchase";
 import ProductListCategory from "@/components/product/ProductListCategory";
 import axios from "axios";
 import {usePageParams} from "@/hooks/usePageParams";
 import SearchBar from "@/components/common/SearchBar";
+import ProductTagFilter from "@/components/product/ProductTagFilter";
 
 export default function ProductListPage({ searchParams }) {
   // 전체 상품
   const [products, setProducts] = useState(null);
+  const [cate, setCate] = useState(null);
   // 필터링된 상품
   const [productList, setProductList] = useState(null);
-  const [search, setSearch] = useState("");
 
   const { page,
     size,
-    type,
     keyword,
     sortBy,
     direction,
@@ -39,6 +39,15 @@ export default function ProductListPage({ searchParams }) {
     }
   };
 
+  function filterCategories() {
+    const filtered = products?.filter((item) => {
+      const categoryMatch = category === "전체" || item.category === category;
+      return categoryMatch;
+    });
+    setCate(filtered);
+    return filtered;
+  }
+
   function filterProducts(products) {
     let filtered = products?.filter((item) => {
       const safeKeyword = keyword?.trim() || "";
@@ -48,9 +57,6 @@ export default function ProductListPage({ searchParams }) {
         item.modelName?.toLowerCase().includes(safeKeyword.toLowerCase());
 
       console.log("keyword", keywordMatch);
-      // 카테고리 필터
-      const categoryMatch = category === "전체" || item.category === category;
-      console.log("category", categoryMatch);
       // 태그 필터
       const tagMatch =
         tags.length === 0 || tags.some((t) => item.tags?.includes(t));
@@ -60,7 +66,7 @@ export default function ProductListPage({ searchParams }) {
 
 
       // 각 조건 모두 통과해야 true 반환
-      return keywordMatch && categoryMatch && tagMatch && statusMatch;
+      return keywordMatch  && tagMatch && statusMatch;
     })
 
     if (sortBy) {
@@ -98,6 +104,10 @@ export default function ProductListPage({ searchParams }) {
     return filtered;
   }
 
+  const onTagSelect = (data) => {
+    setTags(data);
+  }
+
   // 최초에 불러오는 거
   useEffect(() => {
   fetchProducts();
@@ -106,7 +116,7 @@ export default function ProductListPage({ searchParams }) {
   // 필터
   useEffect(() => {
     if(products !== null){
-      setProductList(filterProducts(products));
+      setProductList(filterProducts(filterCategories(products)));
     }
   }, [
     category,
@@ -124,27 +134,34 @@ export default function ProductListPage({ searchParams }) {
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex flex-col justify-between items-center mb-6 gap-4">
         {/* 카테고리 필터 */}
-        <ProductListCategory selected={category} />
+        <ProductListCategory
+          products={products}
+          category={category}
+          onTagSelect={setTags}
+        />
 
+        {/*상세검색 태그 필터*/}
+        <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
         {/* 검색 입력창 */}
         <div className="flex items-center gap-2 w-full">
           <SearchBar keyword={keyword} />
         </div>
       </div>
-      <pre>{JSON.stringify(products, null, 2)}</pre>
-       상품 리스트
+
       {
         productList ? (
           <div>
           {productList?.length === 0 ? (
             <p className="p-6 text-gray-500 text-center">상품이 없습니다.</p>
           ) : (
+            <div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {productList.map((p) => (
                 <Link key={p.productId} href={`/product/${p.productId}`}>
                   <ProductCardPurchase product={p} />
                 </Link>
               ))}
+            </div>
             </div>
           )}
           </div>

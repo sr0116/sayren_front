@@ -5,14 +5,14 @@ export default function ProductListCategory({selected}) {
 const categories = [
     "전체",
     "정수기",
-    "TV",
-    "에어컨",
     "냉장고",
-    "공기청정기",
-    "의류건조기",
-    "식기세척기",
-    "세탁기",
+    "프로젝터",
+    "신발관리기",
+    "가습기",
+    "스탠바이미",
+    "와인셀러",
     "스타일러",
+    "맥주제조기",
 ];
 
     return (
@@ -22,7 +22,7 @@ const categories = [
                 return (
                     <Link
                         key={cat}
-                        href={cat === "전체" ? "/products" : `/product?category=${cat}`}
+                        href={cat === "전체" ? "/product" : `/product?category=${cat}`}
                         className={`px-4 py-2 rounded-full border text-sm transition-colors
               ${
                             isActive
