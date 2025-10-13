@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export default function ProductListCategory({selected}) {
 
-const categories = [
-    "전체",
-    "정수기",
-    "냉장고",
-    "프로젝터",
-    "신발관리기",
-    "가습기",
-    "스탠바이미",
-    "와인셀러",
-    "스타일러",
-    "맥주제조기",
-];
+    const categories = [
+        "전체",
+        "정수기",
+        "냉장고",
+        "프로젝터",
+        "신발관리기",
+        "가습기",
+        "스탠바이미",
+        "와인셀러",
+        "스타일러",
+        "맥주제조기",
+    ];
 
     return (
         <div className="flex flex-wrap gap-3 mb-8">

@@ -6,6 +6,7 @@ import ProductListCategory from "@/components/product/ProductListCategory";
 import axios from "axios";
 import {usePageParams} from "@/hooks/usePageParams";
 import SearchBar from "@/components/common/SearchBar";
+import {calcRentalPrice} from "@/utils/CalcRentalPrice";
 
 export default function RentalListPage({ searchParams }) {
   // 전체 상품
@@ -105,19 +106,25 @@ export default function RentalListPage({ searchParams }) {
 
   // 필터
   useEffect(() => {
-    if(products !== null){
-      setProductList(filterProducts(products));
+    if (products !== null) {
+      // 렌탈가 계산 추가
+      const withRentalInfo = products.map((p) => {
+        try {
+          const rental = calcRentalPrice(p.price, 24); // 기본 24개월 기준
+          return {
+            ...p,
+            rentalPrice: rental.monthlyFee,
+            deposit: rental.deposit,
+          };
+        } catch (err) {
+          console.error("렌탈가 계산 실패:", err);
+          return p;
+        }
+      });
+
+      setProductList(filterProducts(withRentalInfo));
     }
-  }, [
-    category,
-    page,
-    size,
-    tags,
-    keyword,
-    sortBy,
-    direction,
-    products
-  ]);
+  }, [category, page, size, tags, keyword, sortBy, direction, products]);
 
 
   return (

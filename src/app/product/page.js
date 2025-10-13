@@ -52,14 +52,14 @@ export default function ProductListPage({ searchParams }) {
     let filtered = products?.filter((item) => {
       const safeKeyword = keyword?.trim() || "";
       const keywordMatch =
-        safeKeyword.length === 0 ||
-        item.productName?.toLowerCase().includes(safeKeyword.toLowerCase()) ||
-        item.modelName?.toLowerCase().includes(safeKeyword.toLowerCase());
+          safeKeyword.length === 0 ||
+          item.productName?.toLowerCase().includes(safeKeyword.toLowerCase()) ||
+          item.modelName?.toLowerCase().includes(safeKeyword.toLowerCase());
 
       console.log("keyword", keywordMatch);
       // 태그 필터
       const tagMatch =
-        tags.length === 0 || tags.some((t) => item.tags?.includes(t));
+          tags.length === 0 || tags.some((t) => item.tags?.includes(t));
       console.log("tag", tagMatch);
       // status 필터
       const statusMatch = item.status === "ACTIVE";
@@ -85,15 +85,15 @@ export default function ProductListPage({ searchParams }) {
         // 날짜형 정렬 (createdAt 등)
         if (!isNaN(Date.parse(valA)) && !isNaN(Date.parse(valB))) {
           return direction === "desc"
-            ? new Date(valB) - new Date(valA)
-            : new Date(valA) - new Date(valB);
+              ? new Date(valB) - new Date(valA)
+              : new Date(valA) - new Date(valB);
         }
 
         // 문자열 정렬 (productName, modelName 등)
         if (typeof valA === "string" && typeof valB === "string") {
           return direction === "desc"
-            ? valB.localeCompare(valA)
-            : valA.localeCompare(valB);
+              ? valB.localeCompare(valA)
+              : valA.localeCompare(valB);
         }
 
         // 기타 자료형은 그대로
@@ -110,7 +110,7 @@ export default function ProductListPage({ searchParams }) {
 
   // 최초에 불러오는 거
   useEffect(() => {
-  fetchProducts();
+    fetchProducts();
   }, []);
 
   // 필터
@@ -131,42 +131,42 @@ export default function ProductListPage({ searchParams }) {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="flex flex-col justify-between items-center mb-6 gap-4">
-        {/* 카테고리 필터 */}
-        <ProductListCategory
-          products={products}
-          category={category}
-          onTagSelect={setTags}
-        />
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex flex-col justify-between items-center mb-6 gap-4">
+          {/* 카테고리 필터 */}
+          <ProductListCategory
+              products={products}
+              category={category}
+              onTagSelect={setTags}
+          />
 
-        {/*상세검색 태그 필터*/}
-        <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
-        {/* 검색 입력창 */}
-        <div className="flex items-center gap-2 w-full">
-          <SearchBar keyword={keyword} />
-        </div>
-      </div>
-
-      {
-        productList ? (
-          <div>
-          {productList?.length === 0 ? (
-            <p className="p-6 text-gray-500 text-center">상품이 없습니다.</p>
-          ) : (
-            <div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {productList.map((p) => (
-                <Link key={p.productId} href={`/product/${p.productId}`}>
-                  <ProductCardPurchase product={p} />
-                </Link>
-              ))}
-            </div>
-            </div>
-          )}
+          {/*상세검색 태그 필터*/}
+          <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
+          {/* 검색 입력창 */}
+          <div className="flex items-center gap-2 w-full">
+            <SearchBar keyword={keyword} />
           </div>
-        ) : (<p className="p-6 text-gray-500 text-center">상품을 불러오는 중입니다.</p> )
-      }
-    </div>
+        </div>
+
+        {
+          productList ? (
+              <div>
+                {productList?.length === 0 ? (
+                    <p className="p-6 text-gray-500 text-center">상품이 없습니다.</p>
+                ) : (
+                    <div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {productList.map((p) => (
+                            <Link key={p.productId} href={`/product/${p.productId}`}>
+                              <ProductCardPurchase product={p} />
+                            </Link>
+                        ))}
+                      </div>
+                    </div>
+                )}
+              </div>
+          ) : (<p className="p-6 text-gray-500 text-center">상품을 불러오는 중입니다.</p> )
+        }
+      </div>
   );
 }

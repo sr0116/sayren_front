@@ -13,6 +13,7 @@ export default function ProductCardRental({ product }) {
     deposit,
   } = product || {};
 
+
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-[400px]">
       {/* 이미지 */}
