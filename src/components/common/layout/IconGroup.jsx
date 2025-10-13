@@ -16,7 +16,7 @@ export default function IconGroup({ isMobile, onToggle, isAuthenticated }) {
           <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
         </Link>
         {/* 장바구니 아이콘 */}
-        <Link href={"/"} className="p-3">
+        <Link href={"/order/cart"} className="p-3">
           <ShoppingCart className="w-5 h-5 text-gray-700 cursor-pointer" />
         </Link>
         {/* 유저 아이콘 (로그인 여부에 따라 링크 분기) */}
