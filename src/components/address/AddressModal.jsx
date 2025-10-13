@@ -25,8 +25,7 @@ export default function AddressModal({ onSelect }) {
     });
 
     /**
-     * ✅ 배송지 목록 조회 (조장님 axios 구조 대응)
-     * 반드시 ()=>addressApi.getAll() 로 감싸야 함!
+     * ✅ 배송지 목록 조회
      */
     const {
         data: addresses = [],
@@ -38,8 +37,7 @@ export default function AddressModal({ onSelect }) {
     });
 
     /**
-     * ✅ 신규 배송지 등록 Mutation
-     * 완료 시 invalidate + refetch
+     * ✅ 신규 배송지 등록
      */
     const createAddress = useMutation({
         mutationFn: (data) => addressApi.create(data),
@@ -68,111 +66,135 @@ export default function AddressModal({ onSelect }) {
     };
 
     /**
-     * ✅ 배송지 선택 시 CheckoutPage로 값 전달
+     * ✅ 배송지 선택 → CheckoutPage로 전달
+     * → 필드명 통일 + 정상화(Normalize)
      */
     const handleSelect = (addr) => {
-        if (onSelect) onSelect(addr); // 부모로 전달
+        if (!addr) return;
+
+        // 💡 서버/DB 구조와 CheckoutPage 필드 불일치 해결
+        const normalized = {
+            name: addr.name || addr.receiverName || "",
+            tel: addr.tel || addr.receiverTel || "",
+            zipcode: addr.zipcode || addr.zipCode || "",
+            address: addr.address || addr.addressDetail || "",
+            memo: addr.memo || addr.deliveryMemo || "",
+        };
+
+        if (onSelect) onSelect(normalized);
         dispatch(closeModal());
     };
 
     return (
-        <div className="p-6 w-[550px] bg-white rounded-lg">
-            {!showForm ? (
-                <>
-                    <h2 className="text-xl font-bold mb-4">배송지 관리</h2>
+      <div className="p-6 w-[550px] bg-white rounded-lg">
+          {/* ------------------------------- */}
+          {/* 🚩 배송지 목록 화면 */}
+          {/* ------------------------------- */}
+          {!showForm ? (
+            <>
+                <h2 className="text-xl font-bold mb-4">배송지 관리</h2>
 
-                    {isFetching ? (
-                        <p className="text-gray-400">불러오는 중...</p>
-                    ) : addresses.length === 0 ? (
-                        <p className="text-gray-500 mb-4">등록된 배송지가 없습니다.</p>
-                    ) : (
-                        <ul className="space-y-2 mb-4">
-                            {addresses.map((addr) => (
-                                <li
-                                    key={addr.id}
-                                    className="border rounded p-3 cursor-pointer hover:bg-gray-100 transition"
-                                    onClick={() => handleSelect(addr)}
-                                >
-                                    <p className="font-medium">
-                                        {addr.name} | {addr.tel}
-                                    </p>
-                                    <p className="text-sm text-gray-600">{addr.address}</p>
-                                    {addr.isDefault && (
-                                        <span className="text-blue-500 text-xs">기본 배송지</span>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                {isFetching ? (
+                  <p className="text-gray-400">불러오는 중...</p>
+                ) : addresses.length === 0 ? (
+                  <p className="text-gray-500 mb-4">등록된 배송지가 없습니다.</p>
+                ) : (
+                  <ul className="space-y-2 mb-4 max-h-[300px] overflow-y-auto border rounded p-2">
+                      {addresses.map((addr) => (
+                        <li
+                          key={addr.id}
+                          className="border rounded p-3 cursor-pointer hover:bg-gray-100 transition"
+                          onClick={() => handleSelect(addr)}
+                        >
+                            <p className="font-medium">
+                                {addr.name || addr.receiverName} |{" "}
+                                {addr.tel || addr.receiverTel}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                                {addr.address || addr.addressDetail}
+                            </p>
+                            {addr.isDefault && (
+                              <span className="text-blue-500 text-xs">기본 배송지</span>
+                            )}
+                        </li>
+                      ))}
+                  </ul>
+                )}
 
-                    <Button variant="primary" onClick={() => setShowForm(true)}>
-                        신규 배송지 추가
-                    </Button>
-                </>
-            ) : (
+                <Button variant="primary" onClick={() => setShowForm(true)}>
+                    신규 배송지 추가
+                </Button>
+            </>
+          ) : (
+            <>
+                {/* ------------------------------- */}
+                {/* 🚩 신규 배송지 등록 화면 */}
+                {/* ------------------------------- */}
                 <div className="space-y-3">
                     <h3 className="text-lg font-semibold mb-2">신규 배송지 등록</h3>
 
                     <input
-                        className="border rounded w-full p-2"
-                        placeholder="수령인"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="border rounded w-full p-2"
+                      placeholder="수령인"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
                     />
+
                     <input
-                        className="border rounded w-full p-2"
-                        placeholder="연락처"
-                        value={form.tel}
-                        onChange={(e) => setForm({ ...form, tel: e.target.value })}
+                      className="border rounded w-full p-2"
+                      placeholder="연락처"
+                      value={form.tel}
+                      onChange={(e) => setForm({ ...form, tel: e.target.value })}
                     />
 
                     <div className="flex gap-2">
                         <input
-                            className="border rounded flex-1 p-2"
-                            placeholder="우편번호"
-                            value={form.zipcode}
-                            readOnly
+                          className="border rounded flex-1 p-2"
+                          placeholder="우편번호"
+                          value={form.zipcode}
+                          readOnly
                         />
                         <Button onClick={() => setShowPostcode(true)}>주소 찾기</Button>
                     </div>
 
                     <input
-                        className="border rounded w-full p-2"
-                        placeholder="주소"
-                        value={form.address}
-                        readOnly
+                      className="border rounded w-full p-2"
+                      placeholder="주소"
+                      value={form.address}
+                      readOnly
                     />
 
                     <input
-                        className="border rounded w-full p-2"
-                        placeholder="배송 메모"
-                        value={form.memo}
-                        onChange={(e) => setForm({ ...form, memo: e.target.value })}
+                      className="border rounded w-full p-2"
+                      placeholder="배송 메모"
+                      value={form.memo}
+                      onChange={(e) => setForm({ ...form, memo: e.target.value })}
                     />
 
                     <Button
-                        variant="primary"
-                        className="w-full mt-3"
-                        onClick={() => createAddress.mutate(form)}
+                      variant="primary"
+                      className="w-full mt-3"
+                      onClick={() => createAddress.mutate(form)}
                     >
                         등록하기
                     </Button>
 
                     <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => setShowForm(false)}
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setShowForm(false)}
                     >
                         목록으로 돌아가기
                     </Button>
 
                     {showPostcode && (
-                        <div className="mt-4 border rounded">
-                            <DaumPostcode onComplete={handleSelectAddress} />
-                        </div>
+                      <div className="mt-4 border rounded">
+                          <DaumPostcode onComplete={handleSelectAddress} />
+                      </div>
                     )}
                 </div>
-            )}
-        </div>
+            </>
+          )}
+      </div>
     );
 }
