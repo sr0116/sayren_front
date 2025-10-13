@@ -19,6 +19,12 @@ const menuGroups = [
     ],
   },
   {
+    title: "배송관리",
+    items: [
+      { name: "배송 및 환불 목록", href: "/admin/delivery/list" },
+    ],
+  },
+  {
     title: "구독 / 결제 관리",
     items: [
       { name: "구독 내역", href: "/admin/subscribe/list" },
