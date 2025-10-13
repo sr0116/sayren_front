@@ -2,12 +2,13 @@
 
 export default function ProductCardPurchase({ product }) {
   const {
+    productId,
     thumbnailUrl,
-    productCategory,
     productName,
-    modelName,
     price,
-    tags = [],
+    modelName,
+    tags,
+    category,
   } = product || {};
 
   return (
@@ -25,9 +26,9 @@ export default function ProductCardPurchase({ product }) {
             No Image
           </div>
         )}
-        {productCategory && (
+        {category && (
           <span className="absolute top-2 left-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-md">
-            {productCategory}
+            {category}
           </span>
         )}
       </div>

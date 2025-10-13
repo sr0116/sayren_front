@@ -22,7 +22,7 @@ const categories = [
                 return (
                     <Link
                         key={cat}
-                        href={cat === "전체" ? "/products" : `/products?category=${cat}`}
+                        href={cat === "전체" ? "/products" : `/product?category=${cat}`}
                         className={`px-4 py-2 rounded-full border text-sm transition-colors
               ${
                             isActive
