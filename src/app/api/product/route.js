@@ -1,23 +1,21 @@
 import { NextResponse } from "next/server";
-import redis from "@/lib/redis";
 
+export const revalidate = false;
 export async function GET() {
   try {
-    const products = await redis.get("PRODUCTS");
+    const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL; // 백엔드 주소
+    const url = `${baseUrl}/api/user/product`;
 
-    if (products.length === 0) {
-      return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
-    }
+    const res = await fetch(url, { cache: "no-store" });
+    const contentType = res.headers.get("content-type");
 
-    const parsed = JSON.parse(products);
+    const data = contentType?.includes("application/json")
+      ? await res.json()
+      : await res.text();
 
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      return NextResponse.json({ error: "상품이 없습니다." }, { status: 404 });
-    }
-
-    return NextResponse.json(JSON.parse(products));
+    return NextResponse.json(data, { status: res.status });
   } catch (err) {
-    console.error("상품 조회 실패:", err);
-    return NextResponse.json({ error: "서버 에러" }, { status: 500 });
+    console.error("서버오류 오류:", err);
+    return NextResponse.json({ error: "서버 오류" }, { status: 500 });
   }
 }
