@@ -24,11 +24,10 @@ export default function AddressModal({ onSelect }) {
         isDefault: true,
     });
 
-    /**
-     * ✅ 배송지 목록 조회
-     */
+   // 배송지 목록 조회
+
     const {
-        data: addresses = [],
+        data: addresses,
         isFetching,
         refetch,
     } = useQuery({
@@ -36,9 +35,11 @@ export default function AddressModal({ onSelect }) {
         queryFn: () => addressApi.getAll(),
     });
 
-    /**
-     * ✅ 신규 배송지 등록
-     */
+    //  데이터가 배열인지 확인 후 안전 처리
+    const safeAddresses = Array.isArray(addresses) ? addresses : [];
+
+   // 신규 배송지 등록
+
     const createAddress = useMutation({
         mutationFn: (data) => addressApi.create(data),
         onSuccess: () => {
@@ -48,14 +49,13 @@ export default function AddressModal({ onSelect }) {
             setShowForm(false);
         },
         onError: (err) => {
-            console.error("배송지 등록 실패:", err);
+            console.error(" 배송지 등록 실패:", err);
             alert("배송지 등록 중 오류가 발생했습니다.");
         },
     });
 
-    /**
-     * ✅ 카카오 주소 선택 핸들러
-     */
+  // 카카오 주소 선택 핸들러
+
     const handleSelectAddress = (data) => {
         setForm({
             ...form,
@@ -65,20 +65,17 @@ export default function AddressModal({ onSelect }) {
         setShowPostcode(false);
     };
 
-    /**
-     * ✅ 배송지 선택 → CheckoutPage로 전달
-     * → 필드명 통일 + 정상화(Normalize)
-     */
+    //배송지 선택 → CheckoutPage로 전달
+
     const handleSelect = (addr) => {
         if (!addr) return;
 
-        // 💡 서버/DB 구조와 CheckoutPage 필드 불일치 해결
         const normalized = {
-            name: addr.name || addr.receiverName || "",
-            tel: addr.tel || addr.receiverTel || "",
-            zipcode: addr.zipcode || addr.zipCode || "",
-            address: addr.address || addr.addressDetail || "",
-            memo: addr.memo || addr.deliveryMemo || "",
+            name: addr.name || "",
+            tel: addr.tel || "",
+            zipcode: addr.zipcode || "",
+            address: addr.address || "",
+            memo: addr.memo || "",
         };
 
         if (onSelect) onSelect(normalized);
@@ -87,32 +84,29 @@ export default function AddressModal({ onSelect }) {
 
     return (
       <div className="p-6 w-[550px] bg-white rounded-lg">
-          {/* ------------------------------- */}
-          {/* 🚩 배송지 목록 화면 */}
-          {/* ------------------------------- */}
+
+          {/*  배송지 목록 */}
+
           {!showForm ? (
             <>
                 <h2 className="text-xl font-bold mb-4">배송지 관리</h2>
 
                 {isFetching ? (
                   <p className="text-gray-400">불러오는 중...</p>
-                ) : addresses.length === 0 ? (
+                ) : safeAddresses.length === 0 ? (
                   <p className="text-gray-500 mb-4">등록된 배송지가 없습니다.</p>
                 ) : (
                   <ul className="space-y-2 mb-4 max-h-[300px] overflow-y-auto border rounded p-2">
-                      {addresses.map((addr) => (
+                      {safeAddresses.map((addr) => (
                         <li
                           key={addr.id}
                           className="border rounded p-3 cursor-pointer hover:bg-gray-100 transition"
                           onClick={() => handleSelect(addr)}
                         >
                             <p className="font-medium">
-                                {addr.name || addr.receiverName} |{" "}
-                                {addr.tel || addr.receiverTel}
+                                {addr.name} | {addr.tel}
                             </p>
-                            <p className="text-sm text-gray-600">
-                                {addr.address || addr.addressDetail}
-                            </p>
+                            <p className="text-sm text-gray-600">{addr.address}</p>
                             {addr.isDefault && (
                               <span className="text-blue-500 text-xs">기본 배송지</span>
                             )}
@@ -121,15 +115,17 @@ export default function AddressModal({ onSelect }) {
                   </ul>
                 )}
 
-                <Button variant="primary" onClick={() => setShowForm(true)}>
-                    신규 배송지 추가
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="primary" onClick={() => setShowForm(true)}>
+                        신규 배송지 추가
+                    </Button>
+                </div>
             </>
           ) : (
             <>
-                {/* ------------------------------- */}
-                {/* 🚩 신규 배송지 등록 화면 */}
-                {/* ------------------------------- */}
+
+                {/*  신규 배송지 등록 */}
+
                 <div className="space-y-3">
                     <h3 className="text-lg font-semibold mb-2">신규 배송지 등록</h3>
 
@@ -171,21 +167,21 @@ export default function AddressModal({ onSelect }) {
                       onChange={(e) => setForm({ ...form, memo: e.target.value })}
                     />
 
-                    <Button
-                      variant="primary"
-                      className="w-full mt-3"
-                      onClick={() => createAddress.mutate(form)}
-                    >
-                        등록하기
-                    </Button>
+                    <div className="flex flex-col gap-2 mt-3">
+                        <Button
+                          variant="primary"
+                          onClick={() => createAddress.mutate(form)}
+                        >
+                            등록하기
+                        </Button>
 
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => setShowForm(false)}
-                    >
-                        목록으로 돌아가기
-                    </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowForm(false)}
+                        >
+                            목록으로 돌아가기
+                        </Button>
+                    </div>
 
                     {showPostcode && (
                       <div className="mt-4 border rounded">
