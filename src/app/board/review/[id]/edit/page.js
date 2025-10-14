@@ -1,4 +1,4 @@
-// app/board/review/[id]/edit/page.js
+// app/board/review/[id]/edit/route.js
 "use client";
 
 import { useEffect, useRef, useState } from "react";
