@@ -4,19 +4,19 @@ import Image from "next/image";
 export default function ProductCardRental({ product }) {
   const {
     thumbnailUrl,
-    productCategory,
     productName,
-    modelName,
     price,
-    rentalPrice,
-    tags = [],
-    deposit,
+    modelName,
+    tags,
+    category,
   } = product || {};
 
+  const monthlyPrice = Math.round(price / 36 * 1.005);
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-[400px]">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-[430px]">
       {/* 이미지 */}
-      <div className="relative w-full h-40 md:h-45 lg:h-60 shrink-0">
+      <div className="relative w-full h-45 md:h-50 lg:h-65 shrink-0">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}
@@ -28,9 +28,9 @@ export default function ProductCardRental({ product }) {
             No Image
           </div>
         )}
-        {productCategory && (
+        {category && (
           <span className="absolute top-2 left-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-md">
-            {productCategory}
+            {category}
           </span>
         )}
       </div>
@@ -38,18 +38,25 @@ export default function ProductCardRental({ product }) {
       {/* 본문 */}
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
-          {tags.length > 0 && (
-            <p className="text-xs text-gray-500 mb-2">#{tags.join(" #")}</p>
-          )}
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.length > 0 && tags.map((tag, i) => (
+                <p key={`${tag}-${i}`}
+                   className="text-xs text-gray-500">
+                  #{tag.split("#")[1]}
+                </p>
+              )
+            )}
+          </div>
 
           <h3 className="font-semibold text-base line-clamp-1">{productName}</h3>
-          <span className="text-sm text-gray-600 mt-1">{modelName}</span>
-
+          <span className=" text-sm text-gray-600 mt-1">{modelName}</span>
         </div>
 
-        <div className="mt-3">
-          {/*<span className="text-gray-400 line-through text-sm">{price?.toLocaleString()}원</span>*/}
-          <p className="text-lg font-bold text-[#ff0066] line-clamp-1">월 {rentalPrice?.toLocaleString()}원 </p>
+        <div className="mt-2">
+          <p className="text-lg font-bold text-[#ff0066] line-clamp-1">
+            월 {monthlyPrice.toLocaleString()}원
+          </p>
+          <p className="text-gray-400">36개월 기준</p>
         </div>
       </div>
     </div>

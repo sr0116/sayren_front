@@ -8,7 +8,7 @@ export default function SearchBar({keyword = ""}) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(keyword);
+  const [search, setSearch] = useState(keyword ?? "");
 
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams.toString()); // 기존 쿼리 유지

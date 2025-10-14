@@ -2,7 +2,6 @@
 
 export default function ProductCardPurchase({ product }) {
   const {
-    productId,
     thumbnailUrl,
     productName,
     price,
@@ -12,7 +11,7 @@ export default function ProductCardPurchase({ product }) {
   } = product || {};
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-[400px]">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-[430px]">
       {/* 이미지 */}
       <div className="relative w-full h-45 md:h-50 lg:h-65 shrink-0">
         {thumbnailUrl ? (
@@ -36,9 +35,15 @@ export default function ProductCardPurchase({ product }) {
       {/* 본문 */}
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
-          {tags.length > 0 && (
-            <p className="text-xs text-gray-500 mb-2">#{tags.join(" #")}</p>
+          <div className="flex flex-wrap gap-2 mb-2">
+          {tags.length > 0 && tags.map((tag, i) => (
+              <p key={`${tag}-${i}`}
+                 className="text-xs text-gray-500">
+                #{tag.split("#")[1]}
+              </p>
+            )
           )}
+          </div>
 
           <h3 className="font-semibold text-base line-clamp-1">{productName}</h3>
           <span className=" text-sm text-gray-600 mt-1">{modelName}</span>
@@ -50,10 +55,6 @@ export default function ProductCardPurchase({ product }) {
           </p>
         </div>
       </div>
-
-      {/*<div className="px-4 py-2 border-t text-sm text-gray-500 flex justify-end">*/}
-      {/*  <button className="hover:text-black">♡ 비교하기</button>*/}
-      {/*</div>*/}
     </div>
   );
 }

@@ -1,39 +1,38 @@
+"use client";
 import Link from "next/link";
 
-export default function ProductListCategory({selected}) {
+export default function ProductListCategory({products, selected}) {
+  console.log(selected);
+  const category = () => {
+    const cate = new Set();
+    cate.add("전체");
+    products?.forEach(item => {
+      cate.add(item.category)
+    });
+    return Array.from(cate);
+  }
 
-const categories = [
-    "전체",
-    "정수기",
-    "TV",
-    "에어컨",
-    "냉장고",
-    "공기청정기",
-    "의류건조기",
-    "식기세척기",
-    "세탁기",
-    "스타일러",
-];
+  const categories = category();
 
-    return (
-        <div className="flex flex-wrap gap-3 mb-8">
-            {categories.map((cat) => {
-                const isActive = selected === cat || (!selected && cat === "전체");
-                return (
-                    <Link
-                        key={cat}
-                        href={cat === "전체" ? "/products" : `/product?category=${cat}`}
-                        className={`px-4 py-2 rounded-full border text-sm transition-colors
+  return (
+    <div className="flex flex-wrap gap-3 mb-8">
+      {categories && categories.map((cat) => {
+        const isActive = selected === cat;
+        return (
+          <Link
+            key={cat}
+            href={cat === "전체" ? "/product" : `/product?category=${cat}`}
+            className={`px-4 py-2 rounded-full border text-sm transition-colors
               ${
-                            isActive
-                                ? "bg-black text-white border-black"
-                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                        }`}
-                    >
-                        {cat}
-                    </Link>
-                );
-            })}
-        </div>
-    );
+              isActive
+                ? "bg-black text-white border-black"
+                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+            }`}
+          >
+            {cat}
+          </Link>
+        );
+      })}
+    </div>
+  );
 }

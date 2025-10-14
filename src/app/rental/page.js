@@ -1,53 +1,30 @@
-import Link from "next/link";
-import ProductCardRental from "@/components/product/ProductCardRental";
-import ProductListCategory from "@/components/product/ProductListCategory";
+import RentalList from "@/components/product/RentalList";
 
-async function getProducts() {
-    // type 고정: RENTAL
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?type=RENTAL`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-}
-
-const categoryMap = {
-    "청소기": "가전",
-    "공기청정기": "가전",
-    "세탁기": "가전제품",
-    "스타일러": "신발관리기",
-};
-
+export const revalidate = false;
 export default async function RentalListPage({ searchParams }) {
-    const category = searchParams?.category || null;
-    const products = await getProducts();
 
-    const filtered =
-        category && category !== "전체"
-            ? products.filter((p) => {
-                const mapped = categoryMap[category] || category;
-                return p.productCategory === mapped;
-            })
-            : products;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`);
 
+
+  if (!res.ok) {
     return (
-        <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="flex justify-between items-center mb-6">
-                <div className="inline-flex flex-wrap items-center gap-2">
-                    <ProductListCategory selected={category} />
-                </div>
-            </div>
-
-            {filtered.length === 0 ? (
-                <p className="p-6">상품이 없습니다.</p>
-            ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {filtered.map((p) => (
-                        <Link key={p.productId} href={`/rental/${p.productId}`}>
-                            <ProductCardRental product={p} />
-                        </Link>
-                    ))}
-                </div>
-            )}
-        </div>
+      <div>
+        <h1 className="text-center mb-16 font-semibold text-2xl">서버 에러가 발생했습니다.</h1>
+        <p>상품을 가져올 수 없습니다.</p>
+      </div>
     );
+  }
+
+  const products = await res.json();
+
+
+  if(products === null || products === undefined) {
+    return (<div>불러오는 중</div>)
+  }
+
+  return (
+    <div>
+      <RentalList products={products} searchParams={searchParams} />
+    </div>
+  );
 }
