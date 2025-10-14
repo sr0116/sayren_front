@@ -90,19 +90,6 @@ export default function ProductDetail({ product, productId }) {
         </div>
       </div>
 
-      {/* 하단: 상세 설명 */}
-      <div>
-        <hr className="my-8 border-t border-gray-200" />
-        <h2 className="text-2xl font-bold mb-6">제품 상세</h2>
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{
-            __html: product.description
-              ? product.description.replace(/<video[^>]*>.*?<\/video>/g, "").replace(/<source[^>]*>/g, "")
-              : "",
-          }}
-        />
-      </div>
     </div>
   );
 }
