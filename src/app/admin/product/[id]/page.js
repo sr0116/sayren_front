@@ -1,58 +1,34 @@
-"use client";
-import { useState } from "react";
-import Button from "@/components/common/Button";
-import Modal from "@/components/common/Modal";
+import ProductDetail from "@/components/product/ProductDetail";
 
-export default function ProductPreviewModal({ product }) {
-    const [open, setOpen] = useState(false);
+export const revalidate = false;
+export default async function ProductDetailPage({ params }) {
 
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product/${params.id}`);
+
+
+  if (!res.ok) {
     return (
-        <>
-            <Button
-                variant="outline"
-                className="!w-[120px]"
-                onClick={() => setOpen(true)}
-            >
-                상세보기
-            </Button>
-
-            {open && (
-                <Modal onClose={() => setOpen(false)} title="상품 상세 미리보기">
-                    <div className="p-4 space-y-4">
-                        <img
-                            src={product.thumbnailUrl}
-                            alt={product.productName}
-                            className="w-full h-[400px] object-cover rounded-lg shadow"
-                        />
-
-                        <div>
-                            <h2 className="text-xl font-bold">{product.productName}</h2>
-                            <p className="text-gray-600">{product.modelName}</p>
-                            <p className="text-gray-500">
-                                카테고리: {product.productCategory}
-                            </p>
-                            <p className="mt-4 whitespace-pre-wrap text-sm text-gray-700">
-                                {product.description}
-                            </p>
-                        </div>
-
-                        <div className="flex justify-end gap-3 mt-6">
-                            <Button
-                                variant="secondary"
-                                onClick={() => setOpen(false)}
-                            >
-                                닫기
-                            </Button>
-                            <Button
-                                onClick={() => handleApprove(product.productId)}
-                                className="bg-gray-800 text-white hover:bg-gray-900"
-                            >
-                                등록 승인
-                            </Button>
-                        </div>
-                    </div>
-                </Modal>
-            )}
-        </>
+      <div>
+        <h1 className="text-center mb-16 font-semibold text-2xl">서버 에러가 발생했습니다.</h1>
+        <p>상품을 가져올 수 없습니다.</p>
+      </div>
     );
+  }
+
+  const product = await res.json();
+
+  // 로딩 처리
+  if (!product) {
+    return (
+      <div className="max-w-6xl mx-auto p-6">
+        <p className="text-gray-500">상품 정보를 불러올 수 없습니다.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <ProductDetail product={product} type="buy"/>
+    </div>
+  );
 }
