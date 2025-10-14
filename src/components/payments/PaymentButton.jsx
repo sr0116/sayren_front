@@ -4,7 +4,7 @@ import { useState } from "react";
 import { preparePayment, completePayment } from "@/api/paymentApi";
 import { requestPortOnePayment } from "@/lib/portone";
 
-export default function PaymentButton({ orderItemId = 1 }) {
+export default function PaymentButton({ orderItemId }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
