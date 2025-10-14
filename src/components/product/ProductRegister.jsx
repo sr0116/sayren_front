@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const categories = ["정수기", "TV", "에어컨", "냉장고", "공기청정기", "의류건조기", "식기세척기", "세탁기", "스타일러",]
 
-export default function ProductNewPage() {
+export default function ProductRegister() {
   const [category, setCategory] = useState("");
   const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState(null);

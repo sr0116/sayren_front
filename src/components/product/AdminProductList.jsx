@@ -6,9 +6,9 @@ import ProductListCategory from "@/components/product/ProductListCategory";
 import ProductTagFilter from "@/components/product/ProductTagFilter";
 import SearchBar from "@/components/common/SearchBar";
 import Link from "next/link";
-import ProductCardRental from "@/components/product/ProductCardRental";
+import ProductCardPurchase from "@/components/product/ProductCardPurchase";
 
-export default function RentalList({products, searchParams}) {
+export default function ProductList({products, searchParams}) {
   const [cate, setCate] = useState(null);
   // 필터링된 상품
   const [productList, setProductList] = useState(null);
@@ -127,10 +127,11 @@ export default function RentalList({products, searchParams}) {
         {/*상세검색 태그 필터*/}
         <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
       </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
-          <Link key={p.productId} href={`/rental/${p.productId}`}>
-            <ProductCardRental product={p}/>
+          <Link key={p.productId} href={`/product/${p.productId}`}>
+            <ProductCardPurchase product={p}/>
           </Link>
         ))}
       </div>

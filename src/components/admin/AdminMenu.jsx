@@ -40,6 +40,12 @@ const menuGroups = [
       { name: "내 댓글", href: "/mypage/replies" },
     ],
   },
+  {
+    title: "상품관리",
+    items: [
+      { name: "상품현황 및 상품목록 ", href: "/admin/product/list" },
+    ],
+  },
 ];
 
 export default function AdminMenu() {
