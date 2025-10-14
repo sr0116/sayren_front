@@ -26,6 +26,7 @@ export default function LoginForm(){
 
   const loginMutation = useLoginMutation({
     onSuccess: (data) => {
+      console.log(data)
       dispatch(login({ data }));
       queryClient
           .fetchQuery({
@@ -83,7 +84,7 @@ export default function LoginForm(){
             checked={loginRequestDTO.rememberMe}
             onChange={handleChange}
         />
-        <Button variant="primary" type="submit" disabled={loginMutation.isPending}>
+        <Button variant="primary" type="submit" disabled={loginMutation.isPending || loginRequestDTO.username.trim().length <= 5 || loginRequestDTO.password.trim().length < 8}>
           {loginMutation.isPending ? "로그인 중..." : "로그인"}
         </Button>
 
@@ -92,8 +93,6 @@ export default function LoginForm(){
         </p>
         <SocialLoginButton />
       </form>
-
-
     </div>
   )
 }

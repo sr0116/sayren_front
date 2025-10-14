@@ -35,22 +35,40 @@ export default function EmailSendForm() {
       ))
       router.push("/");
     },
-    onError: () => {
-      dispatch(openModal({
-          content: (
-            <div className="flex flex-col justify-center items-center gap-4">
-              <h3>이미 가입된 이메일입니다.</h3>
-              <p>해당 이메일로 로그인해주세요.</p>
-              <Button variant={"primary"} onClick={() => {
-                dispatch(closeModal());
-                setTimeout(() => router.push("/member/login"), 200);
-              }}>
-                확인
-              </Button>
-            </div>
-          )
-        }
-      ))
+    onError: (err) => {
+      if(err.response?.data?.errorCode === "DELETED_MEMBER") {
+        dispatch(openModal({
+            content: (
+              <div className="flex flex-col justify-center items-center gap-4">
+                <h3>탈퇴한지 30일이 지나지 않아 해당 이메일로 가입이 불가능합니다.</h3>
+                <p>다른 이메일로 시도해주세요.</p>
+                <Button variant={"primary"} onClick={() => {
+                  dispatch(closeModal());
+                }}>
+                  확인
+                </Button>
+              </div>
+            )
+          }
+        ))
+      }
+      else {
+        dispatch(openModal({
+            content: (
+              <div className="flex flex-col justify-center items-center gap-4">
+                <h3>이미 가입된 이메일입니다.</h3>
+                <p>해당 이메일로 로그인해주세요.</p>
+                <Button variant={"primary"} onClick={() => {
+                  dispatch(closeModal());
+                  setTimeout(() => router.push("/member/login"), 200);
+                }}>
+                  확인
+                </Button>
+              </div>
+            )
+          }
+        ))
+      }
     }
   })
 
