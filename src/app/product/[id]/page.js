@@ -129,8 +129,10 @@ export default function ProductDetailPage({ params }) {
           <div className="flex gap-3 mt-2">
             <AddToCartButton
               productId={params.id}
-              planId={selectedPlan?.planId || 1}
+              type={selectedPlan?.type}
+              month={selectedPlan?.month}
             />
+
             <Button
               className="bg-[#ff0066] text-white px-6 py-2 rounded"
               onClick={() => {
