@@ -13,3 +13,13 @@ export function formatDate(dateString) {
     day: "2-digit",
   });
 }
+
+export function formatCurrency(value) {
+  if (value == null) return "-";
+  return value.toLocaleString("ko-KR") + "원";
+}
+
+export function formatDateTime(value) {
+  if (!value) return "-";
+  return new Date(value).toLocaleString("ko-KR", { hour12: false });
+}

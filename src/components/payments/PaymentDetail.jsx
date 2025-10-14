@@ -4,8 +4,10 @@ import { useApiQuery } from "@/hooks/useApi";
 import dayjs from "dayjs";
 import RefundRequestButton from "@/components/refund/RefundRequestButton";
 import StatusBadge from "@/components/common/StatusBadge";
+import EmptyState from "@/components/common/EmptyState";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 
 export default function PaymentDetail({ paymentId }) {
   const router = useRouter();
@@ -16,76 +18,112 @@ export default function PaymentDetail({ paymentId }) {
     isLoading,
     isError,
   } = useApiQuery(["payment", paymentId], `/api/user/payments/${paymentId}`, {
-    refetchOnWindowFocus: true, // 창 포커스 시 자동 갱신
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError) return <div>결제 상세 조회 실패</div>;
+  if (isError)
+    return (
+        <EmptyState
+            title="결제 상세 조회 실패"
+            message="일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        />
+    );
 
   const isRental = payment.orderPlanType === "RENTAL";
-  const hasRound = Boolean(payment.roundNo);
 
   const refreshPaymentStatus = async () => {
-    await queryClient.invalidateQueries(["payment", paymentId]); // 결제 상세 새로고침
-    await queryClient.invalidateQueries(["payments"]); // 전체 목록 갱신
-    if (isRental) {
-      await queryClient.invalidateQueries(["subscribeRounds"]); // 회차 결제 목록 갱신
-    }
+    await queryClient.invalidateQueries(["payment", paymentId]);
+    await queryClient.invalidateQueries(["payments"]);
   };
 
   return (
-      <div className="space-y-8 w-full max-w-[550px]">
+      <div className="w-full max-w-[550px] space-y-10">
         {/* 헤더 */}
-        <header className="border-b border-gray-200 pb-3">
+        <header className="border-b border-gray-200 pb-4">
           <h2 className="text-lg font-bold text-gray-900">결제 상세 정보</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Payment ID: {payment.paymentId}
+            주문번호 #{payment.orderItemId ?? "-"}
           </p>
         </header>
 
+        {/* 상품 정보 */}
+        <section className="space-y-4">
+          <h3 className="text-base font-semibold text-gray-800">주문 상품</h3>
+
+          <div className="flex items-start gap-4">
+            <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+              <Image
+                  src={payment.productThumbnail || "/image/image2.svg"}
+                  alt={payment.productName || "상품 이미지"}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center">
+              <p className="font-medium text-gray-900">{payment.productName}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {isRental ? "렌탈 구독 결제" : "일시 결제"}
+              </p>
+              <p className="font-semibold text-gray-900 mt-2">
+                {payment.amount?.toLocaleString()}원
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* 결제 정보 */}
-        <section className="space-y-3">
+        <section className="space-y-4">
           <h3 className="text-base font-semibold text-gray-800">결제 정보</h3>
 
+
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">상품명</span>
-              <span className="font-medium text-gray-900 text-right">
-              {payment.productName}
-            </span>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500">결제 유형</span>
-              <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                      isRental
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-700"
-                  }`}
-              >
-              {isRental ? "구독 결제" : "일반 결제"}
-            </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-gray-500">결제 수단</span>
-              <span className="text-gray-800 font-medium text-right">
-              {payment.paymentType || "-"}
-            </span>
-            </div>
-
+            {/* 구독 정보 (렌탈만) */}
+            {isRental && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">회차 번호</span>
+                  <span className="text-gray-900">{payment.roundNo || "-"} 회차</span>
+                </div>
+            )}
             <div className="flex justify-between">
               <span className="text-gray-500">결제 금액</span>
-              <span className="font-semibold text-gray-900 text-right">
+              <span className="font-semibold text-gray-900">
               {payment.amount?.toLocaleString()}원
             </span>
             </div>
 
             <div className="flex justify-between">
+              <span className="text-gray-500">결제 수단</span>
+              <span className="text-gray-900">
+              {payment.paymentType ?? "카드 결제"}
+            </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-500">결제 상태</span>
+              <StatusBadge
+                  type="PaymentStatus"
+                  value={payment.paymentStatus || "PENDING"}
+              />
+            </div>
+
+            {payment.refundStatus && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">환불 상태</span>
+                  <StatusBadge
+                      type="RefundRequestStatus"
+                      value={payment.refundStatus}
+                  />
+                </div>
+            )}
+
+            <div className="flex justify-between">
               <span className="text-gray-500">결제일</span>
-              <span className="text-gray-800 text-right">
-              {dayjs(payment.regDate).format("YYYY-MM-DD HH:mm")}
+              <span className="text-gray-900">
+              {dayjs(payment.paidDate || payment.regDate).format(
+                  "YYYY-MM-DD HH:mm"
+              )}
             </span>
             </div>
 
@@ -96,7 +134,7 @@ export default function PaymentDetail({ paymentId }) {
                       href={payment.receiptUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                   >
                     영수증 보기
                   </a>
@@ -105,42 +143,36 @@ export default function PaymentDetail({ paymentId }) {
           </div>
         </section>
 
-        {/* 회차 결제 정보 */}
-        {isRental && hasRound && (
-            <section className="space-y-3">
-              <h3 className="text-base font-semibold text-gray-800">
-                회차 결제 정보
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">회차 번호</span>
-                  <span className="text-gray-800">{payment.roundNo}회차</span>
-                </div>
-              </div>
-            </section>
-        )}
+        {/* 주문자 정보 */}
+        <section className="space-y-4">
+          <h3 className="text-base font-semibold text-gray-800">주문자 정보</h3>
 
-        {/* 결제 상태 */}
-        <section className="space-y-3">
-          <h3 className="text-base font-semibold text-gray-800">결제 상태</h3>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-500 text-sm">결제 상태</span>
-            <StatusBadge type="PaymentStatus" value={payment.paymentStatus} />
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-500">주문자명</span>
+              <span className="text-gray-900 font-medium">
+              {payment.buyerName || payment.member?.name || "-"}
+            </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-500">이메일</span>
+              <span className="text-gray-900">
+              {payment.buyerEmail || payment.member?.email || "-"}
+            </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-500">전화번호</span>
+              <span className="text-gray-900">
+              {payment.buyerTel || payment.member?.tel || "-"}
+            </span>
+            </div>
           </div>
-
-          {payment.refundStatus && (
-              <div className="flex items-center justify-between">
-                <span className="text-gray-500 text-sm">환불 상태</span>
-                <StatusBadge
-                    type="RefundRequestStatus"
-                    value={payment.refundStatus}
-                />
-              </div>
-          )}
         </section>
 
         {/* 하단 액션 */}
-        <section className="pt-3 border-t border-gray-200">
+        <section className="pt-4 border-t border-gray-200">
           {isRental ? (
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">

@@ -5,17 +5,20 @@ import { motion } from "framer-motion";
 export default function LoadingSpinner({
                                          size = "md",
                                          fullscreen = false,
-                                         blockUI = true, // 기본값: 클릭 차단
+                                         blockUI = true,
+                                         color = "gray-900",
                                        }) {
   const sizeMap = {
     sm: "w-4 h-4 border-2",
-    md: "w-8 h-8 border-3",
+    md: "w-8 h-8 border-[3px]",
     lg: "w-12 h-12 border-4",
   };
 
   const spinner = (
       <motion.div
-          className={`rounded-full border-t-transparent border-gray-900 ${sizeMap[size]}`}
+          role="status"
+          aria-label="Loading..."
+          className={`rounded-full border-t-transparent border-${color} ${sizeMap[size]}`}
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
       />
@@ -28,9 +31,7 @@ export default function LoadingSpinner({
                 blockUI ? "" : "pointer-events-none"
             }`}
         >
-          <div className="pointer-events-auto -translate-x-[120px]">
-            {spinner}
-          </div>
+          {spinner}
         </div>
     );
   }

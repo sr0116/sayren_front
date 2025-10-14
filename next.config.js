@@ -8,8 +8,15 @@ const nextConfig = {
         hostname: "placehold.co",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "kiylab-bucket.s3.ap-northeast-2.amazonaws.com",
+        pathname: "/**", // S3 버킷 내 모든 경로 허용
+      },
     ],
   },
+
+
   async rewrites() {
     return [
       {
