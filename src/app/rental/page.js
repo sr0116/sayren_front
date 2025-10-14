@@ -1,162 +1,30 @@
-"use client"
-import {useState, useEffect} from "react";
-import Link from "next/link";
-import ProductCardRental from "@/components/product/ProductCardRental";
-import ProductListCategory from "@/components/product/ProductListCategory";
-import axios from "axios";
-import {usePageParams} from "@/hooks/usePageParams";
-import SearchBar from "@/components/common/SearchBar";
-import {calcRentalPrice} from "@/utils/CalcRentalPrice";
+import RentalList from "@/components/product/RentalList";
 
-export default function RentalListPage({ searchParams }) {
-  // 전체 상품
-  const [products, setProducts] = useState(null);
-  // 필터링된 상품
-  const [productList, setProductList] = useState(null);
-  const [search, setSearch] = useState("");
+export const revalidate = false;
+export default async function RentalListPage({ searchParams }) {
 
-  const { page,
-    size,
-    type,
-    keyword,
-    sortBy,
-    direction,
-  } = usePageParams();
-
-  const category = searchParams?.category || "전체";
-
-  const [tags, setTags] = useState([]);
-  const fetchProducts = async () => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-      const url = `${baseUrl}/api/product`;
-
-      const res = await axios.get(url, { headers: { "Cache-Control": "no-store" } });
-      setProducts(res.data);
-    } catch (err) {
-      console.error("상품 조회 실패:", err);
-      setProducts([]);
-    }
-  };
-
-  function filterProducts(products) {
-    let filtered = products?.filter((item) => {
-      const safeKeyword = keyword?.trim() || "";
-      const keywordMatch =
-        safeKeyword.length === 0 ||
-        item.productName?.toLowerCase().includes(safeKeyword.toLowerCase()) ||
-        item.modelName?.toLowerCase().includes(safeKeyword.toLowerCase());
-
-      console.log("keyword", keywordMatch);
-      // 카테고리 필터
-      const categoryMatch = category === "전체" || item.category === category;
-      console.log("category", categoryMatch);
-      // 태그 필터
-      const tagMatch =
-        tags.length === 0 || tags.some((t) => item.tags?.includes(t));
-      console.log("tag", tagMatch);
-      // status 필터
-      const statusMatch = item.status === "ACTIVE";
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`);
 
 
-      // 각 조건 모두 통과해야 true 반환
-      return keywordMatch && categoryMatch && tagMatch && statusMatch;
-    })
-
-    if (sortBy) {
-      filtered = [...filtered].sort((a, b) => {
-        const valA = a[sortBy];
-        const valB = b[sortBy];
-
-        // null/undefined 방어
-        if (valA == null || valB == null) return 0;
-
-        // 숫자형 정렬 (price, deposit 등)
-        if (typeof valA === "number" && typeof valB === "number") {
-          return direction === "desc" ? valB - valA : valA - valB;
-        }
-
-        // 날짜형 정렬 (createdAt 등)
-        if (!isNaN(Date.parse(valA)) && !isNaN(Date.parse(valB))) {
-          return direction === "desc"
-            ? new Date(valB) - new Date(valA)
-            : new Date(valA) - new Date(valB);
-        }
-
-        // 문자열 정렬 (productName, modelName 등)
-        if (typeof valA === "string" && typeof valB === "string") {
-          return direction === "desc"
-            ? valB.localeCompare(valA)
-            : valA.localeCompare(valB);
-        }
-
-        // 기타 자료형은 그대로
-        return 0;
-      });
-    }
-
-    return filtered;
+  if (!res.ok) {
+    return (
+      <div>
+        <h1 className="text-center mb-16 font-semibold text-2xl">서버 에러가 발생했습니다.</h1>
+        <p>상품을 가져올 수 없습니다.</p>
+      </div>
+    );
   }
 
-  // 최초에 불러오는 거
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const products = await res.json();
 
-  // 필터
-  useEffect(() => {
-    if (products !== null) {
-      // 렌탈가 계산 추가
-      const withRentalInfo = products.map((p) => {
-        try {
-          const rental = calcRentalPrice(p.price, 24); // 기본 24개월 기준
-          return {
-            ...p,
-            rentalPrice: rental.monthlyFee,
-            deposit: rental.deposit,
-          };
-        } catch (err) {
-          console.error("렌탈가 계산 실패:", err);
-          return p;
-        }
-      });
 
-      setProductList(filterProducts(withRentalInfo));
-    }
-  }, [category, page, size, tags, keyword, sortBy, direction, products]);
-
+  if(products === null || products === undefined) {
+    return (<div>불러오는 중</div>)
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="flex flex-col justify-between items-center mb-6 gap-4">
-        {/* 카테고리 필터 */}
-        <ProductListCategory selected={category} />
-
-        {/* 검색 입력창 */}
-        <div className="flex items-center gap-2 w-full">
-          <SearchBar keyword={keyword} />
-        </div>
-      </div>
-      <pre>{JSON.stringify(products, null, 2)}</pre>
-      상품 리스트
-      {
-        productList ? (
-          <div>
-            {productList?.length === 0 ? (
-              <p className="p-6 text-gray-500 text-center">상품이 없습니다.</p>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {productList.map((p) => (
-                  <Link key={p.productId} href={`/product/${p.productId}`}>
-                    <ProductCardRental product={p} />
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (<p className="p-6 text-gray-500 text-center">상품을 불러오는 중입니다.</p> )
-      }
+    <div>
+      <RentalList products={products} searchParams={searchParams} />
     </div>
   );
 }
