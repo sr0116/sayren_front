@@ -33,6 +33,9 @@ export default function ProductCartOrBuy({productId, price, type}) {
           />
           <Button
             className="bg-[#ff0066] text-white px-6 py-2 rounded"
+            onClick={() =>
+              router.push(`/order/checkout/${productId}?type=PURCHASE`)
+            }
           >
             바로 구매
           </Button>

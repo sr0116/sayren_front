@@ -8,12 +8,13 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { queryClient } from "@/lib/queryClient";
 
-export default function AddToCartButton({ productId, type, month }) {
+export default function AddToCartButton({ productId, planId }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const addCartItemMutation = useAddCartItemMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
       dispatch(openModal({
         content: (
           <div className="flex flex-col justify-center items-center gap-2">
@@ -41,7 +42,7 @@ export default function AddToCartButton({ productId, type, month }) {
 
   const handleAdd = () => {
     addCartItemMutation.mutate({
-      data: { productId, type, month },
+      data: { productId, orderPlanId: planId },
     });
   };
 
