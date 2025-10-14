@@ -96,7 +96,7 @@ export default function Page() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">🛒 내 장바구니</h1>
+      <h1 className="text-2xl font-bold mb-6"> 내 장바구니</h1>
       {/* 장바구니 비어있을 때 */}
       {!itemList || itemList.length === 0 ? (
         <p className="text-gray-500 text-center py-20">장바구니가 비어 있습니다.</p>
@@ -116,7 +116,7 @@ export default function Page() {
                     요금제: {item.planType === "PURCHASE" ? "구매" : `렌탈 - ${plans.find(plan => plan.planId === item.planId).month} 개월`}
                   </p>
 
-                  {/* ✅ 가격 */}
+                  {/*  가격 */}
                   <div className="flex gap-2 items-center">
 
                     <span className="text-lg font-bold text-gray-900">
@@ -130,7 +130,7 @@ export default function Page() {
                     }
                   </div>
 
-                  {/* ✅ 수량 조절 버튼 */}
+                  {/*  수량 조절 버튼 */}
                   <div className="flex gap-3 flex-col">
                     <div className="items-center border border-gray-300 rounded-full px-1 py-1 flex w-20">
                       <button
