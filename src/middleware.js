@@ -12,12 +12,28 @@ function parseJwt(token) {
 }
 
 export function middleware(req) {
+  const refresh = req.cookies.get("SR_REFRESH")?.value;
   const token = req.cookies.get("SR_ACCESS")?.value;
-  const login = req.cookies.has("SR_ACTIVE");
+
+  // 로그인 안한 유저 관리
+  if (!refresh && req.nextUrl.pathname.startsWith("/mypage")) {
+    return NextResponse.redirect(new URL("/member/login", req.url));
+  }
+
+  if (!refresh && req.nextUrl.pathname.startsWith("/admin")) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // 리프레쉬 토큰 없을 때 쿠키 삭제
+  if (!refresh) {
+    const res = NextResponse.next();
+    res.cookies.delete("SR_ACCESS");
+    res.cookies.delete("SR_ACTIVE");
+    return res;
+  }
 
   if (token) {
     const user = parseJwt(token);
-    console.log("User from SR_ACCESS:", user);
 
     // 로그인 페이지 접근 제한
     if (req.nextUrl.pathname.startsWith("/member") && user) {
@@ -35,13 +51,7 @@ export function middleware(req) {
       }
     }
   }
-  // 로그인 안한 유저 관리
-  else if(!login) {
-    if (req.nextUrl.pathname.startsWith("/mypage")) {
-      return NextResponse.redirect(new URL("/member/login", req.url));
-    }
 
-  }
 
   return NextResponse.next();
 }

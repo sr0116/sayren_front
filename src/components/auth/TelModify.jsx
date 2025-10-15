@@ -31,7 +31,6 @@ export default function TelModify(){
           </div>)}
         ));
         queryClient.invalidateQueries("memberTel");
-        router.push("/mypage");
       },
       onError: (err) => {
         dispatch(openModal({
@@ -51,7 +50,7 @@ export default function TelModify(){
 
   return(
       <div>
-        {user?.status === "ACTIVE" && <TelInfo />}
+        <TelInfo />
         <p className="font-semibold text-gray-600 mb-4">휴대폰 번호 수정</p>
         <TelCheckForm mutation={telmodifyMutation}/>
       </div>
