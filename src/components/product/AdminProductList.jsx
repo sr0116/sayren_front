@@ -38,16 +38,16 @@ export default function AdminProductList({ products = [] }) {
         >
           전체
         </button>
-        <button
-          onClick={() => setFilter("VISIBLE")}
-          className={`px-4 py-1.5 text-sm rounded-md border transition ${
-            filter === "VISIBLE"
-              ? "bg-green-600 text-white border-green-600"
-              : "bg-white text-gray-700 hover:bg-gray-100"
-          }`}
-        >
-          노출함
-        </button>
+        {/*<button*/}
+        {/*  onClick={() => setFilter("VISIBLE")}*/}
+        {/*  className={`px-4 py-1.5 text-sm rounded-md border transition ${*/}
+        {/*    filter === "VISIBLE"*/}
+        {/*      ? "bg-green-600 text-white border-green-600"*/}
+        {/*      : "bg-white text-gray-700 hover:bg-gray-100"*/}
+        {/*  }`}*/}
+        {/*>*/}
+        {/*  노출함*/}
+        {/*</button>*/}
         <button
           onClick={() => setFilter("HIDDEN")}
           className={`px-4 py-1.5 text-sm rounded-md border transition ${
@@ -100,7 +100,6 @@ export default function AdminProductList({ products = [] }) {
             <th className="px-4 py-3 text-left">썸네일</th>
             <th className="px-4 py-3 text-left">상품명</th>
             <th className="px-4 py-3 text-right">일반구매가</th>
-            <th className="px-4 py-3 text-right">월 구독가</th>
             <th className="px-4 py-3 text-center">상태</th>
             <th className="px-4 py-3 text-center">관리</th>
           </tr>
@@ -139,24 +138,30 @@ export default function AdminProductList({ products = [] }) {
                     ? `${p.purchasePrice.toLocaleString()}원`
                     : "-"}
                 </td>
-                <td className="px-4 py-3 text-right text-gray-600">
-                  {p.rentalPrice
-                    ? `${p.rentalPrice.toLocaleString()}원`
-                    : "-"}
-                </td>
+                {/*<td className="px-4 py-3 text-right text-gray-600">*/}
+                {/*  {p.rentalPrice*/}
+                {/*    ? `${p.rentalPrice.toLocaleString()}원`*/}
+                {/*    : "-"}*/}
+                {/*</td>*/}
                 <td className="px-4 py-3 text-center">
                   {p.isDeleted ? (
                     <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-500 rounded">
                         삭제됨
-                      </span>
+                    </span>
                   ) : p.isUse ? (
                     <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded">
                         노출중
-                      </span>
+                    </span>
+
                   ) : (
-                    <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded">
+                    <div>
+                      <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded">
                         노출안함
                       </span>
+                      <Button size="xs" variant="outline">
+                        노출함
+                      </Button>
+                    </div>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
