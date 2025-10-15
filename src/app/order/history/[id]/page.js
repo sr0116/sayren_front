@@ -32,7 +32,7 @@ export default function OrderDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center">🧾 주문 상세 내역</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">주문 상세 내역</h1>
 
       {/* 주문 요약 */}
       <div className="bg-white shadow-sm rounded-xl border p-6 mb-8">
@@ -138,7 +138,7 @@ export default function OrderDetailPage() {
           className="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
           onClick={() => history.back()}
         >
-          ← 이전으로
+          이전으로
         </Button>
         <Button
           variant="primary"
