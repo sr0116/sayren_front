@@ -1,56 +1,44 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import dayjs from "dayjs";
 import { useSubscribeRoundsQuery } from "@/api/subscribeApi";
 import SubscribeRoundItem from "@/components/subscribe/SubscribeRoundItem";
-import EmptyState from "@/components/common/EmptyState";
-import { X } from "lucide-react";
+
 
 /**
- * 구독 회차 목록 페이지
- * - 회차별 납부 상태 및 결제 가능 버튼 노출
- * - 결제 시 invalidate로 상태 실시간 갱신
+ * 구독 회차 리스트
+ * - 가장 앞의 미납 회차만 결제 가능
  */
 export default function SubscribeRoundList() {
   const { id: subscribeId } = useParams();
-  const router = useRouter();
 
-  const { data: rounds = [], isLoading, isError, refetch } =
-      useSubscribeRoundsQuery(subscribeId, {
-        refetchOnWindowFocus: true,
-      });
+  // 회차 목록 조회
+  const {
+    data: rounds,
+    isLoading,
+    refetch,
+  } = useSubscribeRoundsQuery(subscribeId);
 
-  if (isLoading) return <div>불러오는 중...</div>;
-  if (isError) return <div>회차 목록 조회 실패</div>;
+
+
+  if (!rounds || rounds.length === 0)
+    return <p className="text-gray-500 text-center py-10">등록된 회차 정보가 없습니다.</p>;
+
+  // 첫 번째 미납 회차 인덱스
+  const firstPendingIndex = rounds.findIndex((r) => r.payStatus === "PENDING");
 
   return (
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold text-gray-800">
-            구독 {subscribeId} 회차 목록
-          </h2>
-          <button
-              onClick={() => router.push("/mypage/subscribe")}
-              className="ml-auto text-gray-500 hover:text-gray-700 cursor-pointer"
-          >
-            <X />
-          </button>
-        </div>
-
-        {rounds.length === 0 ? (
-            <EmptyState title="회차 정보가 없습니다" />
-        ) : (
-            <ul className="divide-y divide-gray-200">
-              {rounds.map((round) => (
-                  <SubscribeRoundItem
-                      key={round.subscribeRoundId}
-                      round={round}
-                      subscribeId={subscribeId}
-                      refetch={refetch}
-                  />
-              ))}
-            </ul>
-        )}
-      </div>
+      <ul className="divide-y divide-gray-100">
+        {rounds.map((round, idx) => (
+            <SubscribeRoundItem
+                key={round.id}
+                round={round}
+                subscribeId={subscribeId}
+                refetch={refetch}
+                isFirstPending={idx === firstPendingIndex} // 첫 미납 회차만 결제 가능
+            />
+        ))}
+      </ul>
   );
 }
