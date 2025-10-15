@@ -8,6 +8,7 @@ import { TextInput } from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { useFormInput } from "@/hooks/useFormInput";
 import { useReviewCreateMutation } from "@/api/reviewApi";
+import {queryClient} from "@/lib/queryClient";
 
 export default function ReviewNewPage() {
   const router = useRouter();
@@ -26,6 +27,9 @@ export default function ReviewNewPage() {
   const { mutate: createReview, isLoading } = useReviewCreateMutation({
     onSuccess: () => {
       alert("후기가 등록되었습니다!");
+      queryClient.invalidateQueries({
+        queryKey: ["reviews"],
+      });
       router.push("/board/review");
     },
     onError: (err) => {

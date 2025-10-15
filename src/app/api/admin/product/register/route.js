@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request, { params }) {
     try {
         const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL; // 백엔드 주소
-        const url = `${baseUrl}/api/admin/product/pending`;
+        const url = `${baseUrl}/api/admin/product`;
 
         const res = await fetch(url, { cache: "no-store" });
         const contentType = res.headers.get("content-type");

@@ -1,54 +1,62 @@
-// import AdminProductRegister from "@/components/product/AdminProductRegister";
-//
-// export default function RegisterPage() {
-//     return (
-//         <div className="max-w-7xl mx-auto py-10 px-6">
-//             <h1 className="text-2xl font-bold mb-8">상품 등록</h1>
-//             <AdminProductRegister />
-//         </div>
-//     );
-// }
+"use client";
+import { useState } from "react";
+import AdminProductRegister from "@/components/product/AdminProductRegister";
+import axios from "axios";
 
-import AdminProductRegisterList from "@/components/product/AdminProductRegisterList";
+export default function AdminProductRegisterForm() {
+    // 비어있는 초기 상태 (값 들어가는지 테스트용)
+    const [product, setProduct] = useState({
+        productName: "",
+        description: "",
+        price: "",
+        productCategory: "",
+        modelName: "",
+        stock: "",
+        tags: {},
+        attach: null,
+        attachList: [],
+    });
 
-export const revalidate = false;
-export default async function ProductListPage({searchParams}) {
-    try {
-        // 관리자용 승인 대기(= 등록 전) 상품만 가져옴
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_SPRING_API_BASE_URL}/api/admin/product/pending`,
-            { cache: "no-store" }
-        );
+    const handleSubmit = async () => {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
+            const token = localStorage.getItem("accessToken");
 
-        if (!res.ok) {
-            throw new Error("상품을 불러오는 데 실패했습니다.");
+            // 가격, 재고 숫자로 변환
+            const payload = {
+                ...product,
+                price: Number(product.price),
+                stock: Number(product.stock),
+            };
+
+            console.log("상품 등록 요청 데이터 ↓↓↓");
+            console.log(JSON.stringify(payload, null, 2));
+
+            const res = await axios.post(`${baseUrl}/api/admin/product`, payload, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            alert("상품 등록 완료!");
+            console.log("등록 성공:", res.data);
+
+        } catch (err) {
+            console.error("상품 등록 실패:", err);
+            alert("상품 등록에 실패했습니다");
         }
+    };
 
-        const data = await res.json();
-        const products = data.list || data; // PageResponseDTO 구조 대응
+    return (
+      <div className="p-4">
 
-        // 데이터 유효성 확인
-        if (!products || products.length === 0) {
-            return (
-                <div className="p-10 text-center text-gray-500">
-                    <h1 className="text-2xl font-bold mb-2">등록할 상품이 없습니다.</h1>
-                    <p>현재 승인 대기 중인 상품이 없습니다.</p>
-                </div>
-            );
-        }
-
-        return (
-            <div>
-                <AdminProductRegisterList products={products} searchParams={searchParams} />
-            </div>
-        );
-    } catch (err) {
-        console.error("상품 목록 불러오기 실패:", err);
-        return (
-            <div className="p-10 text-center text-red-500">
-                <h1 className="text-2xl font-bold mb-2">서버 오류</h1>
-                <p>상품 목록을 불러오는 중 문제가 발생했습니다.</p>
-            </div>
-        );
-    }
+          {/* AdminProductRegister에 전달 */}
+          <AdminProductRegister
+            product={product}
+            handleSubmit={handleSubmit}
+            setProduct={setProduct}
+          />
+      </div>
+    );
 }
