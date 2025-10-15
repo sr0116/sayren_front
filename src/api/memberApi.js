@@ -43,6 +43,11 @@ export function useSocialDisconnectMutation(options) {
   return useApiMutation("POST", "api/user/member/social-disconnect", { options });
 }
 
+export function useDeleteMemberMutation(options) {
+  return useApiMutation("DELETE", "api/user/member/delete-member", { options });
+}
+
+
 // ========================================== 관리자 기능 ===============================================
 
 // 이름 변경

@@ -17,8 +17,8 @@ export default function TelInfo() {
       }
   );
 
-  if (isLoading) return <p>불러오는 중...</p>;
-  if (isError) return <p>조회 실패</p>;
+  if (isLoading) return <p></p>;
+  if (isError) return <p></p>;
 
   const tel = data?.telinfo;
 
@@ -26,7 +26,7 @@ export default function TelInfo() {
   return(
       <div className="mb-6 flex flex-col gap-2">
         <p className="font-semibold text-gray-600">현재 등록된 휴대폰 번호</p>
-        <p className="font-medium text-2xl text-gray-700">{formatPhoneNumber(tel)}</p>
+        <p className="font-medium text-2xl text-gray-700">{tel ? formatPhoneNumber(tel) : ""}</p>
       </div>
   )
 }
