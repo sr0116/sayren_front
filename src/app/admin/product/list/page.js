@@ -1,4 +1,4 @@
-import AdminProductList from "@/components/product/ProductList";
+import AdminProductList from "@/components/product/AdminProductList";
 import AdminProductState from "@/components/product/AdminProductState";
 
 export const revalidate = false;
