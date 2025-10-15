@@ -1,4 +1,5 @@
 import AdminMenu from "@/components/admin/AdminMenu";
+import SectionLoader from "@/components/common/loading/SectionLoader";
 
 export default function AdminRayOut({children}) {
   return(
@@ -11,7 +12,9 @@ export default function AdminRayOut({children}) {
 
       {/* 오른쪽 컨텐츠 영역 */}
       <section className="flex-grow border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-        {children}
+        <SectionLoader padded={false} color="gray-900">
+          {children}
+        </SectionLoader>
       </section>
     </div>
   )
