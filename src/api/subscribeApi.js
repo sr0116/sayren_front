@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 // 내 구독 요약 리스트 (마이페이지)
 export const getMySubscribes = async () => {
@@ -112,5 +113,27 @@ export function useProcessSubscribeCancelMutation(options) {
       }
   );
 }
+
+// 구독 삭제 (직접 axios.delete 사용)
+export function useDeleteSubscribeMutation(options) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (subscribeId) => {
+      //  DELETE는 body 없이 전송해야 함
+      return await api.delete(`/api/user/subscribes/${subscribeId}`, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: async (res, variables, context) => {
+      //  캐시 무효화로 리스트 자동 새로고침
+      await queryClient.invalidateQueries(["mySubscribes"]);
+      options?.onSuccess?.(res, variables, context);
+    },
+    onError: options?.onError,
+  });
+}
+
 
 

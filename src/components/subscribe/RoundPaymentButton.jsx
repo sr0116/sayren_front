@@ -39,9 +39,9 @@ export default function RoundPaymentButton({ round, subscribeId }) {
         merchant_uid: paymentData.merchantUid,
         name: `구독 ${subscribeId} - ${round.roundNo}회차`,
         amount: paymentData.amount,
-        buyer_email: paymentData.buyerEmail || "test@example.com",
-        buyer_name: paymentData.buyerName || "홍길동",
-        buyer_tel: paymentData.buyerTel || "010-1234-5678",
+        buyer_email: paymentData.buyerEmail || "t2t@example.com",
+        buyer_name: paymentData.buyerName || "정사랑",
+        buyer_tel: paymentData.buyerTel || "010-10454-5478",
       };
 
       //  PortOne 결제창 실행

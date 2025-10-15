@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 
 // 결제 준비 (결제창 열기 전 호출)
@@ -33,6 +34,31 @@ export function usePrepareRoundPaymentMutation(options) {
       { options }
   );
 }
+
+// 결제 삭제 (직접 axios.delete 사용)
+export function useDeletePaymentMutation(options) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (paymentId) => {
+      // DELETE는 body 없이 전송해야 함
+      return await api.delete(`/api/user/payments/${paymentId}`, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: async (res, variables, context) => {
+      //  캐시 무효화 (최근 결제 + 전체 결제 목록 갱신)
+      await Promise.all([
+        queryClient.invalidateQueries(["recentPayments"]),
+        queryClient.invalidateQueries(["allPayments"]),
+      ]);
+      options?.onSuccess?.(res, variables, context);
+    },
+    onError: options?.onError,
+  });
+}
+
 
 
 
