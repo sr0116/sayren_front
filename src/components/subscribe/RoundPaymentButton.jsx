@@ -84,7 +84,7 @@ export default function RoundPaymentButton({ round, subscribeId }) {
             handlePay();
           }}
           disabled={loading}
-          className={`px-3 py-1 rounded text-sm ${
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${
               loading
                   ? "bg-gray-400 text-white"
                   : "bg-gray-500 text-white hover:bg-gray-700"

@@ -3,25 +3,23 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useMyNotificationsQuery } from "@/api/notificationApi";
-import { formatDate } from "@/components/common/Format";
-import StatusBadge from "@/components/common/StatusBadge";
-import EmptyState from "@/components/common/EmptyState";
-import Pagination from "@/components/common/Pagination";
 import { useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import EmptyState from "@/components/common/EmptyState";
+import StatusBadge from "@/components/common/StatusBadge";
+import Pagination from "@/components/common/Pagination";
 
 export default function NotificationList() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
-  // URL에서 현재 page 파라미터 읽기 (기본값 1)
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   const { data, isLoading, isError } = useMyNotificationsQuery();
   const notifications = Array.isArray(data) ? data : [];
 
-  // 실시간 갱신 (10초마다)
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(["myNotifications"]);
@@ -29,87 +27,111 @@ export default function NotificationList() {
     return () => clearInterval(interval);
   }, [queryClient]);
 
-  // 로딩/에러 처리
   if (isLoading) return <div>불러오는 중...</div>;
   if (isError)
-    return <div>알림을 불러오는 중 오류가 발생했습니다.</div>;
-  if (notifications.length === 0)
     return (
-        <EmptyState title="알림 없음" message="현재 받은 알림이 없습니다." />
+        <EmptyState
+            title="알림 조회 실패"
+            message="알림 정보를 불러오는 중 오류가 발생했습니다."
+        />
     );
+  if (notifications.length === 0)
+    return <EmptyState title="알림 없음" message="현재 받은 알림이 없습니다." />;
 
-  // 페이지네이션 계산
   const totalPages = Math.ceil(notifications.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentData = notifications.slice(startIdx, startIdx + itemsPerPage);
 
-  // 테이블 클릭 핸들러
-  const handleRowClick = (id) => {
-    router.push(`/mypage/notification/${id}`);
+  const handleAction = (n) => {
+    if (n.type === "SUBSCRIBE" && n.title?.includes("회차 결제")) {
+      router.push(`/mypage/subscribe/round/${n.targetId}?autoPay=true`);
+    } else if (n.type === "SUBSCRIBE") {
+      router.push(`/mypage/subscribe/${n.targetId}`);
+    } else if (n.linkUrl) {
+      router.push(n.linkUrl);
+    } else {
+      router.push(`/mypage/notification/${n.notificationId}`);
+    }
   };
 
   return (
-      <div className="flex flex-col gap-6 h-full">
-        {/* 헤더 */}
+      <div className="w-full h-full space-y-8">
         <header className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">알림 목록</h2>
         </header>
 
-        {/* 알림 테이블 */}
-        <div className="flex-1 border border-gray-100 rounded-xl p-4 bg-white shadow-sm overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="p-2 text-center font-medium text-gray-600">
-                알림 ID
-              </th>
-              <th className="p-2 text-center font-medium text-gray-600">
-                제목
-              </th>
-              <th className="p-2 text-center font-medium text-gray-600">
-                유형
-              </th>
-              <th className="p-2 text-center font-medium text-gray-600">
-                등록일
-              </th>
-            </tr>
-            </thead>
+        <div className="space-y-6">
+          {currentData.map((n) => {
+            const isSubscribePayment =
+                n.type === "SUBSCRIBE" && n.title?.includes("회차 결제");
 
-            <tbody>
-            {currentData.map((n) => (
-                <tr
+            return (
+                <section
                     key={n.notificationId}
-                    onClick={() => handleRowClick(n.notificationId)}
-                    className="border-t hover:bg-gray-50 cursor-pointer transition"
+                    className="border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition p-5"
                 >
-                  <td className="p-2 text-center text-gray-700">
-                    {n.notificationId}
-                  </td>
-                  <td className="p-2 text-left text-gray-900 font-medium">
-                    {n.title}
-                  </td>
-                  <td className="p-2 text-center">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <h3 className="text-base font-semibold text-gray-900">
+                        {n.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                        {n.message || "알림 내용이 없습니다."}
+                      </p>
+                    </div>
                     <StatusBadge type="NotificationType" value={n.type} />
-                  </td>
-                  <td className="p-2 text-center text-gray-500">
-                    {formatDate(n.regDate)}
-                  </td>
-                </tr>
-            ))}
-            </tbody>
-          </table>
+                  </div>
 
-          {/* 페이지네이션 */}
-          <div className="mt-6 flex justify-center">
-            <Pagination
-                data={{
-                  page: currentPage,
-                  totalPages,
-                  hasPrev: currentPage > 1,
-                  hasNext: currentPage < totalPages,
-                }}
-            />
-          </div>
+                  <div className="flex justify-between items-center mt-4 border-t border-gray-100 pt-3">
+                    <p className="text-xs text-gray-400">
+                      {dayjs(n.regDate).format("YYYY.MM.DD HH:mm")}
+                    </p>
+
+                    <div className="flex gap-2">
+                      <button
+                          onClick={() =>
+                              router.push(`/mypage/notification/${n.notificationId}`)
+                          }
+                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                      >
+                        상세 보기
+                      </button>
+
+                      {isSubscribePayment ? (
+                          <button
+                              onClick={() =>
+                                  router.push(
+                                      `/mypage/subscribe/round/${n.targetId}?autoPay=true`
+                                  )
+                              }
+                              className="px-3 py-1.5 text-sm font-semibold text-white bg-gray-900 rounded-md hover:bg-gray-800 transition"
+                          >
+                            결제하기
+                          </button>
+                      ) : (
+                          <button
+                              onClick={() => handleAction(n)}
+                              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                          >
+                            관련 페이지로 이동
+                          </button>
+                      )}
+                    </div>
+                  </div>
+                </section>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Pagination
+              data={{
+                page: currentPage,
+                totalPages,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < totalPages,
+              }}
+          />
         </div>
       </div>
   );

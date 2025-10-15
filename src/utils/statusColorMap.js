@@ -14,6 +14,16 @@ export const statusColorMap = {
     ADMIN: "bg-blue-200 text-blue-900",
   },
 
+  NotificationType: {
+    SUBSCRIBE: "bg-indigo-100 text-indigo-800",  // 구독
+    SUBSCRIBE_ROUND: "bg-indigo-200 text-indigo-900", // 회차 결제
+    DELIVERY: "bg-green-100 text-green-800",    // 배송
+    PAYMENT: "bg-blue-100 text-blue-800",       // 결제
+    REFUND: "bg-yellow-100 text-yellow-800",    // 환불
+    SYSTEM: "bg-gray-100 text-gray-800",        // 시스템
+  },
+
+
   // 사유코드(ReasonCode)
   ReasonCode: {
     NONE: "bg-gray-100 text-gray-800",
