@@ -67,7 +67,7 @@ export default function DeliveryListPage() {
   return (
     <div>
       <pre>{JSON.stringify(data, null, 2)}</pre>
-      <DeliveryTable deliveries={data.list}/>
+      <DeliveryTable deliveries={data?.list ?? []} />
       <Pagination data={data} />
     </div>
   )
