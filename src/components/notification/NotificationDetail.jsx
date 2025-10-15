@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import { useNotificationDetailQuery } from "@/api/notificationApi";
 import { prepareRoundPayment, completePayment } from "@/api/paymentApi";
 import { queryClient } from "@/lib/queryClient";
+import Button from "@/components/common/Button";
+import dayjs from "dayjs";
 
 export default function NotificationDetail() {
   const { id } = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // SDK 로드
+  // PortOne SDK 로드
   useEffect(() => {
     if (!window.IMP) {
       const script = document.createElement("script");
@@ -21,23 +23,26 @@ export default function NotificationDetail() {
     }
   }, []);
 
-  const { data: notification, isLoading, isError } = useNotificationDetailQuery(id);
+  const { data: notification, isLoading, isError } =
+      useNotificationDetailQuery(id);
 
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError || !notification) return <div>알림 정보를 불러올 수 없습니다.</div>;
+  if (isError || !notification)
+    return <div>알림 정보를 불러올 수 없습니다.</div>;
 
-  //  타입 분기 로직
-  const isPaymentNotice = notification.type === "SUBSCRIBE";
+  // 알림 타입 분기
+  const isRoundPaymentNotice =
+      notification.type === "SUBSCRIBE_ROUND" || notification.type === "SUBSCRIBE";
   const isDeliveryNotice = notification.type === "DELIVERY";
   const isRefundNotice = notification.type === "PAYMENT";
 
-  //  원클릭 결제 처리
+  // 회차 결제 처리
   const handleQuickPay = async () => {
     try {
       setLoading(true);
 
       const roundId = parseInt(notification.linkUrl.split("/").pop(), 10);
-      if (isNaN(roundId)) throw new Error("linkUrl에서 회차 ID를 찾을 수 없습니다.");
+      if (isNaN(roundId)) throw new Error("회차 ID를 찾을 수 없습니다.");
 
       const paymentData = await prepareRoundPayment(roundId);
       const IMP = window.IMP;
@@ -86,59 +91,87 @@ export default function NotificationDetail() {
     }
   };
 
-  //  이동 (기본 알림용)
+  // 페이지 이동
   const handleNavigate = () => {
-    if (notification.linkUrl) {
-      router.push(notification.linkUrl);
-    } else {
-      router.push("/mypage/notification");
-    }
+    if (notification.linkUrl) router.push(notification.linkUrl);
+    else router.push("/mypage/notification");
   };
 
   return (
-      <div className="max-w-lg mx-auto space-y-5">
-        <h2 className="text-xl font-semibold">{notification.title}</h2>
-        <p className="text-gray-700 whitespace-pre-line">{notification.message}</p>
+      <div className="max-w-2xl mx-auto p-6 bg-white border border-gray-200 rounded-xl shadow-sm space-y-8">
+        {/* 헤더 */}
+        <header className="border-b border-gray-200 pb-3">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {notification.title}
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            등록일: {dayjs(notification.regDate).format("YYYY-MM-DD HH:mm")}
+          </p>
+          <span className="inline-block mt-2 px-2 py-1 text-xs rounded bg-gray-100 text-gray-600">
+          {notification.type}
+        </span>
+        </header>
 
-        {/* 기본 버튼 */}
-        <div className="flex items-center justify-between">
-          <button
-              onClick={() => router.back()}
-              className="text-sm text-gray-600 underline"
-          >
-            ← 목록으로 돌아가기
-          </button>
+        {/* 본문 */}
+        <section>
+          <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+            {notification.message}
+          </p>
+        </section>
 
-          {!isPaymentNotice && (
-              <button
-                  onClick={handleNavigate}
-                  className="text-sm text-gray-600 underline"
-              >
-                관련 페이지로 이동 →
-              </button>
-          )}
-        </div>
-
-        {/*  구독 결제용 (원클릭 결제 버튼) */}
-        {isPaymentNotice && (
+        {/* 버튼 그룹 */}
+        <section className="border-t border-gray-200 pt-5">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full">
+            {/* 목록으로 돌아가기 */}
             <button
-                disabled={loading}
-                onClick={handleQuickPay}
-                className={`block w-full mt-4 py-2 rounded text-white ${
-                    loading ? "bg-gray-400" : "bg-gray-800 hover:bg-gray-900"
-                }`}
+                onClick={() => router.push("/mypage/notification")}
+                className="flex-1 py-3 font-semibold text-gray-800 bg-gray-100 border border-gray-300
+                       rounded-md sm:rounded-l-md sm:rounded-r-none hover:bg-gray-200 transition"
             >
-              {loading ? "결제 중..." : "원클릭 결제"}
+              목록으로 돌아가기
             </button>
-        )}
 
-        {/*  배송 완료 등 단순 알림용 */}
-        {isDeliveryNotice && (
-            <div className="mt-4 text-sm text-gray-600">
-              상품 배송 또는 회수와 관련된 알림입니다.
-            </div>
-        )}
+            {/* 관련 페이지로 이동 (회차 결제 외) */}
+            {!isRoundPaymentNotice && notification.linkUrl && (
+                <button
+                    onClick={handleNavigate}
+                    className="flex-1 py-3 font-semibold text-white bg-gray-700
+                         border border-gray-700 rounded-md sm:rounded-r-md sm:rounded-l-none
+                         hover:bg-gray-800 transition"
+                >
+                  관련 페이지로 이동
+                </button>
+            )}
 
+            {/* 회차 결제 버튼 (해당 타입일 때만) */}
+            {isRoundPaymentNotice && (
+                <button
+                    onClick={handleQuickPay}
+                    disabled={loading}
+                    className={`flex-1 py-3 font-semibold text-white rounded-md sm:rounded-r-md sm:rounded-l-none 
+                          transition border border-gray-900 ${
+                        loading
+                            ? "bg-gray-400 border-gray-300 cursor-not-allowed"
+                            : "bg-gray-900 hover:bg-gray-800"
+                    }`}
+                >
+                  {loading ? "결제 중..." : "회차 결제하기"}
+                </button>
+            )}
+          </div>
+
+          {/* 하단 안내 문구 */}
+          {isDeliveryNotice && (
+              <p className="text-sm text-gray-500 mt-3">
+                배송 관련 안내입니다. 배송 상세 페이지에서 확인해주세요.
+              </p>
+          )}
+          {isRefundNotice && (
+              <p className="text-sm text-gray-500 mt-3">
+                환불 관련 안내입니다. 결제 내역 페이지에서 환불 내역을 확인하세요.
+              </p>
+          )}
+        </section>
       </div>
   );
 }

@@ -1,74 +1,100 @@
-"use client"
-import {useState} from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAllSubscribesForAdminQuery } from "@/api/subscribeApi";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/store/modalSlice";
+
 import Pagination from "@/components/common/Pagination";
-import {formatDate} from "@/components/common/Format";
-import StatusBadge from "@/components/common/StatusBadge";
 import EmptyState from "@/components/common/EmptyState";
-import {useAllSubscribesForAdminQuery} from "@/api/subscribeApi";
+import SubscribeFilterBar from "@/components/admin/subscribe/SubscribeFilterBar";
+import AdminSubscribeSummaryCards from "@/components/admin/subscribe/AdminSubscribeSummaryCards";
+import AdminSubscribeTable from "@/components/admin/subscribe/AdminSubscribeTable";
+import AdminSubscribeDetailModal from "@/components/admin/subscribe/AdminSubscribeDetailModal";
 
 export default function SubscribeList() {
-  const {data: subscribes = [], isLoading} = useAllSubscribesForAdminQuery();
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const { data: subscribes = [], isLoading, isError } = useAllSubscribesForAdminQuery();
+
+  const [filtered, setFiltered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (!subscribes.length) return <EmptyState message="구독 내역이 없습니다."/>;
+  // 초기 데이터 세팅
+  useEffect(() => {
+    if (subscribes.length > 0) setFiltered(subscribes);
+  }, [subscribes]);
 
-  const totalPages = Math.ceil(subscribes.length / itemsPerPage);
-  const currentData = subscribes.slice(
+  // 실시간 상태 갱신 (10초마다)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries(["allSubscribes"]);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [queryClient]);
+
+  if (isLoading) return <div>불러오는 중...</div>;
+  if (isError) return <div>구독 내역을 불러오는 중 오류가 발생했습니다.</div>;
+  if (!subscribes.length)
+    return <EmptyState title="구독 내역 없음" message="등록된 구독이 없습니다." />;
+
+  // 필터 / 검색 로직
+  const handleFilter = ({ keyword, status, startDate, endDate }) => {
+    let result = [...subscribes];
+
+    if (keyword) {
+      const lower = keyword.toLowerCase();
+      result = result.filter(
+          (s) =>
+              s.productName?.toLowerCase().includes(lower) ||
+              s.memberName?.toLowerCase().includes(lower)
+      );
+    }
+
+    if (status) result = result.filter((s) => s.status === status);
+
+    if (startDate)
+      result = result.filter((s) => new Date(s.regDate) >= new Date(startDate));
+    if (endDate)
+      result = result.filter((s) => new Date(s.regDate) <= new Date(endDate));
+
+    setFiltered(result);
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const currentData = filtered.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
   );
 
+  const handleRowClick = (subscribeId) => {
+    dispatch(openModal({ content: <AdminSubscribeDetailModal subscribeId={subscribeId} /> }));
+  };
+
   return (
-      <div>
-        <h2 className="text-xl font-bold mb-4">구독 내역</h2>
+      <div className="flex flex-col gap-6 h-full">
+        {/* 필터 바 */}
+        <SubscribeFilterBar onFilter={handleFilter} />
 
-        <table className="w-full border border-gray-100 text-sm">
-          <thead>
-          <tr className="bg-gray-100 text-gray-700">
-            <th className="p-2">구독 ID</th>
-            <th className="p-2">상태</th>
-            <th className="p-2">보증금</th>
-            <th className="p-2">월 렌탈료</th>
-            <th className="p-2">개월 수</th>
-            <th className="p-2">시작일</th>
-            <th className="p-2">종료일</th>
-            <th className="p-2">신청일</th>
-          </tr>
-          </thead>
+        {/* 요약 카드 */}
+        <AdminSubscribeSummaryCards subscribes={filtered} />
 
-          <tbody>
-          {currentData.map((s) => (
-              <tr key={s.subscribeId} className="border-t hover:bg-gray-50 transition">
-                <td className="p-2 text-center">{s.subscribeId}</td>
-                <td className="p-2 text-center">
-                  <StatusBadge type="SubscribeStatus" value={s.status}/>
-                </td>
-                <td className="p-2 text-right">
-                  {s.depositSnapshot?.toLocaleString()} 원
-                </td>
-                <td className="p-2 text-right">
-                  {s.monthlyFeeSnapshot?.toLocaleString()} 원
-                </td>
-                <td className="p-2 text-center">{s.totalMonths}개월</td>
-                <td className="p-2 text-center">{formatDate(s.startDate)}</td>
-                <td className="p-2 text-center">{formatDate(s.endDate)}</td>
-                <td className="p-2 text-center">{formatDate(s.regDate)}</td>
-              </tr>
-          ))}
-          </tbody>
-        </table>
+        {/* 구독 목록 테이블 */}
+        <div className="flex-1 border border-gray-100 rounded-xl p-4 bg-white">
+          <AdminSubscribeTable subscribes={currentData} onRowClick={handleRowClick} />
 
-        {/*  Pagination 처리 일단 임시로 */}
-        <Pagination
-            data={{
-              page: currentPage,
-              totalPages: totalPages,
-              hasPrev: currentPage > 1,
-              hasNext: currentPage < totalPages,
-            }}
-        />
+          <Pagination
+              data={{
+                page: currentPage,
+                totalPages: totalPages,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < totalPages,
+              }}
+          />
+        </div>
       </div>
   );
 }

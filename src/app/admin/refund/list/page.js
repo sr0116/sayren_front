@@ -1,9 +1,9 @@
-import RefundList from "@/components/admin/refund/RefundList";
+import AdminRefundList from "@/components/admin/refund/AdminReFundList";
 
 export default function page() {
   return (
       <div>
-        <RefundList />
+        <AdminRefundList />
       </div>
   )
 }

@@ -186,12 +186,9 @@ export default function PaymentDetail({ paymentId }) {
                 </button>
               </div>
           ) : (
-              <RefundRequestButton
-                  paymentId={payment.paymentId}
-                  paymentStatus={payment.paymentStatus}
-                  refundStatus={payment.refundStatus}
-                  onSuccess={refreshPaymentStatus}
-              />
+              <p className="text-sm text-gray-600">
+                이 결제는 일반 결제 상품 결제입니다.
+              </p>
           )}
         </section>
       </div>

@@ -6,13 +6,19 @@ import SubscribeRoundItem from "@/components/subscribe/SubscribeRoundItem";
 import EmptyState from "@/components/common/EmptyState";
 import { X } from "lucide-react";
 
+/**
+ * 구독 회차 목록 페이지
+ * - 회차별 납부 상태 및 결제 가능 버튼 노출
+ * - 결제 시 invalidate로 상태 실시간 갱신
+ */
 export default function SubscribeRoundList() {
   const { id: subscribeId } = useParams();
   const router = useRouter();
 
-  // 회차 목록 쿼리
   const { data: rounds = [], isLoading, isError, refetch } =
-      useSubscribeRoundsQuery(subscribeId);
+      useSubscribeRoundsQuery(subscribeId, {
+        refetchOnWindowFocus: true,
+      });
 
   if (isLoading) return <div>불러오는 중...</div>;
   if (isError) return <div>회차 목록 조회 실패</div>;

@@ -1,30 +1,48 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useMySubscribesQuery } from "@/api/subscribeApi";
-import StatusBadge from "@/components/common/StatusBadge";
 import EmptyState from "@/components/common/EmptyState";
+import StatusBadge from "@/components/common/StatusBadge";
+import Button from "@/components/common/Button";
 import dayjs from "dayjs";
 
 /**
  * 구독 내역 리스트 (SubscribeSummaryDTO 기반)
+ * - 결제 리스트와 동일한 레이아웃 구성
+ * - 반응형 대응 (모바일 ~ 데스크탑)
  */
 export default function SubscribeList() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  // 구독 목록 조회 (SubscribeSummaryDTO 반환)
-  const { data, isLoading, isError } = useMySubscribesQuery();
+  // 구독 목록 조회
+  const { data, isError, isLoading } = useMySubscribesQuery({
+    refetchOnWindowFocus: false,
+  });
+
   const subscribes = Array.isArray(data) ? data : data?.list ?? [];
 
-  // 로딩 / 에러 / 빈 상태 처리
-  if (isLoading) return <div className="text-sm text-gray-500">불러오는 중...</div>;
+  // 새로고침 (invalidate)
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries(["mySubscribes"]);
+  };
+
+  // 로딩 / 오류 / 빈 상태 처리
+  if (isLoading)
+    return <div className="text-sm text-gray-500">불러오는 중...</div>;
+
   if (isError)
     return (
-        <div className="text-sm text-red-500">
-          구독 내역을 불러오는 중 오류가 발생했습니다.
-        </div>
+        <EmptyState
+            title="구독 내역을 불러올 수 없습니다"
+            message="일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        />
     );
-  if (subscribes.length === 0)
+
+  if (!subscribes.length)
     return (
         <EmptyState
             title="구독 내역이 없습니다"
@@ -32,82 +50,115 @@ export default function SubscribeList() {
         />
     );
 
-  // 상세 페이지 이동
-  const handleClick = (subscribeId) => {
-    router.push(`/mypage/subscribe/${subscribeId}`);
-  };
-
+  // 렌더링
   return (
-      <div className="flex flex-col h-full">
+      <div className="w-full h-full space-y-10">
         {/* 헤더 */}
-        <h2 className="text-xl font-semibold mb-6">구독 내역</h2>
+        <header className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-900">구독 내역</h2>
+          <button
+              onClick={handleRefresh}
+              className="text-sm text-gray-500 hover:text-gray-800 transition"
+          >
+            새로고침
+          </button>
+        </header>
 
-        {/* 구독 리스트 테이블 */}
-        <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-5 py-3 font-medium text-gray-700 w-[35%]">
-                상품명
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-700 text-center">
-                구독 기간
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-700 text-center">
-                월 렌탈료
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-700 text-center">
-                상태
-              </th>
-            </tr>
-            </thead>
+        {subscribes.map((s) => {
+          const thumbnail = "/image/image2.svg"; // 임시 썸네일
+          const startDate = s.startDate
+              ? dayjs(s.startDate).format("YYYY.MM.DD")
+              : "-";
+          const endDate = s.endDate
+              ? dayjs(s.endDate).format("YYYY.MM.DD")
+              : "진행 중";
 
-            <tbody className="divide-y divide-gray-100">
-            {subscribes.map((s) => (
-                <tr
-                    key={s.subscribeId}
-                    onClick={() => handleClick(s.subscribeId)}
-                    className="hover:bg-gray-50 transition cursor-pointer"
-                >
-                  {/* 상품명 */}
-                  <td className="px-5 py-3">
-                    <div className="flex flex-col">
-                    <span className="font-medium text-gray-900 truncate">
-                      {s.productName || `구독 ID ${s.subscribeId}`}
-                    </span>
-                      <span className="text-xs text-gray-400">
-                      ID: {s.subscribeId}
-                    </span>
+          return (
+              <section
+                  key={s.subscribeId}
+                  className="space-y-3 border-b border-gray-100 pb-6"
+              >
+                {/* 상단 날짜 및 상태 */}
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {dayjs(s.startDate || new Date()).format("YYYY.MM.DD (dd)")}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {s.status === "ACTIVE"
+                          ? "이용 중"
+                          : s.status === "ENDED"
+                              ? "종료"
+                              : s.status === "CANCELED"
+                                  ? "취소됨"
+                                  : "대기 중"}
+                    </p>
+                  </div>
+                  <button
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                      onClick={() => router.push(`/mypage/subscribe/${s.subscribeId}`)}
+                  >
+                    구독 상세
+                  </button>
+                </div>
+
+                {/* 카드 본문 */}
+                <div className="border border-gray-200 rounded-lg bg-white">
+                  <div className="flex items-start gap-4 p-4">
+                    {/* 썸네일 */}
+                    <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+                      <Image
+                          src={thumbnail}
+                          alt={s.productName || "상품 이미지"}
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                      />
                     </div>
-                  </td>
 
-                  {/* 구독 기간 */}
-                  <td className="px-4 py-3 text-center text-gray-600">
-                    {s.startDate
-                        ? `${dayjs(s.startDate).format("YYYY.MM.DD")} ~ ${
-                            s.endDate
-                                ? dayjs(s.endDate).format("YYYY.MM.DD")
-                                : "진행 중"
-                        }`
-                        : "-"}
-                  </td>
+                    {/* 구독 정보 */}
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500 mt-1">렌탈 상품</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {s.productName}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        구독 기간: {startDate} ~ {endDate}
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 mt-1">
+                        {s.monthlyFeeSnapshot
+                            ? `${s.monthlyFeeSnapshot.toLocaleString()}원`
+                            : "0원"}
+                      </p>
+                    </div>
 
-                  {/* 월 렌탈료 */}
-                  <td className="px-4 py-3 text-center font-semibold text-gray-800">
-                    {s.monthlyFeeSnapshot
-                        ? `${s.monthlyFeeSnapshot.toLocaleString()}원`
-                        : "0원"}
-                  </td>
+                    {/* 상태 뱃지 */}
+                    <div className="flex items-start justify-end">
+                      <StatusBadge type="SubscribeStatus" value={s.status} />
+                    </div>
+                  </div>
 
-                  {/* 상태 */}
-                  <td className="px-4 py-3 text-center">
-                    <StatusBadge type="SubscribeStatus" value={s.status} />
-                  </td>
-                </tr>
-            ))}
-            </tbody>
-          </table>
-        </div>
+                  {/* 하단 버튼 */}
+                  <div className="grid grid-cols-2 border-t border-gray-100 text-sm text-gray-700">
+                    <button
+                        className="py-2 hover:bg-gray-50 transition"
+                        onClick={() =>
+                            router.push(`/mypage/subscribe/${s.subscribeId}/rounds`)
+                        }
+                    >
+                      회차 보기
+                    </button>
+                    <button
+                        className="py-2 border-l border-gray-100 hover:bg-gray-50 transition"
+                        onClick={() => router.push(`/mypage/subscribe/${s.subscribeId}`)}
+                    >
+                      구독 취소
+                    </button>
+                  </div>
+                </div>
+              </section>
+          );
+        })}
       </div>
   );
 }

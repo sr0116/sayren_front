@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 import StatusBadge from "@/components/common/StatusBadge";
 import { statusLabelMap } from "@/utils/statusLabelMap";
 
-export default function SubscribeCancelTable({ requests, onProcess }) {
+export default function AdminSubscribeCancelTable({ requests, onProcess }) {
   if (!requests || requests.length === 0) {
     return (
         <div className="text-center text-gray-500 py-10">
