@@ -1,4 +1,4 @@
-import AdminRefundList from "@/components/refund/AdminReFundList";
+import AdminRefundList from "@/components/admin/refund/AdminReFundList";
 
 export default function TelModifyPage() {
   return (

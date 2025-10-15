@@ -12,6 +12,7 @@ import { openModal } from "@/store/modalSlice";
 import dayjs from "dayjs";
 import SubscribeCancelForm from "@/components/subscribe/SubscribeCancelForm";
 import StatusBadge from "@/components/common/StatusBadge";
+import Image from "next/image";
 
 /**
  * 구독 상세 페이지 (SubscribeResponseDTO 기반)
@@ -145,24 +146,37 @@ export default function SubscribeDetail({ subscribeId }) {
           </p>
         </header>
 
-        {/* 상품 정보 */}
+        {/*상품 정보*/}
         <section className="space-y-3">
           <h3 className="text-base font-semibold text-gray-800">상품 정보</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">상품명</span>
-              <span className="font-medium text-gray-900 text-right">
-              {subscribe.productName}
-            </span>
+
+          {/* 이미지 + 상품명 묶음 */}
+          <div className="flex items-start gap-4">
+            <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+              <Image
+                  src={"/image/image2.svg"} // 임시 썸네일
+                  alt={subscribe.productName || "상품 이미지"}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+              />
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">카테고리</span>
-              <span className="text-gray-800 text-right">
-              {subscribe.productCategory || "-"}
-            </span>
+
+            <div className="flex-1 space-y-1 text-sm">
+              <p className="font-medium text-gray-900 text-base">
+                {subscribe.productName}
+              </p>
+              <p className="text-gray-500 text-sm">
+                {subscribe.productCategory || "카테고리 미지정"}
+              </p>
+              <p className="font-semibold text-gray-900 mt-1">
+                {subscribe.monthlyFeeSnapshot?.toLocaleString()}원
+              </p>
             </div>
           </div>
         </section>
+
+
 
         {/* 금액 정보 */}
         <section className="space-y-3">
@@ -212,6 +226,22 @@ export default function SubscribeDetail({ subscribeId }) {
           </div>
         </section>
 
+
+        {/* 회원 정보 */}
+        <section className="space-y-3">
+          <h3 className="text-base font-semibold text-gray-800">회원 정보</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-500">회원명</span>
+              <span className="text-gray-800">{subscribe.memberName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">이메일</span>
+              <span className="text-gray-800">{subscribe.memberEmail}</span>
+            </div>
+          </div>
+        </section>
+
         {/* 상태 정보 */}
         <section className="space-y-3">
           <h3 className="text-base font-semibold text-gray-800">상태 정보</h3>
@@ -236,49 +266,34 @@ export default function SubscribeDetail({ subscribeId }) {
           )}
         </section>
 
-        {/* 회원 정보 */}
-        <section className="space-y-3">
-          <h3 className="text-base font-semibold text-gray-800">회원 정보</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">회원명</span>
-              <span className="text-gray-800">{subscribe.memberName}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">이메일</span>
-              <span className="text-gray-800">{subscribe.memberEmail}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 하단 액션 */}
-        <section className="pt-4 border-t border-gray-200 flex flex-col gap-3">
+        {/* 하단 버튼 */}
+        <section className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
           <Button
               variant="primary"
+              className="sm:w-1/3 py-2.5 text-sm"
               onClick={() =>
                   router.push(`/mypage/subscribe/${subscribeId}/rounds`)
               }
               disabled={subscribe.status === "FAILED"}
           >
-            {subscribe.status === "FAILED"
-                ? "회차 조회 불가 (구독 실패)"
-                : "회차 보기"}
-          </Button>
-
-          <Button
-              variant="secondary"
-              onClick={handleCancel}
-              disabled={!isCancelable}
-          >
-            {getCancelButtonLabel()}
+            회차 보기
           </Button>
 
           <Button
               variant="outline"
+              className="sm:w-1/3 py-2.5 text-sm"
               onClick={() => router.push("/mypage/subscribe")}
-              className="w-auto px-4 py-2"
           >
-            구독 목록으로
+            목록으로
+          </Button>
+
+          <Button
+              variant="secondary"
+              className="sm:w-1/3 py-2.5 text-sm"
+              onClick={handleCancel}
+              disabled={!isCancelable}
+          >
+            구독 취소
           </Button>
         </section>
       </div>

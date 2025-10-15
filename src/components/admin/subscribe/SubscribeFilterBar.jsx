@@ -3,32 +3,30 @@
 import { useState } from "react";
 import Button from "@/components/common/Button";
 
-export default function PaymentFilterBar({ onFilter }) {
-  // 필터 상태 관리
+/**
+ * 관리자 구독 필터 바 (결제용 구조 동일)
+ */
+export default function SubscribeFilterBar({ onFilter }) {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("");
-  const [type, setType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // 검색 실행
   const handleFilter = () => {
-    onFilter({ keyword, status, type, startDate, endDate });
+    onFilter({ keyword, status, startDate, endDate });
   };
 
-  // 초기화
   const handleReset = () => {
     setKeyword("");
     setStatus("");
-    setType("");
     setStartDate("");
     setEndDate("");
-    onFilter({ keyword: "", status: "", type: "", startDate: "", endDate: "" });
+    onFilter({ keyword: "", status: "", startDate: "", endDate: "" });
   };
 
   return (
       <div className="flex flex-wrap items-end gap-4 bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-        {/* 검색 필드 */}
+        {/* 검색 */}
         <div className="flex flex-col flex-1 min-w-[200px]">
           <label className="text-sm font-medium text-gray-600 mb-1">검색</label>
           <input
@@ -40,40 +38,25 @@ export default function PaymentFilterBar({ onFilter }) {
           />
         </div>
 
-        {/* 결제 상태 필터 */}
-        <div className="flex flex-col min-w-[150px]">
-          <label className="text-sm font-medium text-gray-600 mb-1">결제 상태</label>
+        {/* 상태 필터 */}
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-600 mb-1">구독 상태</label>
           <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="border border-gray-300 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
           >
             <option value="">전체</option>
-            <option value="PAID">결제 완료</option>
-            <option value="REFUNDED">환불 완료</option>
+            <option value="PREPARING">준비중</option>
+            <option value="ACTIVE">진행중</option>
+            <option value="ENDED">종료</option>
             <option value="CANCELED">취소됨</option>
-            <option value="FAILED">결제 실패</option>
-            <option value="PENDING">결제 대기</option>
+            <option value="OVERDUE">연체</option>
           </select>
         </div>
 
-        {/* 결제 유형 필터 */}
-        <div className="flex flex-col min-w-[150px]">
-          <label className="text-sm font-medium text-gray-600 mb-1">결제 유형</label>
-          <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-          >
-            <option value="">전체</option>
-            <option value="PURCHASE">일반 결제</option>
-            <option value="RENTAL">구독 결제</option>
-            <option value="REPAYMENT">재결제</option>
-          </select>
-        </div>
-
-        {/* 날짜 범위 필터 */}
-        <div className="flex flex-col min-w-[150px]">
+        {/* 날짜 필터 */}
+        <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-600 mb-1">시작일</label>
           <input
               type="date"
@@ -83,7 +66,7 @@ export default function PaymentFilterBar({ onFilter }) {
           />
         </div>
 
-        <div className="flex flex-col min-w-[150px]">
+        <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-600 mb-1">종료일</label>
           <input
               type="date"
@@ -93,7 +76,7 @@ export default function PaymentFilterBar({ onFilter }) {
           />
         </div>
 
-        {/* 버튼 영역 */}
+        {/* 버튼 */}
         <div className="flex flex-row justify-end items-center gap-2 ml-auto">
           <Button
               variant="outline"
