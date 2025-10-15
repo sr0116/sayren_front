@@ -7,7 +7,7 @@ import { closeModal, openModal } from "@/store/modalSlice";
 import { queryClient } from "@/lib/queryClient";
 import React from "react";
 
-// ✅ 상태 전환 단계 정의
+//  상태 전환 단계 정의
 const nextStatusMap = {
   READY: "SHIPPING",
   SHIPPING: "DELIVERED",
@@ -17,7 +17,7 @@ const nextStatusMap = {
 export default function DeliveryStatusChangeButton({ deliveryId, status }) {
   const dispatch = useDispatch();
 
-  // ✅ React Query Mutation 훅
+  // React Query Mutation 훅
   const changeDeliveryStatusMutation = useChangedDeliveryStatusMutation({
     onSuccess: () => {
       dispatch(

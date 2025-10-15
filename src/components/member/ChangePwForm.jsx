@@ -8,6 +8,7 @@ import {useNoResetPwMutation, useResetPwMutation} from "@/api/memberApi";
 import {closeModal, openModal} from "@/store/modalSlice";
 import {useDispatch} from "react-redux";
 import {useRouter} from "next/navigation";
+import {queryClient} from "@/lib/queryClient";
 
 export default function ChangePwForm({token, buttonText}) {
 
@@ -34,6 +35,7 @@ export default function ChangePwForm({token, buttonText}) {
           </Button>
         </div>)
       }))
+      queryClient.removeQueries({ queryKey: ["sr-check"] });
       router.push("/mypage");
     },
     onError: () => {
