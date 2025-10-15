@@ -71,6 +71,7 @@ export default function AddressModal({ onSelect }) {
         if (!addr) return;
 
         const normalized = {
+            id: addr.id || "",
             name: addr.name || "",
             tel: addr.tel || "",
             zipcode: addr.zipcode || "",
