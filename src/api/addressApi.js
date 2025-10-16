@@ -1,18 +1,12 @@
 // src/api/addressApi.js
 import { api } from "@/lib/axios";
-
-
-
-
 export const addressApi = {
-
      //  전체 배송지 목록 조회
 
     getAll: async () => {
         const res = await api.get("/api/user/addresses");
         return res.data; //  배열만 반환 (map() 사용 가능)
     },
-
 
      //기본 배송지 조회
 
