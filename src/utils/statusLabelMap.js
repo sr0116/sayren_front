@@ -13,6 +13,8 @@ export const statusLabelMap = {
     ADMIN: "관리자",
   },
 
+
+
   NotificationType: {
     SUBSCRIBE: "구독 알림",
     SUBSCRIBE_ROUND: "회차 결제 안내",

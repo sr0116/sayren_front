@@ -133,6 +133,8 @@ export function usePaymentByIdQuery(paymentId, options) {
   });
 }
 
+
+
 // 관리자: 전체 결제 내역 조회
 export function useAllPaymentsForAdminQuery(options) {
   return useApiQuery("allPayments", "/api/admin/payments", { options });

@@ -31,6 +31,21 @@ export default function PaymentList() {
       { refetchOnWindowFocus: true, refetchInterval: 10000 }
   );
 
+  const handleDeleteConfirm = (paymentId) => {
+    dispatch(
+        openModal({
+          content: (
+              <ConfirmDialog
+                  title="결제 내역 삭제"
+                  message="이 결제 내역을 삭제하시겠습니까? 배송 중이거나 환불 진행 중인 결제는 삭제할 수 없습니다."
+                  confirmText="삭제하기"
+                  onConfirm={() => deleteMutation.mutate(paymentId)}
+              />
+          ),
+        })
+    );
+  };
+
   const totalPages = Math.ceil(allPayments.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const payments = allPayments.slice(startIdx, startIdx + itemsPerPage);
