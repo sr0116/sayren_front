@@ -37,7 +37,7 @@ export default function DeliveryStatusChangeButton({ deliveryId, status }) {
             ),
           })
       );
-      // ✅ 리스트 새로고침
+      //  리스트 새로고침
       queryClient.invalidateQueries(["delivery-list"]);
     },
     onError: (error) => {
@@ -60,7 +60,7 @@ export default function DeliveryStatusChangeButton({ deliveryId, status }) {
     },
   });
 
-  // ✅ 클릭 시 다음 상태 계산 후 API 호출
+  // 클릭 시 다음 상태 계산 후 API 호출
   const handleClick = (e) => {
     e.preventDefault();
     const nextStatus = nextStatusMap[status];
