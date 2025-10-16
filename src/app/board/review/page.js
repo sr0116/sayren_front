@@ -36,7 +36,7 @@ export default function ReviewListPage() {
     ["reviews"],
     "/api/user/reviews/list",
     {
-      params: { page: 1, size: 10 },
+      params: { page: 1, size: 10, categoryId: 2 },
       options: { staleTime: 1000 * 60 }
     }
   );

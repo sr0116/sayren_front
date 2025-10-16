@@ -3,7 +3,9 @@ import RentalList from "@/components/product/RentalList";
 export const revalidate = false;
 export default async function RentalListPage({ searchParams }) {
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`, {
+    // cache: "no-store"  // 캐시 막는
+  });
 
 
   if (!res.ok) {

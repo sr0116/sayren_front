@@ -12,8 +12,9 @@ export default function AdminProductList({ products = [], categories = [] }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 카테고리 리스트는 props로 바로 초기화
-  const [categoryList, setCategoryList] = useState(categories || []);
+  // 카테고리 리스트 초기화 (SSR로 전달받은 props)
+  const [categoryList, setCategoryList] = useState([]
+  );
 
   // 상품 리스트 초기화
   useEffect(() => {
@@ -22,7 +23,35 @@ export default function AdminProductList({ products = [], categories = [] }) {
     }
   }, [products]);
 
-  // 카테고리 useEffect 제거 (이제 props에서 받으니까 필요 없음)
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // const token = localStorage.getItem("accessToken");
+        const token =
+            "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiIsIlVTRVIiXSwic3RhdHVzIjoiQUNUSVZFIiwic3ViIjoiMSIsImlhdCI6MTc2MDU1OTI0MCwiZXhwIjoxNzYwNTYxMDQwfQ.wGhBgOm3WJO-7-ouCYD0XAH_O6v01Ygui_5qE7dEPeA";
+
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/product/category`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+
+        if (!res.ok) throw new Error("카테고리 요청 실패");
+        const data = await res.json();
+
+        console.log("카테고리 응답:", data);
+        setCategoryList(Array.isArray(data) ? data : data.data || []);
+      } catch (err) {
+        console.error("카테고리 불러오기 실패:", err);
+        setCategoryList([]);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // 상태별 필터링
   const filteredProducts = productList.filter((p) => {
@@ -33,7 +62,7 @@ export default function AdminProductList({ products = [], categories = [] }) {
     return true;
   });
 
-  // 노출중 등록 모달 열기
+  // 모달 열기
   const handleOpenModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -50,27 +79,31 @@ export default function AdminProductList({ products = [], categories = [] }) {
   const handleRegisterProduct = async () => {
     if (!selectedCategory) {
       alert("카테고리를 선택해주세요.");
-      console.log("카테고리 응답:", res.data)
       return;
     }
 
     try {
       const token = localStorage.getItem("accessToken");
-      await fetch("/api/admin/product/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: selectedProduct.productId,
-          productCategory: selectedCategory,
-        }),
-      });
 
+      const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/product/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // 토큰 직접 전달
+            },
+            body: JSON.stringify({
+              productId: selectedProduct.productId,
+              categoryId: Number(selectedCategory), // 카테고리 id
+            }),
+          }
+      );
+
+      if (!res.ok) throw new Error("등록 실패");
       alert("상품이 게시글로 등록되었습니다!");
       handleCloseModal();
-      window.location.reload(); // 새로고침
+      window.location.reload();
     } catch (err) {
       console.error("게시글 등록 실패:", err);
       alert("등록 실패! 다시 시도해주세요.");
@@ -79,7 +112,7 @@ export default function AdminProductList({ products = [], categories = [] }) {
 
   return (
       <div className="max-w-7xl mx-auto px-4 py-10 space-y-10">
-        <pre>{JSON.stringify(products, null, 2)}</pre>
+        {/*<pre>{JSON.stringify(categoryList, null, 2)}</pre>*/}
         {/* 필터 버튼 */}
         <div className="flex flex-wrap items-center gap-2 border border-gray-200 rounded-md p-3 bg-gray-50">
           <button
@@ -127,11 +160,9 @@ export default function AdminProductList({ products = [], categories = [] }) {
         <div className="bg-white shadow-sm border border-gray-200 rounded-lg mt-10 overflow-hidden">
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h3 className="font-semibold text-gray-800">상품 목록</h3>
-            <p className="text-sm text-gray-500">
-              총 {productList?.length || 0}개
-            </p>
+            <p className="text-sm text-gray-500">총 {productList?.length || 0}개</p>
           </div>
-<pre>{JSON.stringify(categories, null, 2)}</pre>
+
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
             <tr>
@@ -208,9 +239,9 @@ export default function AdminProductList({ products = [], categories = [] }) {
                       </td>
 
                       <td className="px-4 py-3 text-center space-x-2">
-                        <Button size="xs" variant="outline">
-                          수정
-                        </Button>
+                        {/*<Button size="xs" variant="outline">*/}
+                        {/*  수정*/}
+                        {/*</Button>*/}
                         <Button size="xs" variant="danger">
                           삭제
                         </Button>
@@ -219,10 +250,7 @@ export default function AdminProductList({ products = [], categories = [] }) {
                 ))
             ) : (
                 <tr>
-                  <td
-                      colSpan="9"
-                      className="py-8 text-center text-gray-400 text-sm"
-                  >
+                  <td colSpan="9" className="py-8 text-center text-gray-400 text-sm">
                     등록된 상품이 없습니다.
                   </td>
                 </tr>
@@ -235,9 +263,7 @@ export default function AdminProductList({ products = [], categories = [] }) {
         {isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
               <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
-                <h2 className="text-lg font-bold mb-4 text-gray-800">
-                  카테고리 선택
-                </h2>
+                <h2 className="text-lg font-bold mb-4 text-gray-800">카테고리 선택</h2>
 
                 <select
                     value={selectedCategory}
@@ -247,7 +273,7 @@ export default function AdminProductList({ products = [], categories = [] }) {
                   <option value="">카테고리를 선택하세요</option>
                   {categoryList.length > 0 ? (
                       categoryList.map((c) => (
-                          <option key={c.categoryId} value={c.name}>
+                          <option key={c.id} value={c.id}>
                             {c.name}
                           </option>
                       ))
