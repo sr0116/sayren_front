@@ -9,6 +9,8 @@ export default function ProductTagFilter({productList, onTagSelect}) {
     const tagMap = {};
 
     productList.forEach((product) => {
+      if (!product?.tags) return; // tags가 없으면 건너뜀
+
       product.tags.forEach((tag) => {
         const [tagName, tagValue] = tag.split("#");
         if (!tagMap[tagName]) tagMap[tagName] = new Set();
