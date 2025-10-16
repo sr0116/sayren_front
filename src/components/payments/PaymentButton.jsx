@@ -63,7 +63,7 @@ export default function PaymentButton({ orderItemId }) {
                       message="결제 페이지로 이동하시겠습니까?"
                       confirmText="결제 내역 보기"
                       cancelText="메인으로 이동"
-                      onConfirm={() => router.push("/mypage/payments")}
+                      onConfirm={() => router.push("/mypage/payment")}
                       onCancel={() => router.push("/")}
                   />
               ),
