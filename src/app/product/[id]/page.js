@@ -3,8 +3,10 @@ import ProductDetail from "@/components/product/ProductDetail";
 export const revalidate = false;
 export default async function ProductDetailPage({ params }) {
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product/${params.id}`);
-
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product/${params.id}`, {
+      cache: "no-store"  // 캐시 막는
+    },
+  );
 
   if (!res.ok) {
     return (
@@ -28,7 +30,7 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <div>
-     <ProductDetail product={product} type="buy"/>
+      <ProductDetail product={product} type="buy"/>
     </div>
   );
 }

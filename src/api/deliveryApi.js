@@ -1,11 +1,40 @@
-import {useApiMutation} from "@/hooks/useApi";
+import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import { useQueryClient } from "@tanstack/react-query";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
-
-export function useChangeDeliveryStatusMutation(options) {
-  return useApiMutation("POST", "/api/admin/deliveries/change-status", { options });
+// ✅ 전체 배송 목록 조회
+export function useAllDeliveriesQuery(params, options) {
+  return useApiQuery(
+      ["allDeliveries", params],
+      "/api/admin/deliveries/get-list",
+      {
+        params,
+        // ✅ select 제거 (전체 응답 그대로 유지)
+        options: {
+          keepPreviousData: true,
+          staleTime: 0,
+          cacheTime: 0,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: false,
+          ...options,
+        },
+      }
+  );
 }
-//   이벤트 처리된 api 컨트롤러
-export function useChangedDeliveryStatusMutation(options) {
-  return useApiMutation("POST", "/api/admin/deliveries/changed-status", options);
+
+// ✅ 이벤트 처리된 배송 상태 변경 + invalidate 자동 포함
+export function useChangedDeliveryStatusMutation(
+    options = {},
+    invalidateKey = ["allDeliveries"]
+) {
+  const queryClient = useQueryClient();
+
+  return useApiMutation("POST", "/api/admin/deliveries/changed-status", {
+    options: {
+      ...options,
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries(invalidateKey);
+        options?.onSuccess?.(data, variables, context);
+      },
+    },
+  });
 }

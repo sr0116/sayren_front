@@ -12,11 +12,16 @@ export function useCreateRefundRequestMutation(options) {
 
 // 환불 요청 취소
 export function useCancelRefundRequestMutation(options) {
-  return useApiMutation("POST", ({ id }) => `/api/user/refunds/requests/${id}/cancel`, {
-    invalidateKeys: ["myRefundRequests"],
-    options,
-  });
+  return useApiMutation(
+      "POST",
+      ({ id }) => `/api/user/refunds/requests/${id}/cancel`,
+      {
+        invalidateKeys: ["myRefundRequests"],
+        options,
+      }
+  );
 }
+
 
 // 환불 요청 단건 조회
 export function useRefundRequestByIdQuery(id, options) {

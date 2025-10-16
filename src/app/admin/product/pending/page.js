@@ -15,7 +15,6 @@ export default function AdminPendingPage() {
 
     const [selectedProduct, setSelectedProduct] = useState(null);
 
-
     // axios 대신 useApiQuery로 데이터 호출
     const { data: pendingProducts, isLoading, isError } = useApiQuery(
         ["pendingProducts", pageParams.page, pageParams.size],
@@ -35,7 +34,6 @@ export default function AdminPendingPage() {
     // 로딩 및 에러 처리
     if (isLoading) return <p className="p-8">로딩중...</p>;
     if (isError) return <p className="p-8 text-red-500">에러 발생!</p>;
-
 
     // 상품 승인 처리
     const handleApprove = async (id) => {

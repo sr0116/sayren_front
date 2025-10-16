@@ -1,17 +1,11 @@
-import {NextResponse} from "next/server";
+import {callSpringAPI} from "@/lib/serverFetch";
 
-export async function callSpringAPI(req, path, method = "GET") {
-    const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
+export async function GET(req) {
+    // 관리자 상품 카테고리 목록 조회 (JWT 토큰 자동 전달)
+    return callSpringAPI(req, "/api/admin/product/category", "GET");
+}
 
-    const res = await fetch(`${baseUrl}${path}`, {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: req.headers.get("authorization"), // ✅ 이거 없으면 토큰 안 넘어감
-        },
-        body: method !== "GET" ? await req.text() : undefined,
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data);
+export async function POST(req) {
+    // 요청 본문(body)을 그대로 스프링으로 전달
+    return callSpringAPI(req, "/api/admin/product/register", "POST");
 }

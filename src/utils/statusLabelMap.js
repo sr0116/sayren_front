@@ -13,6 +13,18 @@ export const statusLabelMap = {
     ADMIN: "관리자",
   },
 
+
+
+  NotificationType: {
+    SUBSCRIBE: "구독 알림",
+    SUBSCRIBE_ROUND: "회차 결제 안내",
+    DELIVERY: "배송 알림",
+    PAYMENT: "결제 알림",
+    REFUND: "환불 알림",
+    SYSTEM: "시스템 안내",
+  },
+
+
   // 사유 코드 (ReasonCode)
   ReasonCode: {
     NONE: "없음",

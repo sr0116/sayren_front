@@ -127,7 +127,7 @@ export default function ProductList({products, searchParams}) {
         {/*상세검색 태그 필터*/}
         <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
       </div>
-
+{/*<pre>{JSON.stringify(productList, null, 2)}</pre>*/}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
           <Link key={p.productId} href={`/product/${p.productId}`}>
