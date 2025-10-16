@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useMySubscribesQuery,
@@ -9,28 +9,32 @@ import {
 } from "@/api/subscribeApi";
 import EmptyState from "@/components/common/EmptyState";
 import StatusBadge from "@/components/common/StatusBadge";
-import Button from "@/components/common/Button";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { useDispatch } from "react-redux";
 import { openModal, closeModal } from "@/store/modalSlice";
 import dayjs from "dayjs";
+import Pagination from "@/components/common/Pagination";
 
-/**
- * 구독 내역 리스트 (SubscribeSummaryDTO 기반)
- * - 결제 리스트와 동일한 레이아웃 구성
- * - 반응형 대응 (모바일 ~ 데스크탑)
- */
 export default function SubscribeList() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
 
+  // 페이지네이션 설정
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const itemsPerPage = 10;
+
+  //  구독 리스트 쿼리 (자동 감시)
   const { data, isError, isLoading } = useMySubscribesQuery({
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // 탭 전환 시 자동 최신화
+    refetchInterval: 10000, // 10초마다 상태 변경 감지
   });
 
+  //  구독 삭제 Mutation
   const deleteMutation = useDeleteSubscribeMutation({
     onSuccess: async () => {
+      // 삭제 후 캐시 무효화 → 자동 refetch로 최신 상태 반영
       await queryClient.invalidateQueries(["mySubscribes"]);
       dispatch(closeModal());
     },
@@ -42,12 +46,12 @@ export default function SubscribeList() {
 
   const subscribes = Array.isArray(data) ? data : data?.list ?? [];
 
-  // 새로고침
-  const handleRefresh = async () => {
-    await queryClient.invalidateQueries(["mySubscribes"]);
-  };
+  // 페이지 단위로 데이터 슬라이싱
+  const totalPages = Math.ceil(subscribes.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const paginatedSubscribes = subscribes.slice(startIdx, startIdx + itemsPerPage);
 
-  // 삭제 확인 모달
+  //  삭제 확인 모달
   const handleDeleteConfirm = (id) => {
     dispatch(
         openModal({
@@ -74,7 +78,7 @@ export default function SubscribeList() {
         />
     );
 
-  if (!subscribes.length)
+  if (!paginatedSubscribes.length)
     return (
         <EmptyState
             title="구독 내역이 없습니다"
@@ -84,17 +88,14 @@ export default function SubscribeList() {
 
   return (
       <div className="w-full h-full space-y-10">
+        {/* 상단 타이틀 */}
         <header className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">구독 내역</h2>
-          <button
-              onClick={handleRefresh}
-              className="text-sm text-gray-500 hover:text-gray-800 transition"
-          >
-            새로고침
-          </button>
+          {/* 새로고침 버튼 제거 */}
         </header>
 
-        {subscribes.map((s) => {
+        {/*  구독 리스트 */}
+        {paginatedSubscribes.map((s) => {
           const thumbnail = "/image/image2.svg";
           const startDate = s.startDate
               ? dayjs(s.startDate).format("YYYY.MM.DD")
@@ -108,6 +109,7 @@ export default function SubscribeList() {
                   key={s.subscribeId}
                   className="space-y-3 border-b border-gray-100 pb-6"
               >
+                {/* 상단 영역 */}
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="text-base font-semibold text-gray-900">
@@ -133,6 +135,7 @@ export default function SubscribeList() {
                   </button>
                 </div>
 
+                {/* 카드 본문 */}
                 <div className="border border-gray-200 rounded-lg bg-white">
                   <div className="flex items-start gap-4 p-4">
                     <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
@@ -154,6 +157,7 @@ export default function SubscribeList() {
                         구독 기간: {startDate} ~ {endDate}
                       </p>
                       <p className="text-sm font-semibold text-gray-900 mt-1">
+                        월 렌탈료{" "}
                         {s.monthlyFeeSnapshot
                             ? `${s.monthlyFeeSnapshot.toLocaleString()}원`
                             : "0원"}
@@ -165,9 +169,10 @@ export default function SubscribeList() {
                     </div>
                   </div>
 
+                  {/* 하단 버튼 */}
                   <div className="grid grid-cols-3 border-t border-gray-100 text-sm text-gray-700">
                     <button
-                        className="py-2 hover:bg-gray-50 transition"
+                        className="py-2 hover:bg-gray-50 transition cursor-pointer"
                         onClick={() =>
                             router.push(`/mypage/subscribe/${s.subscribeId}/rounds`)
                         }
@@ -175,15 +180,15 @@ export default function SubscribeList() {
                       회차 보기
                     </button>
                     <button
-                        className="py-2 border-l border-gray-100 hover:bg-gray-50 transition"
+                        className="py-2 border-l border-gray-100 hover:bg-gray-50 transition cursor-pointer"
                         onClick={() =>
                             router.push(`/mypage/subscribe/${s.subscribeId}`)
                         }
                     >
-                      구독 취소
+                      상세 정보
                     </button>
                     <button
-                        className="py-2 border-l border-gray-100 text-red-600 hover:bg-gray-50 transition"
+                        className=" py-2 border-l border-gray-100 hover:bg-gray-50 transition cursor-pointer"
                         onClick={() => handleDeleteConfirm(s.subscribeId)}
                     >
                       삭제
@@ -193,6 +198,18 @@ export default function SubscribeList() {
               </section>
           );
         })}
+
+        {/* 페이지네이션 */}
+        <div className="mt-8 flex justify-center">
+          <Pagination
+              data={{
+                page: currentPage,
+                totalPages,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < totalPages,
+              }}
+          />
+        </div>
       </div>
   );
 }
