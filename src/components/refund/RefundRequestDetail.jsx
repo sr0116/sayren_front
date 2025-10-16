@@ -1,12 +1,19 @@
 "use client";
 
+import { useDispatch } from "react-redux";
+import { openModal } from "@/store/modalSlice";
 import { useRefundRequestByIdQuery } from "@/api/refundRequestApi";
 import EmptyState from "@/components/common/EmptyState";
 import StatusBadge from "@/components/common/StatusBadge";
 import dayjs from "dayjs";
 import Image from "next/image";
+import Button from "@/components/common/Button";
+import RefundPolicyPurchaseModal from "@/components/refund/RefundPolicyPurchaseModal";
+import RefundPolicyRentalModal from "@/components/refund/RefundPolicyRentalModal";
 
 export default function RefundRequestDetail({ refundRequestId }) {
+  const dispatch = useDispatch();
+
   const {
     data: refund,
     isLoading,
@@ -39,9 +46,23 @@ export default function RefundRequestDetail({ refundRequestId }) {
     CHANGE_OF_MIND: "단순 변심",
   };
 
+  // 타입별 환불 규정 모달 분기
+  const handleOpenPolicy = () => {
+    dispatch(
+        openModal({
+          content:
+              refund.orderPlanType === "RENTAL" ? (
+                  <RefundPolicyRentalModal />
+              ) : (
+                  <RefundPolicyPurchaseModal />
+              ),
+        })
+    );
+  };
+
   return (
       <div className="w-full max-w-[550px] space-y-10">
-        {/* 헤더 */}
+        {/* 상단 헤더 */}
         <header className="border-b border-gray-200 pb-4">
           <h2 className="text-lg font-bold text-gray-900">환불 상세 정보</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -69,19 +90,13 @@ export default function RefundRequestDetail({ refundRequestId }) {
                     ? "렌탈 상품"
                     : "일반 결제 상품"}
               </p>
-              <p className="font-semibold text-gray-900 mt-2">
-                {refund.amount?.toLocaleString()}원
-              </p>
             </div>
           </div>
         </section>
 
         {/* 환불 요청 정보 */}
         <section className="space-y-4">
-          <h3 className="text-base font-semibold text-gray-800">
-            환불 요청 정보
-          </h3>
-
+          <h3 className="text-base font-semibold text-gray-800">환불 요청 정보</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">요청 사유</span>
@@ -89,54 +104,54 @@ export default function RefundRequestDetail({ refundRequestId }) {
               {reasonLabelMap[refund.reasonCode] || refund.reasonCode}
             </span>
             </div>
-
             <div className="flex justify-between">
               <span className="text-gray-500">환불 상태</span>
               <StatusBadge type="RefundRequestStatus" value={refund.status} />
             </div>
-
             <div className="flex justify-between">
               <span className="text-gray-500">요청일</span>
               <span className="text-gray-900">
               {dayjs(refund.regDate).format("YYYY-MM-DD HH:mm")}
             </span>
             </div>
+          </div>
+        </section>
 
-            {refund.voidDate && (
+        {/* 환불 금액 (조건: APPROVED, AUTO_REFUNDED) */}
+        {["APPROVED", "AUTO_REFUNDED"].includes(refund.status) && (
+            <section className="space-y-4">
+              <h3 className="text-base font-semibold text-gray-800">환불 금액</h3>
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">처리일</span>
-                  <span className="text-gray-900">
-                {dayjs(refund.voidDate).format("YYYY-MM-DD HH:mm")}
+                  <span className="text-gray-500">결제 금액</span>
+                  <span className="text-gray-900 font-medium">
+                {refund.amount?.toLocaleString()}원
               </span>
                 </div>
-            )}
-          </div>
-        </section>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">환불 예정 금액</span>
+                  <span className="text-gray-900 font-medium">
+                {refund.refundAmount?.toLocaleString() || "-"}원
+              </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">환불 수단</span>
+                  <span className="text-gray-900">
+                {refund.refundMethod || refund.paymentMethod || "카드 결제"}
+              </span>
+                </div>
+              </div>
+            </section>
+        )}
 
-        {/* 환불 금액 정보 */}
-        <section className="space-y-4">
-          <h3 className="text-base font-semibold text-gray-800">환불 금액</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">결제 금액</span>
-              <span className="text-gray-900 font-medium">
-              {refund.amount?.toLocaleString()}원
-            </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">환불 예정 금액</span>
-              <span className="text-gray-900 font-medium">
-              {refund.refundAmount?.toLocaleString() || "-"}원
-            </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">환불 수단</span>
-              <span className="text-gray-900">
-              {refund.refundMethod || refund.paymentMethod || "카드 결제"}
-            </span>
-            </div>
-          </div>
-        </section>
+        {/* 하단 버튼 (조건 분기 적용) */}
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={handleOpenPolicy}>
+            {refund.orderPlanType === "RENTAL"
+                ? "렌탈 환불 규정"
+                : "일반 환불 규정"}
+          </Button>
+        </div>
       </div>
   );
 }
