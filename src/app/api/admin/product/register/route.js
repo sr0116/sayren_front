@@ -1,21 +1,17 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 
-// export const revalidate = false;
-export async function GET(request, { params }) {
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL; // 백엔드 주소
-        const url = `${baseUrl}/api/admin/product`;
+export async function callSpringAPI(req, path, method = "GET") {
+    const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL;
 
-        const res = await fetch(url, { cache: "no-store" });
-        const contentType = res.headers.get("content-type");
+    const res = await fetch(`${baseUrl}${path}`, {
+        method,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: req.headers.get("authorization"), // ✅ 이거 없으면 토큰 안 넘어감
+        },
+        body: method !== "GET" ? await req.text() : undefined,
+    });
 
-        const data = contentType?.includes("application/json")
-            ? await res.json()
-            : await res.text();
-
-        return NextResponse.json(data, { status: res.status });
-    } catch (err) {
-        console.error("상품 상세 조회 실패:", err);
-        return NextResponse.json({ error: "서버 에러" }, { status: 500 });
-    }
+    const data = await res.json();
+    return NextResponse.json(data);
 }
