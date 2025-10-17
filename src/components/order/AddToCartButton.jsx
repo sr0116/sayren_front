@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { queryClient } from "@/lib/queryClient";
 
-export default function AddToCartButton({ productId, planId, check}) {
+export default function AddToCartButton({ productId, planId, check = true}) {
   const dispatch = useDispatch();
   const router = useRouter();
 
