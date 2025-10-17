@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
 import Link from "next/link";
+import {useApiQuery} from "@/hooks/useApi";
+import {useProductRegisterMutation} from "@/api/productApi";
+import {closeModal} from "@/store/modalSlice";
+import {queryClient} from "@/lib/queryClient";
 
-export default function AdminProductList({ products = [], categories = [] }) {
+export default function AdminProductList({ products = [] }) {
   const [productList, setProductList] = useState([]);
   const [filter, setFilter] = useState("ALL");
 
@@ -13,45 +17,35 @@ export default function AdminProductList({ products = [], categories = [] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 카테고리 리스트 초기화 (SSR로 전달받은 props)
-  const [categoryList, setCategoryList] = useState([]
-  );
+  const [categoryList, setCategoryList] = useState([]);
 
   // 상품 리스트 초기화
   useEffect(() => {
     if (Array.isArray(products)) {
       setProductList(products);
     }
+    if(products === null || products === undefined) {
+      return (<div>불러오는 중</div>)
+    }
+
   }, [products]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        // const token = localStorage.getItem("accessToken");
-        const token =
-            "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiIsIlVTRVIiXSwic3RhdHVzIjoiQUNUSVZFIiwic3ViIjoiMSIsImlhdCI6MTc2MDU1OTI0MCwiZXhwIjoxNzYwNTYxMDQwfQ.wGhBgOm3WJO-7-ouCYD0XAH_O6v01Ygui_5qE7dEPeA";
-
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/product/category`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-        );
-
-        if (!res.ok) throw new Error("카테고리 요청 실패");
-        const data = await res.json();
-
-        console.log("카테고리 응답:", data);
-        setCategoryList(Array.isArray(data) ? data : data.data || []);
-      } catch (err) {
-        console.error("카테고리 불러오기 실패:", err);
-        setCategoryList([]);
+  const { data, isLoading, isError } = useApiQuery(
+    ["productCategory"],
+    `/api/admin/product/category`,
+    {
+      options: {
+        keepPreviousData: true,
+        staleTime: 0,
+        cacheTime: 0,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
       }
-    };
+    })
 
-    fetchCategories();
-  }, []);
+  useEffect(() => {
+    setCategoryList(Array.isArray(data) && data);
+  }, [data]);
 
   // 상태별 필터링
   const filteredProducts = productList.filter((p) => {
@@ -75,6 +69,20 @@ export default function AdminProductList({ products = [], categories = [] }) {
     setSelectedCategory("");
   };
 
+
+
+  const productRegisterMutation = useProductRegisterMutation({
+    onSuccess: () => {
+      alert("상품이 노출되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: ["productList"],
+      });
+    },
+    onError: () => {
+      alert("서버에 에러가 발생했습니다.");
+    }
+  })
+
   // 게시글 등록 요청
   const handleRegisterProduct = async () => {
     if (!selectedCategory) {
@@ -82,33 +90,13 @@ export default function AdminProductList({ products = [], categories = [] }) {
       return;
     }
 
-    try {
-      const token = localStorage.getItem("accessToken");
+    productRegisterMutation.mutate({
+      data: { productId : selectedProduct.id, categoryId : selectedCategory },
+    });
+    handleCloseModal();
 
-      const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/product/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // 토큰 직접 전달
-            },
-            body: JSON.stringify({
-              productId: selectedProduct.productId,
-              categoryId: Number(selectedCategory), // 카테고리 id
-            }),
-          }
-      );
-
-      if (!res.ok) throw new Error("등록 실패");
-      alert("상품이 게시글로 등록되었습니다!");
-      handleCloseModal();
-      window.location.reload();
-    } catch (err) {
-      console.error("게시글 등록 실패:", err);
-      alert("등록 실패! 다시 시도해주세요.");
-    }
   };
+
 
   return (
       <div className="max-w-7xl mx-auto px-4 py-10 space-y-10">
@@ -125,6 +113,16 @@ export default function AdminProductList({ products = [], categories = [] }) {
           >
             전체
           </button>
+          <button
+            onClick={() => setFilter("ACTIVE")}
+            className={`px-4 py-1.5 text-sm rounded-md border transition ${
+              filter === "ACTIVE"
+                ? "bg-yellow-500 text-white border-yellow-500"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            노출됨
+          </button>
 
           <button
               onClick={() => setFilter("HIDDEN")}
@@ -137,16 +135,16 @@ export default function AdminProductList({ products = [], categories = [] }) {
             노출안함
           </button>
 
-          <button
-              onClick={() => setFilter("DELETED")}
-              className={`px-4 py-1.5 text-sm rounded-md border transition ${
-                  filter === "DELETED"
-                      ? "bg-red-600 text-white border-red-600"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-          >
-            삭제
-          </button>
+          {/*<button*/}
+          {/*    onClick={() => setFilter("DELETED")}*/}
+          {/*    className={`px-4 py-1.5 text-sm rounded-md border transition ${*/}
+          {/*        filter === "DELETED"*/}
+          {/*            ? "bg-red-600 text-white border-red-600"*/}
+          {/*            : "bg-white text-gray-700 hover:bg-gray-100"*/}
+          {/*    }`}*/}
+          {/*>*/}
+          {/*  삭제*/}
+          {/*</button>*/}
 
           <Link
               href="/admin/product/register"
@@ -166,14 +164,11 @@ export default function AdminProductList({ products = [], categories = [] }) {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left w-12">
-                <input type="checkbox" />
-              </th>
+              <th className="px-4 py-3 text-left w-12"><input type="checkbox" /></th>
               <th className="px-4 py-3 text-left">번호</th>
-              <th className="px-4 py-3 text-left">상품 구분</th>
               <th className="px-4 py-3 text-left">썸네일</th>
               <th className="px-4 py-3 text-left">상품명</th>
-              <th className="px-4 py-3 text-right">일반구매가</th>
+              <th className="px-4 py-3 text-right">가격</th>
               <th className="px-4 py-3 text-center">상태</th>
               <th className="px-4 py-3 text-center">관리</th>
             </tr>
@@ -181,79 +176,82 @@ export default function AdminProductList({ products = [], categories = [] }) {
 
             <tbody className="divide-y divide-gray-100">
             {filteredProducts && filteredProducts.length > 0 ? (
-                filteredProducts.map((p, i) => (
-                    <tr key={p.productId} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <input type="checkbox" />
-                      </td>
-                      <td className="px-4 py-3 text-gray-500">{i + 1}</td>
-                      <td className="px-4 py-3">{p.category}</td>
-                      <td className="px-4 py-3">
-                        {p.thumbnailUrl ? (
-                            <img
-                                src={p.thumbnailUrl}
-                                alt={p.productName}
-                                width={70}
-                                height={70}
-                                className="rounded-md border border-gray-200 object-cover w-[60px] h-[60px]"
-                            />
-                        ) : (
-                            <div className="w-[60px] h-[60px] bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 rounded-md shrink-0">
-                              No Image
-                            </div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 font-medium text-gray-800">
-                        {p.productName}
-                      </td>
+              filteredProducts.map((p, i) => (
+                <tr key={p.id} className="hover:bg-gray-50">
+                  {/* 체크박스 */}
+                  <td className="px-4 py-3">
+                    <input type="checkbox" />
+                  </td>
 
-                      <td className="px-4 py-3 text-right text-gray-600">
-                        {p.purchasePrice
-                            ? `${p.purchasePrice.toLocaleString()}원`
-                            : "-"}
-                      </td>
+                  {/* 번호 */}
+                  <td className="px-4 py-3 text-gray-500">{i + 1}</td>
 
-                      <td className="px-4 py-3 text-center">
-                        {p.isDeleted ? (
-                            <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-500 rounded">
-                        삭제됨
-                      </span>
-                        ) : p.isUse ? (
-                            <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded">
-                        노출중
-                      </span>
-                        ) : (
-                            <div>
-                        <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded">
-                          노출안함
-                        </span>
-                              <Button
-                                  size="xs"
-                                  variant="outline"
-                                  onClick={() => handleOpenModal(p)}
-                              >
-                                노출함
-                              </Button>
-                            </div>
-                        )}
-                      </td>
+                  {/* 썸네일 */}
+                  <td className="px-4 py-3">
+                    {p.thumbnail ? (
+                      <img
+                        src={p.thumbnail}
+                        alt={p.name}
+                        className="rounded-md border border-gray-200 object-cover w-[60px] h-[60px]"
+                      />
+                    ) : (
+                      <div className="w-[60px] h-[60px] bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 rounded-md shrink-0">
+                        No Image
+                      </div>
+                    )}
+                  </td>
 
-                      <td className="px-4 py-3 text-center space-x-2">
-                        {/*<Button size="xs" variant="outline">*/}
-                        {/*  수정*/}
-                        {/*</Button>*/}
-                        <Button size="xs" variant="danger">
-                          삭제
+                  {/* 상품명 */}
+                  <td className="px-4 py-3 font-medium text-gray-800">
+                    {p.name}
+                    <div className="text-xs text-gray-500 mt-1">{p.productCategory}</div>
+                  </td>
+
+                  {/* 가격 */}
+                  <td className="px-4 py-3 text-right text-gray-600">
+                    {p.price ? `${p.price.toLocaleString()}원` : "-"}
+                  </td>
+
+                  {/* 상태 */}
+                  <td className="px-4 py-3 text-center">
+                    {p.isDeleted ? (
+                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-500 rounded">
+                  삭제됨
+                </span>
+                    ) : p.isUse ? (
+                      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded">
+                  노출중
+                </span>
+                    ) : (
+                      <div>
+                  <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded">
+                    노출안함
+                  </span>
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          onClick={() => handleOpenModal(p)}
+                        >
+                          노출함
                         </Button>
-                      </td>
-                    </tr>
-                ))
-            ) : (
-                <tr>
-                  <td colSpan="9" className="py-8 text-center text-gray-400 text-sm">
-                    등록된 상품이 없습니다.
+                      </div>
+                    )}
+                  </td>
+
+                  {/* 관리 */}
+                  <td className="px-4 py-3 text-center space-x-2">
+                    <Button size="xs" variant="danger">
+                      삭제
+                    </Button>
                   </td>
                 </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="py-8 text-center text-gray-400 text-sm">
+                  로딩중...
+                </td>
+              </tr>
             )}
             </tbody>
           </table>
