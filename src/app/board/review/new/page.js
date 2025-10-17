@@ -53,7 +53,8 @@ export default function ReviewNewPage() {
     createReview({
       data: {
         ...form,
-        productId: 3,
+        categoryId: 2,
+        productId: 108,
         content, // 바로 HTML 문자열
       },
     });
