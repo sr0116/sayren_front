@@ -13,28 +13,34 @@ export default function NotificationDetail() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+  //  PortOne SDK 로드
   useEffect(() => {
     if (!window.IMP) {
       const script = document.createElement("script");
       script.src = "https://cdn.iamport.kr/v1/iamport.js";
       script.async = true;
+      script.onload = () => console.log(" PortOne SDK 로드 완료 (NotificationDetail)");
       document.body.appendChild(script);
     }
   }, []);
 
+  //  알림 상세 조회
   const { data: notification, isLoading, isError } =
       useNotificationDetailQuery(id);
 
-  if (isLoading) return <div>불러오는 중...</div>;
+  if (isLoading)
+    return <div className="text-center py-10 text-gray-500">불러오는 중...</div>;
   if (isError || !notification)
-    return <div>알림 정보를 불러올 수 없습니다.</div>;
+    return <div className="text-center py-10 text-gray-500">알림 정보를 불러올 수 없습니다.</div>;
 
+  //  알림 타입 분기
   const isRoundPaymentNotice =
-      notification.type === "SUBSCRIBE_ROUND" ||
-      notification.type === "SUBSCRIBE";
+      notification.type === "SUBSCRIBE_ROUND" || notification.type === "SUBSCRIBE";
   const isDeliveryNotice = notification.type === "DELIVERY";
   const isRefundNotice = notification.type === "PAYMENT";
+  const hasLink = !!notification.linkUrl;
 
+  //  회차 결제 처리
   const handleQuickPay = async () => {
     try {
       setLoading(true);
@@ -43,10 +49,7 @@ export default function NotificationDetail() {
 
       const paymentData = await prepareRoundPayment(roundId);
       const IMP = window.IMP;
-      if (!IMP) {
-        alert("PortOne SDK가 아직 로드되지 않았습니다.");
-        return;
-      }
+      if (!IMP) throw new Error("PortOne SDK가 아직 로드되지 않았습니다.");
 
       IMP.init(process.env.NEXT_PUBLIC_IMP_CODE);
       IMP.request_pay(
@@ -72,15 +75,8 @@ export default function NotificationDetail() {
             if (result.paymentStatus === "PAID") {
               alert("결제가 완료되었습니다!");
               queryClient.invalidateQueries(["myNotifications"]);
-
-              const roundId =
-                  paymentData.roundId ||
-                  parseInt(notification.linkUrl.split("/").pop(), 10);
-              router.push(
-                  roundId
-                      ? `/mypage/subscribe/round/${roundId}`
-                      : "/mypage/notification"
-              );
+              const roundId = paymentData.roundId || parseInt(notification.linkUrl.split("/").pop(), 10);
+              router.push(roundId ? `/mypage/subscribe/round/${roundId}` : "/mypage/notification");
             } else {
               alert("결제 실패 또는 취소되었습니다.");
             }
@@ -95,6 +91,7 @@ export default function NotificationDetail() {
     }
   };
 
+  //  관련 페이지 이동
   const handleNavigate = () => {
     if (notification.linkUrl) router.push(notification.linkUrl);
     else router.push("/mypage/notification");
@@ -102,10 +99,9 @@ export default function NotificationDetail() {
 
   return (
       <div className="max-w-2xl mx-auto p-6 bg-white border border-gray-200 rounded-xl shadow-sm space-y-8">
+        {/* 헤더 */}
         <header className="border-b border-gray-200 pb-3">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {notification.title}
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">{notification.title}</h2>
           <p className="text-sm text-gray-500 mt-1">
             등록일: {dayjs(notification.regDate).format("YYYY-MM-DD HH:mm")}
           </p>
@@ -114,14 +110,15 @@ export default function NotificationDetail() {
           </div>
         </header>
 
+        {/* 본문 */}
         <section>
-          <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-            {notification.message}
-          </p>
+          <p className="text-gray-700 whitespace-pre-line leading-relaxed">{notification.message}</p>
         </section>
 
+        {/* 버튼 영역 */}
         <section className="border-t border-gray-200 pt-5">
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full">
+            {/* 🔹 목록으로 돌아가기 (공통) */}
             <button
                 onClick={() => router.push("/mypage/notification")}
                 className="flex-1 py-3 font-semibold text-gray-800 bg-gray-100 border border-gray-300
@@ -130,7 +127,8 @@ export default function NotificationDetail() {
               목록으로 돌아가기
             </button>
 
-            {!isRoundPaymentNotice && notification.linkUrl && (
+            {/* 🔹 일반 알림: 관련 페이지 이동 */}
+            {!isRoundPaymentNotice && hasLink && (
                 <button
                     onClick={handleNavigate}
                     className="flex-1 py-3 font-semibold text-white bg-gray-700
@@ -141,6 +139,7 @@ export default function NotificationDetail() {
                 </button>
             )}
 
+            {/* 🔹 회차 결제 알림 */}
             {isRoundPaymentNotice && (
                 <button
                     onClick={handleQuickPay}
@@ -157,6 +156,7 @@ export default function NotificationDetail() {
             )}
           </div>
 
+          {/* 🔹 하단 안내문 */}
           {isDeliveryNotice && (
               <p className="text-sm text-gray-500 mt-3">
                 배송 관련 안내입니다. 배송 상세 페이지에서 확인해주세요.

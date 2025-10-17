@@ -207,7 +207,7 @@ export default function RefundRequestList() {
 
                       {showRefundAmount && (
                           <p className="text-sm font-semibold text-gray-900 mt-1">
-                            환불 금액 : {req.amount?.toLocaleString()}원
+                            {/*환불 금액 : {req.amount?.toLocaleString()}원*/}
                           </p>
                       )}
                     </div>
