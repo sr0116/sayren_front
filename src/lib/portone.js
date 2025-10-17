@@ -13,9 +13,9 @@ export async function requestPortOnePayment(paymentData) {
     merchant_uid: paymentData.merchantUid,
     name: paymentData.productName || `주문번호 ${paymentData.paymentId}`,
     amount: paymentData.amount,
-    buyer_email: paymentData.buyerEmail || "user@test.com",
-    buyer_name: paymentData.buyerName || "테스트 사용자",
-    buyer_tel: paymentData.buyerTel || "010-0000-0000",
+    buyer_email: paymentData.buyerEmail || "ssr0116@gmail.com",
+    buyer_name: paymentData.buyerName || "정사랑",
+    buyer_tel: paymentData.buyerTel || "010-3122-4777",
 
     //  리디렉션 완전 차단
     m_redirect_url: undefined,
