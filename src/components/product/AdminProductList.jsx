@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import {useApiQuery} from "@/hooks/useApi";
-import {useProductRegisterMutation} from "@/api/productApi";
+import {useProductDeleteMutation, useProductRegisterMutation} from "@/api/productApi";
 import {closeModal} from "@/store/modalSlice";
 import {queryClient} from "@/lib/queryClient";
 
@@ -69,11 +69,21 @@ export default function AdminProductList({ products = [] }) {
     setSelectedCategory("");
   };
 
-
-
   const productRegisterMutation = useProductRegisterMutation({
     onSuccess: () => {
       alert("상품이 노출되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: ["productList"],
+      });
+    },
+    onError: () => {
+      alert("서버에 에러가 발생했습니다.");
+    }
+  })
+
+  const productDeleteMutation = useProductDeleteMutation({
+    onSuccess: () => {
+      alert("상품이 노출안함으로 변경되었습니다.");
       queryClient.invalidateQueries({
         queryKey: ["productList"],
       });
@@ -96,6 +106,10 @@ export default function AdminProductList({ products = [] }) {
     handleCloseModal();
 
   };
+
+  const handleDeleteProduct = async (id) => {
+    return;
+  }
 
 
   return (
@@ -230,7 +244,13 @@ export default function AdminProductList({ products = [] }) {
                         <Button
                           size="xs"
                           variant="outline"
-                          onClick={() => handleOpenModal(p)}
+                          onClick={() => {
+                            if (confirm("이 상품을 노출안함 처리하시겠습니까?")) {
+                              productDeleteMutation.mutate({
+                                data: {productId: p.id},
+                              });
+                            }
+                          }}
                         >
                           노출함
                         </Button>
@@ -240,7 +260,13 @@ export default function AdminProductList({ products = [] }) {
 
                   {/* 관리 */}
                   <td className="px-4 py-3 text-center space-x-2">
-                    <Button size="xs" variant="danger">
+                    <Button size="xs" variant="danger" onClick={() => {
+                      if (confirm("이 상품을 노출안함 처리하시겠습니까?")) {
+                        productDeleteMutation.mutate({
+                          data: { productId: p.id },
+                        });
+                      }
+                    }}>
                       삭제
                     </Button>
                   </td>
