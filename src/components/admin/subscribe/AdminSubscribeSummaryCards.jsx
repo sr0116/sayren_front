@@ -14,7 +14,7 @@ export default function AdminSubscribeSummaryCards({ subscribes = [] }) {
       total: safeSubs.length,
       active: safeSubs.filter((s) => s.status === "ACTIVE").length,
       ended: safeSubs.filter((s) => s.status === "ENDED").length,
-      canceled: safeSubs.filter((s) => s.status === "CANCELED").length,
+      canceled: safeSubs.filter((s) => s.status === "CANCELED" ||"FAILED").length,
       overdue: safeSubs.filter((s) => s.status === "OVERDUE").length,
     };
   }, [safeSubs]);

@@ -118,31 +118,31 @@ export default function RefundRequestDetail({ refundRequestId }) {
         </section>
 
         {/* 환불 금액 (조건: APPROVED, AUTO_REFUNDED) */}
-        {["APPROVED", "AUTO_REFUNDED"].includes(refund.status) && (
-            <section className="space-y-4">
-              <h3 className="text-base font-semibold text-gray-800">환불 금액</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">결제 금액</span>
-                  <span className="text-gray-900 font-medium">
-                {refund.amount?.toLocaleString()}원
-              </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">환불 예정 금액</span>
-                  <span className="text-gray-900 font-medium">
-                {refund.refundAmount?.toLocaleString() || "-"}원
-              </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">환불 수단</span>
-                  <span className="text-gray-900">
-                {refund.refundMethod || refund.paymentMethod || "카드 결제"}
-              </span>
-                </div>
-              </div>
-            </section>
-        )}
+        {/*{["APPROVED", "AUTO_REFUNDED"].includes(refund.status) && (*/}
+        {/*    <section className="space-y-4">*/}
+        {/*      <h3 className="text-base font-semibold text-gray-800">환불 금액</h3>*/}
+        {/*      <div className="space-y-2 text-sm">*/}
+        {/*        <div className="flex justify-between">*/}
+        {/*          <span className="text-gray-500">결제 금액</span>*/}
+        {/*          <span className="text-gray-900 font-medium">*/}
+        {/*        {refund.amount?.toLocaleString()}원*/}
+        {/*      </span>*/}
+        {/*        </div>*/}
+        {/*        <div className="flex justify-between">*/}
+        {/*          <span className="text-gray-500">환불 예정 금액</span>*/}
+        {/*          <span className="text-gray-900 font-medium">*/}
+        {/*        {refund.refundAmount?.toLocaleString() || "-"}원*/}
+        {/*      </span>*/}
+        {/*        </div>*/}
+        {/*        <div className="flex justify-between">*/}
+        {/*          <span className="text-gray-500">환불 수단</span>*/}
+        {/*          <span className="text-gray-900">*/}
+        {/*        {refund.refundMethod || refund.paymentMethod || "카드 결제"}*/}
+        {/*      </span>*/}
+        {/*        </div>*/}
+        {/*      </div>*/}
+        {/*    </section>*/}
+        {/*)}*/}
 
         {/* 하단 버튼 (조건 분기 적용) */}
         <div className="flex justify-end">
