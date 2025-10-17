@@ -16,6 +16,5 @@ export function calcRentalPrice(productPrice, months = 36) {
     monthlyFee = floorToTenWon(monthlyFee);
     deposit = floorToTenWon(deposit);
     totalPrice = floorToTenWon(totalPrice);
-
     return { monthlyFee, deposit, totalPrice };
 }
