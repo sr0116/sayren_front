@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { queryClient } from "@/lib/queryClient";
 
-export default function AddToCartButton({ productId, planId }) {
+export default function AddToCartButton({ productId, planId, check = true}) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -41,6 +41,10 @@ export default function AddToCartButton({ productId, planId }) {
   });
 
   const handleAdd = () => {
+    if (!check) {
+      alert("요금제를 선택해주세요!");
+      return false;
+    }
     addCartItemMutation.mutate({
       data: { productId, orderPlanId: planId },
     });

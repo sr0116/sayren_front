@@ -1,14 +1,14 @@
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
 import { useQueryClient } from "@tanstack/react-query";
 
-// ✅ 전체 배송 목록 조회
+//  전체 배송 목록 조회
 export function useAllDeliveriesQuery(params, options) {
   return useApiQuery(
       ["allDeliveries", params],
       "/api/admin/deliveries/get-list",
       {
         params,
-        // ✅ select 제거 (전체 응답 그대로 유지)
+
         options: {
           keepPreviousData: true,
           staleTime: 0,
@@ -21,7 +21,7 @@ export function useAllDeliveriesQuery(params, options) {
   );
 }
 
-// ✅ 이벤트 처리된 배송 상태 변경 + invalidate 자동 포함
+//이벤트 처리된 배송 상태 변경 + invalidate 자동 포함
 export function useChangedDeliveryStatusMutation(
     options = {},
     invalidateKey = ["allDeliveries"]

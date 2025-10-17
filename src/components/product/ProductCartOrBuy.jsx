@@ -84,7 +84,7 @@ export default function ProductCartOrBuy({ productId, price, type }) {
 
         {/* 장바구니 및 구매 버튼 */}
         <div className="flex gap-3 mt-2">
-          <AddToCartButton productId={productId} planId={selectedPlan?.planId} />
+          <AddToCartButton productId={productId} planId={selectedPlan?.planId} check={selectedPlan}/>
           <Button
             className="bg-[#ff0066] text-white px-6 py-2 rounded"
             onClick={() => {

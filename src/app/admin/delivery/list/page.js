@@ -15,18 +15,18 @@ export default function AdminDeliveryListPage() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  // ✅ 배송 목록 조회
+  //  배송 목록 조회
   const { data, isLoading, isError } = useAllDeliveriesQuery();
 
-  console.log("📦 배송 API 응답:", data);
+  console.log("배송 API 응답:", data);
 
-  const deliveries = data?.list ?? []; // ✅ 리스트 배열
-  const totalPages = data?.totalPages ?? 1; // ✅ 전체 페이지 수
+  const deliveries = data?.list ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   const [page, setPage] = useState(data?.page ?? 1);
   const itemsPerPage = data?.size ?? 10;
 
-  // ✅ Mutation 훅
+  // Mutation 훅
   const changeStatusMutation = useChangedDeliveryStatusMutation({
     onSuccess: (res, variables) => {
       queryClient.invalidateQueries(["allDeliveries"]);
@@ -63,7 +63,7 @@ export default function AdminDeliveryListPage() {
     });
   };
 
-  // ✅ 10초마다 자동 갱신
+  //  10초마다 자동 갱신
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(["allDeliveries"]);
@@ -71,7 +71,7 @@ export default function AdminDeliveryListPage() {
     return () => clearInterval(interval);
   }, [queryClient]);
 
-  // ✅ 상태별 렌더링
+  //  상태별 렌더링
   if (isLoading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
   if (isError) return <div className="p-4 text-red-600">배송 데이터를 불러올 수 없습니다.</div>;
   if (!deliveries.length)

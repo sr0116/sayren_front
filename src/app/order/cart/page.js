@@ -10,7 +10,7 @@ import { useApiQuery } from "@/hooks/useApi";
 export default function Page() {
   const router = useRouter();
 
-  // ✅ 장바구니 API 호출 로그 확인
+  // 장바구니 API 호출 로그 확인
   const {
     data: items = [],
     isLoading,
@@ -36,45 +36,45 @@ export default function Page() {
     setItemList([]);
   };
 
-  // ✅ API 결과 로깅
+  //  API 결과 로깅
   useEffect(() => {
-    console.log("📡 [CartPage] useApiQuery 결과:", { items, isLoading, isError, error });
+    console.log(" [CartPage] useApiQuery 결과:", { items, isLoading, isError, error });
 
     if (isLoading) return;
     if (isError) {
-      console.error("❌ [CartPage] 장바구니 API 오류:", error);
+      console.error(" [CartPage] 장바구니 API 오류:", error);
       return;
     }
 
     if (items && Array.isArray(items)) {
       try {
         const grouped = groupCartItems(items);
-        console.log("✅ [CartPage] 그룹핑된 장바구니 아이템:", grouped);
+        console.log("[CartPage] 그룹핑된 장바구니 아이템:", grouped);
         setItemList(grouped);
       } catch (e) {
-        console.error("🔥 [CartPage] groupCartItems 오류:", e);
+        console.error(" [CartPage] groupCartItems 오류:", e);
       }
     } else {
-      console.warn("⚠️ [CartPage] items 데이터가 배열이 아님:", items);
+      console.warn(" [CartPage] items 데이터가 배열이 아님:", items);
     }
   }, [items, isLoading, isError]);
 
-  // ✅ 그룹핑 함수 (안전 처리 + 로깅)
+
   function groupCartItems(cartItems) {
-    console.log("🧾 [groupCartItems] 원본 cartItems:", cartItems);
+    console.log("[groupCartItems] 원본 cartItems:", cartItems);
 
     if (!Array.isArray(cartItems)) {
       throw new Error("cartItems는 배열이어야 합니다!");
     }
 
     if (cartItems.length === 0) {
-      console.warn("⚠️ [groupCartItems] 장바구니가 비어 있음");
+      console.warn("️ [groupCartItems] 장바구니가 비어 있음");
       return [];
     }
 
     const grouped = cartItems.reduce((acc, item) => {
       const key = `${item.productId}_${item.planId}`;
-      console.log("🧩 [groupCartItems] 처리 중 item:", item);
+      console.log(" [groupCartItems] 처리 중 item:", item);
 
       if (!acc[key]) {
         acc[key] = {
@@ -93,7 +93,7 @@ export default function Page() {
       return acc;
     }, {});
 
-    console.log("✅ [groupCartItems] 최종 그룹핑 결과:", Object.values(grouped));
+    console.log(" [groupCartItems] 최종 그룹핑 결과:", Object.values(grouped));
     return Object.values(grouped);
   }
 
@@ -105,7 +105,7 @@ export default function Page() {
         </p>
     );
 
-  // ✅ 총합 계산 로그
+  // 총합 계산 로그
   const buyPrice = itemList
       ?.filter((item) => item.planType === "PURCHASE")
       .reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -118,7 +118,7 @@ export default function Page() {
       .forEach((item) => {
         const plan = plans.find((plan) => plan.planId === item.planId);
         if (!plan) {
-          console.warn("⚠️ [CartPage] planId 매칭 실패:", item.planId);
+          console.warn(" [CartPage] planId 매칭 실패:", item.planId);
           return;
         }
 
@@ -129,7 +129,7 @@ export default function Page() {
 
   const totalPrice = buyPrice + deposit + monthly;
 
-  console.log("💰 [CartPage] 금액 계산:", {
+  console.log(" [CartPage] 금액 계산:", {
     buyPrice,
     monthly,
     deposit,
@@ -259,8 +259,8 @@ export default function Page() {
                       variant="primary"
                       className="w-full bg-blue-600 text-white py-3 rounded"
                       onClick={() => {
-                        console.log("🧾 [CartPage] 주문 버튼 클릭됨");
-                        console.log("📦 [CartPage] 현재 itemList:", itemList);
+                        console.log(" [CartPage] 주문 버튼 클릭됨");
+                        console.log(" [CartPage] 현재 itemList:", itemList);
 
                         if (!itemList || itemList.length === 0) {
                           alert("장바구니가 비어 있습니다.");
@@ -272,7 +272,7 @@ export default function Page() {
                             .join(",");
 
                         const planId = itemList[0].planId;
-                        console.log("🚀 [CartPage] 이동할 주문 파라미터:", {
+                        console.log(" [CartPage] 이동할 주문 파라미터:", {
                           productId: itemList[0].productId,
                           planId,
                           cartIds,
