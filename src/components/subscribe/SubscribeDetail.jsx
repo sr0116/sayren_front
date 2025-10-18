@@ -154,10 +154,10 @@ export default function SubscribeDetail({ subscribeId }) {
           <div className="flex items-start gap-4">
             <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
               <Image
-                  src={"/image/image2.svg"} // 임시 썸네일
+                  src={subscribe.productThumbnail || "/image/image2.svg"}
                   alt={subscribe.productName || "상품 이미지"}
                   fill
-                  sizes="96px"
+                  sizes="80px"
                   className="object-cover"
               />
             </div>
