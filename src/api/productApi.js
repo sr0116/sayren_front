@@ -5,5 +5,9 @@ export function useProductRegisterMutation(options) {
 }
 
 export function useProductDeleteMutation(options) {
-  return useApiMutation("DELETE",({productId}) =>  `/api/admin/product/delete/${productId}`, { options });
+  return useApiMutation("DELETE",() =>  `/api/admin/product/delete`, { options });
 }
+
+// export function useProductDeleteMutation(options) {
+//   return useApiMutation("DELETE",({productId}) =>  `/api/admin/product/delete/${productId}`, { options });
+// }
