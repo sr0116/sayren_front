@@ -13,13 +13,18 @@ export default function OrderDetail({ orderId }) {
   );
 
   // 주문 이력 조회
-  const { data: histories = [] } = useApiQuery(
+  const { data: historiesResponse, isLoading: isHistoryLoading } = useApiQuery(
     ["orderHistory", orderId],
     `/api/user/orders/${orderId}/histories`
   );
 
+
+  const histories = Array.isArray(historiesResponse)
+    ? historiesResponse
+    : historiesResponse?.data ?? [];
+
   // 로딩 & 에러 처리
-  if (isLoading)
+  if (isLoading || isHistoryLoading)
     return (
       <div className="flex justify-center items-center min-h-[200px] text-gray-500">
         불러오는 중...
@@ -48,9 +53,7 @@ export default function OrderDetail({ orderId }) {
       {/* 헤더 */}
       <header className="border-b border-gray-200 pb-4">
         <h2 className="text-lg font-bold text-gray-900">주문 상세 정보</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          주문번호 #{order.orderId}
-        </p>
+        <p className="text-sm text-gray-500 mt-1">주문번호 #{order.orderId}</p>
       </header>
 
       {/* 주문 내역 */}
