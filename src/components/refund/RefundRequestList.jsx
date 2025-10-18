@@ -186,7 +186,7 @@ export default function RefundRequestList() {
                   <div className="flex items-start gap-4 p-4">
                     <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                       <Image
-                          src={thumbnail}
+                          src={req.productThumbnail || "/image/image2.svg"}
                           alt={req.productName || "상품 이미지"}
                           fill
                           sizes="80px"
