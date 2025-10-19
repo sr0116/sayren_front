@@ -16,8 +16,7 @@ import Image from "next/image";
 
 /**
  * 구독 상세 페이지 (SubscribeResponseDTO 기반)
- * - 페이지 전환형 상세 보기
- * - 필수 DTO 필드만 반영
+ * - 상세 정보 + 취소 요청 모달 폼 포함
  */
 export default function SubscribeDetail({ subscribeId }) {
   const router = useRouter();
@@ -59,7 +58,7 @@ export default function SubscribeDetail({ subscribeId }) {
   if (isLoading) return <div>불러오는 중...</div>;
   if (isError || !subscribe) return <div>구독 상세 조회 실패</div>;
 
-  // 구독 취소 가능 조건
+  // 취소 가능 여부
   const isCancelable =
       subscribe.status === "ACTIVE" &&
       ![
@@ -69,25 +68,6 @@ export default function SubscribeDetail({ subscribeId }) {
         "RETURN_FAILED",
       ].includes(subscribe.reasonCode) &&
       !cancelMutation.isLoading;
-
-  // 취소 버튼 문구 처리
-  const getCancelButtonLabel = () => {
-    const { status, reasonCode } = subscribe;
-
-    if (cancelMutation.isLoading) return "요청 중...";
-    if (status === "CANCELED") return "구독이 취소되었습니다";
-    if (status === "ENDED") return "구독이 종료되었습니다";
-    if (status === "OVERDUE") return "연체 중 (결제 후 복구 가능)";
-    if (["USER_REQUEST", "RETURN_REQUEST"].includes(reasonCode))
-      return "취소 요청 처리 중";
-    if (["RETURN_DELAY", "RETURN_FAILED"].includes(reasonCode))
-      return "회수 진행 중";
-    if (["CANCEL_REJECTED"].includes(reasonCode))
-      return "취소 거절됨 (재요청 가능)";
-    if (status === "ACTIVE") return "구독 취소 요청";
-
-    return "취소 불가 상태";
-  };
 
   // 취소 버튼 클릭 처리
   const handleCancel = () => {
@@ -115,8 +95,17 @@ export default function SubscribeDetail({ subscribeId }) {
                     message={<SubscribeCancelForm ref={reasonRef} />}
                     onConfirm={() => {
                       const reasonCode = reasonRef.current?.getSelectedReason();
-                      cancelMutation.mutate({ data: { reasonCode } });
+                      console.log(" reasonCode 선택:", reasonCode);
+
+                      cancelMutation.mutate(
+                          { params: { reasonCode } },
+                          {
+                            onSuccess: () => console.log("cancelMutation 성공"),
+                            onError: (err) => console.error(" cancelMutation 실패:", err),
+                          }
+                      );
                     }}
+
                 />
             ),
           })
@@ -136,6 +125,7 @@ export default function SubscribeDetail({ subscribeId }) {
     }
   };
 
+  // 상세 화면 출력
   return (
       <div className="max-w-[700px] mx-auto space-y-8">
         {/* 헤더 */}
@@ -146,11 +136,9 @@ export default function SubscribeDetail({ subscribeId }) {
           </p>
         </header>
 
-        {/*상품 정보*/}
+        {/* 상품 정보 */}
         <section className="space-y-3">
           <h3 className="text-base font-semibold text-gray-800">상품 정보</h3>
-
-          {/* 이미지 + 상품명 묶음 */}
           <div className="flex items-start gap-4">
             <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
               <Image
@@ -161,7 +149,6 @@ export default function SubscribeDetail({ subscribeId }) {
                   className="object-cover"
               />
             </div>
-
             <div className="flex-1 space-y-1 text-sm">
               <p className="font-medium text-gray-900 text-base">
                 {subscribe.productName}
@@ -176,9 +163,7 @@ export default function SubscribeDetail({ subscribeId }) {
           </div>
         </section>
 
-
-
-        {/* 금액 정보 */}
+        {/* 요금 정보 */}
         <section className="space-y-3">
           <h3 className="text-base font-semibold text-gray-800">요금 정보</h3>
           <div className="space-y-2 text-sm">
@@ -201,7 +186,7 @@ export default function SubscribeDetail({ subscribeId }) {
           </div>
         </section>
 
-        {/* 기간 정보 */}
+        {/* 이용 기간 */}
         <section className="space-y-3">
           <h3 className="text-base font-semibold text-gray-800">이용 기간</h3>
           <div className="space-y-2 text-sm">
@@ -225,7 +210,6 @@ export default function SubscribeDetail({ subscribeId }) {
             </div>
           </div>
         </section>
-
 
         {/* 회원 정보 */}
         <section className="space-y-3">

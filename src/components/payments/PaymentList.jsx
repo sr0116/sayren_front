@@ -328,6 +328,7 @@ export default function PaymentList() {
                                           : "환불 신청"}
                     </button>
 
+
                     {/* 결제 삭제 */}
                     <button
                         className="py-2 border-l border-gray-100 hover:bg-gray-50 transition text-gray-700"

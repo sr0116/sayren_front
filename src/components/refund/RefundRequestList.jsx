@@ -28,16 +28,17 @@ export default function RefundRequestList() {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const itemsPerPage = 10;
 
-  //  실시간 상태 감지 (자동 refetch)
+  // 환불 요청 목록 조회
   const { data: allRequests = [], isLoading, isError } = useMyRefundRequestsQuery({
     refetchOnWindowFocus: true,
-    refetchInterval: 10000, // 10초마다 상태 확인
+    refetchInterval: 10000, // 10초마다 갱신
   });
 
   const totalPages = Math.ceil(allRequests.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const refundRequests = allRequests.slice(startIdx, startIdx + itemsPerPage);
 
+  // 환불 요청 취소 Mutation
   const cancelMutation = useCancelRefundRequestMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries(["myRefundRequests"]);
@@ -131,14 +132,14 @@ export default function RefundRequestList() {
   const reasonLabelMap = {
     USER_REQUEST: "사용자 요청",
     PRODUCT_DEFECT: "상품 불량",
-    DELIVERY_DELAY: "배송 지연",
+    DELIVERY_ISSUE: "배송 문제",
     SYSTEM_ERROR: "시스템 오류",
     CHANGE_OF_MIND: "단순 변심",
   };
 
   return (
       <div className="w-full h-full space-y-10">
-        {/* 상단 타이틀 + 공용 규정 안내 */}
+        {/* 상단 타이틀 */}
         <header className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">환불 요청 내역</h2>
           <button
@@ -154,7 +155,8 @@ export default function RefundRequestList() {
           const thumbnail = req.productThumbnail || "/image/image2.svg";
           const reason = reasonLabelMap[req.reasonCode] || req.reasonCode;
           const formattedDate = dayjs(req.regDate).format("YYYY.MM.DD (dd)");
-          const isProcessed = ["APPROVED", "REJECTED", "CANCELED"].includes(req.status);
+
+          const isCancelable = req.status === "PENDING";
           const showRefundAmount =
               req.status === "APPROVED" || req.status === "AUTO_REFUNDED";
 
@@ -163,7 +165,7 @@ export default function RefundRequestList() {
                   key={req.refundRequestId}
                   className="space-y-3 border-b border-gray-100 pb-6"
               >
-                {/* 상단 영역 */}
+                {/* 상단 정보 */}
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="text-base font-semibold text-gray-900">
@@ -186,7 +188,7 @@ export default function RefundRequestList() {
                   <div className="flex items-start gap-4 p-4">
                     <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                       <Image
-                          src={req.productThumbnail || "/image/image2.svg"}
+                          src={thumbnail}
                           alt={req.productName || "상품 이미지"}
                           fill
                           sizes="80px"
@@ -207,7 +209,7 @@ export default function RefundRequestList() {
 
                       {showRefundAmount && (
                           <p className="text-sm font-semibold text-gray-900 mt-1">
-                            {/*환불 금액 : {req.amount?.toLocaleString()}원*/}
+                            {/* 환불 금액 표시 예정 */}
                           </p>
                       )}
                     </div>
@@ -217,7 +219,7 @@ export default function RefundRequestList() {
                     </div>
                   </div>
 
-                  {/* 버튼 3개 */}
+                  {/* 하단 버튼 */}
                   <div className="grid grid-cols-3 border-t border-gray-100 text-sm text-gray-700">
                     <button
                         className="py-2 hover:bg-gray-50 transition cursor-pointer"
@@ -236,11 +238,25 @@ export default function RefundRequestList() {
                     </button>
 
                     <button
-                        className="py-2 border-l border-gray-100 hover:bg-gray-50 transition disabled:text-gray-400 disabled:cursor-not-allowed cursor-pointer"
+                        className={`py-2 border-l border-gray-100 transition cursor-pointer ${
+                            isCancelable
+                                ? "hover:bg-red-50 text-red-600"
+                                : "text-gray-400 cursor-not-allowed"
+                        }`}
                         onClick={() => handleCancelRequest(req.refundRequestId)}
-                        disabled={isProcessed}
+                        disabled={!isCancelable}
                     >
-                      {req.status === "PENDING" ? "취소 요청" : "처리 완료"}
+                      {req.status === "PENDING"
+                          ? "요청 취소"
+                          : req.status === "APPROVED_WAITING_RETURN"
+                              ? "회수 대기 중"
+                              : req.status === "APPROVED"
+                                  ? "환불 완료"
+                                  : req.status === "REJECTED"
+                                      ? "거절됨"
+                                      : req.status === "CANCELED"
+                                          ? "취소됨"
+                                          : "처리 완료"}
                     </button>
                   </div>
                 </div>
