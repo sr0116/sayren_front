@@ -129,9 +129,7 @@ export default function RentalList({products, searchParams}) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
-          <Link key={p.productId} href={`/rental/${p.productId}`}>
             <ProductCardRental product={p}/>
-          </Link>
         ))}
       </div>
     </div>

@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 export default function ProductTagFilter({productList, onTagSelect}) {
   const [tagOptions, setTagOptions] = useState([]); // 태그 묶음
   const [selectedTags, setSelectedTags] = useState([]);
+  const [openSections, setOpenSections] = useState([]);
 
   function tagList(productList) {
     const tagMap = {};
@@ -30,6 +31,15 @@ export default function ProductTagFilter({productList, onTagSelect}) {
     }
   }, [productList]);
 
+  // 아코디언 토글
+  const toggleSection = (name) => {
+    setOpenSections((prev) =>
+        prev.includes(name)
+            ? prev.filter((item) => item !== name)
+            : [...prev, name]
+    );
+  };
+
   const handleCheckboxChange = (tagName, tagValue, checked) => {
     const tagFull = `${tagName}#${tagValue}`;
     setSelectedTags((prev) =>
@@ -44,34 +54,47 @@ export default function ProductTagFilter({productList, onTagSelect}) {
 
   return (
     <div className="mt-10 border-t pt-6 w-full">
-      <h2 className="text-lg font-bold mb-4">상세 검색</h2>
+      <h2 className="text-2xl font-bold mb-4">상세 검색</h2>
 
 
       {tagOptions.map((group, idx) => {
         const [tagName, tagValues] = Object.entries(group)[0];
+        const isOpen = openSections.includes(tagName);
+
         return (
           <div key={idx} className="mb-4">
-            <h3 className="font-semibold text-lg mb-2">{tagName}</h3>
-            <div className="flex flex-wrap gap-4">
-              {tagValues.map((val, i) => {
-                const tagFull = `${tagName}#${val}`;
-                return (
-                  <label key={i} className="flex items-center gap-2 text-lg">
-                    <input
-                      type="checkbox"
-                      name={tagName}
-                      value={val}
-                      checked={selectedTags.includes(tagFull)}
-                      onChange={(e) =>
-                        handleCheckboxChange(tagName, val, e.target.checked)
-                      }
-                      className="accent-neutral-900 w-4 h-4"
-                    />
-                    <span>{val}</span>
-                  </label>
-                );
-              })}
+            <div
+                onClick={() => toggleSection(tagName)}
+                className="flex justify-between items-center cursor-pointer select-none"
+            >
+              <h3 className="font-semibold text-lg">{tagName}</h3>
+              <span className="text-sm text-gray-500">
+                {isOpen ? "▲" : "▼"}
+              </span>
             </div>
+
+            {isOpen && (
+                <div className="mt-2 flex flex-wrap gap-4 pl-2">
+                  {tagValues.map((val, i) => {
+                    const tagFull = `${tagName}#${val}`;
+                    return (
+                        <label key={i} className="flex items-center gap-2 text-lg">
+                          <input
+                              type="checkbox"
+                              name={tagName}
+                              value={val}
+                              checked={selectedTags.includes(tagFull)}
+                              onChange={(e) =>
+                                  handleCheckboxChange(tagName, val, e.target.checked)
+                              }
+                              className="accent-neutral-900 w-4 h-4"
+                          />
+                          <span>{val}</span>
+                        </label>
+                    );
+                  })}
+                </div>
+            )}
           </div>
         );
       })}

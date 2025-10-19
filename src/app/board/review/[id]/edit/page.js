@@ -1,34 +1,32 @@
-// app/board/review/[id]/edit/route.js
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { getReviewById, updateReview } from "@/api/reviewApi";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { TextInput } from "@/components/common/Input";
 import Button from "@/components/common/Button";
-
-const Editor = dynamic(() => import("@toast-ui/react-editor").then(m => m.Editor), { ssr: false });
+import { getReviewById, updateReview } from "@/api/reviewApi";
+import { queryClient } from "@/lib/queryClient";
 
 export default function ReviewEditPage() {
   const { id } = useParams();
   const router = useRouter();
-  const editorRef = useRef(null);
-  const [form, setForm] = useState({ title: "", content: "", productId: null });
-  const [loading, setLoading] = useState(true);
 
-  // 기존 데이터 불러오기
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // 기존 리뷰 불러오기
   useEffect(() => {
     const fetchReview = async () => {
       try {
         const data = await getReviewById(id);
-        setForm({ title: data.title, content: data.content, productId: data.productId });
-        // Editor가 렌더링된 후 HTML 주입
-        setTimeout(() => {
-          editorRef.current?.getInstance().setHTML(data.content || "");
-        }, 0);
+        setTitle(data.title || "");
+        setContent(data.content || "");
       } catch (err) {
-        console.error("[리뷰 불러오기 실패]", err);
+        console.error("[리뷰 조회 실패]", err);
         alert("리뷰를 불러오는 데 실패했습니다.");
         router.push("/board/review");
       } finally {
@@ -38,48 +36,66 @@ export default function ReviewEditPage() {
     fetchReview();
   }, [id, router]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!title.trim()) {
+      alert("제목을 입력하세요");
+      return;
+    }
+    if (!content || content.replace(/<[^>]*>/g, "").trim() === "") {
+      alert("내용을 입력하세요");
+      return;
+    }
+
     try {
-      const content = editorRef.current?.getInstance().getHTML() || "";
-      await updateReview(id, { ...form, content, productId: form.productId });
-      alert("수정 완료!");
+      setIsSaving(true);
+      await updateReview(id, { title, content });
+      alert("리뷰가 수정되었습니다!");
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
       router.push(`/board/review/${id}`);
     } catch (err) {
       console.error("[리뷰 수정 실패]", err);
       alert("수정 실패: " + (err.response?.data?.message || err.message));
+    } finally {
+      setIsSaving(false);
     }
   };
 
   if (loading) return <p>불러오는 중...</p>;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto p-6 bg-white">
-      <TextInput
-        name="title"
-        type="text"
-        value={form.title}
-        onChange={handleChange}
-        placeholder="제목을 입력하세요"
-      />
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto p-6 bg-white">
+        <h2 className="text-2xl font-bold mb-4">리뷰 수정하기</h2>
 
-      <Editor
-        ref={editorRef}
-        height="460px"
-        initialEditType="wysiwyg"
-        hideModeSwitch={true}
-        usageStatistics={false}
-        initialValue={form.content}
-      />
+        <TextInput
+            name="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="제목을 입력하세요"
+        />
 
-      <div className="flex gap-2 mt-4">
-        <Button type="submit">수정 완료</Button>
-        <Button variant="outline" onClick={() => router.push(`/board/review/${id}`)}>취소</Button>
-      </div>
-    </form>
+        <ReactQuill
+            value={content}
+            onChange={setContent}
+            theme="snow"
+            placeholder="내용을 입력하세요..."
+            className="bg-white h-[400px]"
+        />
+
+        <div className="mt-10 flex gap-2">
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? "수정 중..." : "수정하기"}
+          </Button>
+          <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push(`/board/review/${id}`)}
+          >
+            취소
+          </Button>
+        </div>
+      </form>
   );
 }

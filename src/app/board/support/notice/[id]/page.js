@@ -13,8 +13,8 @@ export default function NoticeDetailPage() {
         <p className="text-sm text-gray-500">2025-09-15 · 조회수 196</p>
       </div>
       <p className="text-gray-700 leading-relaxed">
-        공지사항 내용이 여기에 표시됩니다. <br />
-        여러 줄로 된 본문 텍스트도 가능하고, 스타일링도 적용할 수 있습니다.
+        10월 서버 정기 점검으로 인한 임시 중단 <br />
+        10월 서버 정기 점검으로 사이트가 임시 중단됩니다. 3:00 AM ~ 5:00 AM 으로 이용이 제한됩니다.
       </p>
 
       {/* 목록으로 */}

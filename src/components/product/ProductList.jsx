@@ -130,9 +130,9 @@ export default function ProductList({products, searchParams}) {
 {/*<pre>{JSON.stringify(productList, null, 2)}</pre>*/}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
-          <Link key={p.productId} href={`/product/${p.productId}`}>
+
             <ProductCardPurchase product={p}/>
-          </Link>
+
         ))}
       </div>
     </div>

@@ -1,23 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { getReviews } from "@/api/reviewApi";
 
 export default function ReviewSection() {
-  const reviews = [
-    {
-      user: "Emma123",
-      text: "공기청정기를 구독했는데 설치도 간편하고, 관리까지 해주니까 너무 편리했어요. 요즘 집안 공기도 훨씬 쾌적해졌습니다.",
-    },
-    {
-      user: "Liam525",
-      text: "정수기를 신청했는데 하루 만에 설치 완료! 기사님도 친절하시고, 물 맛도 좋아서 만족합니다.",
-    },
-    {
-      user: "Sophiaaaa",
-      text: "가전제품을 렌탈로 이용하니 초기 비용 부담이 줄어서 좋아요. 특히 월 구독은 생활비 관리에 큰 도움이 됩니다.",
-    },
-  ];
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await getReviews(1, 10);
+        const data = res.data || res;
+
+        console.log("[ReviewSection] API 응답", res);
+        console.log("[ReviewSection] 응답 data", data);
+
+        const reviewArray = Array.isArray(data) ? data : data.dtoList || [];
+        console.log("[ReviewSection] 추출된 reviewArray", reviewArray);
+
+        const picked = reviewArray.slice(0, 3);
+        setReviews(picked);
+      } catch (err) {
+        console.error("리뷰 불러오기 실패:", err);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  if (!reviews || reviews.length === 0) {
+    return (
+        <section className="py-20 bg-white">
+          <div className="max-w-5xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-gray-900">고객 후기</h2>
+            <p className="mt-3 text-gray-500 mb-6">
+              실제 고객님들의 생생한 경험을 확인해보세요.
+            </p>
+            <p className="text-gray-500">아직 등록된 후기가 없습니다.</p>
+          </div>
+        </section>
+    );
+  }
 
   return (
       <section className="py-20 bg-white">
@@ -31,39 +56,55 @@ export default function ReviewSection() {
           </div>
 
           {/* Reviews */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-[200px]">
             {reviews.map((r, i) => (
                 <motion.div
-                    key={i}
+                    key={r.boardId || i}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: i * 0.15 }}
                     viewport={{ once: true }}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6
-                         flex flex-col justify-between hover:shadow-md transition"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition"
                 >
-                  {/* 큰 따옴표 강조 */}
-                  <span className="text-5xl text-gray-200 leading-none mb-4">“</span>
+                  <span className="text-5xl text-gray-200 leading-none mb-3">“</span>
 
-                  <p className="text-gray-700 flex-grow">{r.text}</p>
+            {/* 제목 */}
+            <h3 className="font-bold text-gray-900 text-base mb-2 line-clamp-1">
+              {r.title || "제목 없음"}
+            </h3>
 
+            {/* 본문 */}
+            <p className="text-gray-700 flex-grow text-sm leading-relaxed">
+              {(r.content
+                  ? r.content.replace(/<[^>]*>/g, "").slice(0, 100)
+                  : "내용 없음")}...
+            </p>
 
+            {/* 하단 정보 */}
+            <div className="flex justify-between mt-5 text-xs text-gray-500">
+              <span>
+                {r.productName ? `SAYREN ${r.productName}` : "익명"}
+              </span>
+              <span>
+                {r.regDate ? new Date(r.regDate).toLocaleDateString() : "날짜 없음"}
+              </span>
+            </div>
                 </motion.div>
             ))}
           </div>
 
-          {/* Link to more reviews */}
+
+          {/* 더보기 버튼 */}
           <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
-              className="text-center mt-12"
+              className="text-center mt-9"
           >
             <Link
                 href="/board/review"
-                className="inline-block px-6 py-3 rounded-lg bg-gray-900 text-white
-                       font-medium hover:bg-gray-800 transition"
+                className="inline-block px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition"
             >
               더 많은 후기 보기
             </Link>

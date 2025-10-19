@@ -9,14 +9,14 @@ import {useApiQuery} from "@/hooks/useApi";
 
 const categories = [
   "전체",
-  "TV",
-  "냉장고",
   "정수기",
   "청소기",
-  "세탁기",
-  "건조기",
-  "PC",
+  "의류건조기",
   "에어컨",
+  "세탁기",
+  "냉장고",
+  "TV",
+  "노트북",
 ];
 
 export default function ReviewListPage() {
@@ -34,7 +34,7 @@ export default function ReviewListPage() {
 
   const { data, isLoading, isError } = useApiQuery(
     ["reviews"],
-    "/api/user/reviews/list",
+    "/api/user/review",
     {
       params: { page: 1, size: 10, categoryId: 2 },
       options: { staleTime: 1000 * 60 }
@@ -44,12 +44,12 @@ export default function ReviewListPage() {
   useEffect(() => {
     if(data == null) return;
 
-    setReviews(data.list);        // 리뷰 배열
+    setReviews(Array.isArray(data) ? data : data.list || data.dtoList || []);
+    setTotal(data.length || 0);
     setPage(data.page);
     setPageList(data.pageList);
     setPrev(data.prev);
     setNext(data.next);
-    setTotal(data.totalPages);
   }, [data])
 
   if(isLoading) return (<div>로딩중...</div>)

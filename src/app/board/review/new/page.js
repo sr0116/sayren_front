@@ -54,7 +54,7 @@ export default function ReviewNewPage() {
       data: {
         ...form,
         categoryId: 2,
-        productId: 108,
+        productId: 231,   // 1, 24, 53, 88,125, 150, 174, 212, 231
         content, // 바로 HTML 문자열
       },
     });
