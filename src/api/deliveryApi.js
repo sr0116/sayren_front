@@ -18,7 +18,7 @@ export function useAllDeliveriesQuery(params, options) {
           ...options,
         },
       }
-  );
+  );rp
 }
 
 //이벤트 처리된 배송 상태 변경 + invalidate 자동 포함
