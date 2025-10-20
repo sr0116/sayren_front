@@ -3,10 +3,7 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
 import { userSubscribeOptions } from "@/utils/enumOptions";
 
-/**
- * 구독 취소 시 사용자 사유 선택 폼
- * - forwardRef 로 부모(ConfirmDialog)에서 선택값 참조
- */
+
 const SubscribeCancelForm = forwardRef((props, ref) => {
   const [selectedReason, setSelectedReason] = useState("USER_REQUEST");
 
