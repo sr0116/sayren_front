@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { openModal } from "@/store/modalSlice";
-import {
-  useAllSubscribesForAdminQuery,
-} from "@/api/subscribeApi";
+import { useAllSubscribesForAdminQuery } from "@/api/subscribeApi";
 
 import SubscribeCancelProcessDialog from "@/components/admin/subscribe/SubscribeCancelProcessDialog";
 import AdminSubscribeCancelDetailModal from "@/components/admin/subscribe/AdminSubscribeCancelDetailModal";
@@ -21,6 +20,11 @@ import { statusLabelMap } from "@/utils/statusLabelMap";
 export default function AdminSubscribeCancelList() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+
+  // URL 쿼리 기반 페이지 번호
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const itemsPerPage = 10;
 
   // 관리자 전체 구독 데이터 조회
   const {
@@ -29,11 +33,8 @@ export default function AdminSubscribeCancelList() {
     isError,
   } = useAllSubscribesForAdminQuery();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
   // 10초마다 자동 갱신
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(["allSubscribes"]);
     }, 10000);
@@ -54,14 +55,28 @@ export default function AdminSubscribeCancelList() {
 
   console.debug("[DEBUG] 관리자 구독 목록:", subscribes);
 
-  // 페이지네이션 처리
-  const totalPages = Math.ceil(subscribes.length / itemsPerPage);
-  const currentData = subscribes.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
+  // reasonCode 기준 필터링
+  const visibleReasonCodes = [
+    "CONTRACT_CANCEL", // 승인 - 구독 취소
+    "EXPIRED", // 승인 - 계약 만료
+    "PRODUCT_DEFECT", // 승인 - 상품 불량 환불
+    "DELIVERY_ISSUE", // 승인 - 배송 문제 환불
+    "USER_REQUEST", // 승인 - 단순 변심
+    "CANCEL_REJECTED", // 거절
+    "ADMIN_FORCE_END", // 강제 종료
+  ];
+
+  // reasonCode가 포함된 항목만 필터링
+  const filteredSubscribes = subscribes.filter((s) =>
+      visibleReasonCodes.includes(s.reasonCode)
   );
 
-  // 상세 모달
+  // 페이지네이션 처리
+  const totalPages = Math.ceil(filteredSubscribes.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentData = filteredSubscribes.slice(startIdx, startIdx + itemsPerPage);
+
+  // 상세 모달 열기
   const openDetailModal = (subscribeId) => {
     dispatch(
         openModal({
@@ -70,7 +85,7 @@ export default function AdminSubscribeCancelList() {
     );
   };
 
-  // 처리 모달
+  // 처리 모달 열기
   const openProcessModal = (req) => {
     dispatch(
         openModal({
@@ -86,12 +101,14 @@ export default function AdminSubscribeCancelList() {
 
   return (
       <div className="flex flex-col gap-6 h-full">
+        {/* 헤더 */}
         <header className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">
-            전체 구독 내역 관리
+            구독 취소 / 만료 내역 관리
           </h2>
         </header>
 
+        {/* 테이블 */}
         <div className="flex-1 border border-gray-100 rounded-xl p-4 bg-white shadow-sm">
           <table className="w-full text-sm border-collapse">
             <thead className="bg-gray-50 border-b">
@@ -128,6 +145,7 @@ export default function AdminSubscribeCancelList() {
             {currentData.map((s) => {
               const reasonLabel =
                   statusLabelMap.ReasonCode[s.reasonCode] || s.reasonCode;
+
               const isProcessed =
                   ["APPROVED", "REJECTED", "ENDED", "CANCELED"].includes(
                       s.status
@@ -191,7 +209,7 @@ export default function AdminSubscribeCancelList() {
             </tbody>
           </table>
 
-          {/* Pagination */}
+          {/* 페이지네이션 */}
           <div className="mt-6 flex justify-center">
             <Pagination
                 data={{
@@ -200,7 +218,6 @@ export default function AdminSubscribeCancelList() {
                   hasPrev: currentPage > 1,
                   hasNext: currentPage < totalPages,
                 }}
-                onChangePage={setCurrentPage}
             />
           </div>
         </div>
