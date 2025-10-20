@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { openModal } from "@/store/modalSlice";
 import {
   useAllSubscribesForAdminQuery,
-  useProcessSubscribeCancelMutation,
 } from "@/api/subscribeApi";
+
 import SubscribeCancelProcessDialog from "@/components/admin/subscribe/SubscribeCancelProcessDialog";
 import AdminSubscribeCancelDetailModal from "@/components/admin/subscribe/AdminSubscribeCancelDetailModal";
+
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -20,51 +21,47 @@ import { statusLabelMap } from "@/utils/statusLabelMap";
 export default function AdminSubscribeCancelList() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { data: subscribes = [], isLoading, isError } =
-      useAllSubscribesForAdminQuery();
 
-  const [filtered, setFiltered] = useState([]);
+  // 관리자 전체 구독 데이터 조회
+  const {
+    data: subscribes = [],
+    isLoading,
+    isError,
+  } = useAllSubscribesForAdminQuery();
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // 초기 데이터 세팅
-  useEffect(() => {
-    if (subscribes.length > 0) {
-      // reasonCode가 USER_REQUEST인 항목만 취소 요청으로 필터링
-      const cancelRequests = subscribes.filter(
-          (s) => s.reasonCode === "USER_REQUEST"
-      );
-      setFiltered(cancelRequests);
-    }
-  }, [subscribes]);
-
-  // 실시간 데이터 갱신
-  useEffect(() => {
+  // 10초마다 자동 갱신
+  useState(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(["allSubscribes"]);
     }, 10000);
     return () => clearInterval(interval);
   }, [queryClient]);
 
-  // 상태 처리
+  // 로딩 및 에러 처리
   if (isLoading) return <div>불러오는 중...</div>;
-  if (isError) return <div>구독 요청 불러오기 실패</div>;
-  if (!filtered.length)
+  if (isError)
+    return <div>요청 목록을 불러오는 중 오류가 발생했습니다.</div>;
+  if (!subscribes.length)
     return (
         <EmptyState
-            title="구독 취소 요청 없음"
-            message="현재 취소 요청 중인 구독이 없습니다."
+            title="데이터 없음"
+            message="현재 등록된 구독 내역이 없습니다."
         />
     );
 
+  console.debug("[DEBUG] 관리자 구독 목록:", subscribes);
+
   // 페이지네이션 처리
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
-  const currentData = filtered.slice(
+  const totalPages = Math.ceil(subscribes.length / itemsPerPage);
+  const currentData = subscribes.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
   );
 
-  // 상세 모달 열기
+  // 상세 모달
   const openDetailModal = (subscribeId) => {
     dispatch(
         openModal({
@@ -73,7 +70,7 @@ export default function AdminSubscribeCancelList() {
     );
   };
 
-  // 처리 모달 열기
+  // 처리 모달
   const openProcessModal = (req) => {
     dispatch(
         openModal({
@@ -89,26 +86,22 @@ export default function AdminSubscribeCancelList() {
 
   return (
       <div className="flex flex-col gap-6 h-full">
-        {/* 헤더 */}
         <header className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">
-            구독 취소 요청 관리
+            전체 구독 내역 관리
           </h2>
         </header>
 
-        {/* 구독 취소 요청 테이블 */}
         <div className="flex-1 border border-gray-100 rounded-xl p-4 bg-white shadow-sm">
           <table className="w-full text-sm border-collapse">
             <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="p-2 text-center font-medium text-gray-600">
-                구독 ID
-              </th>
-              <th className="p-2 text-center font-medium text-gray-600">
-                주문 ID
-              </th>
+              <th className="p-2 text-center font-medium text-gray-600">ID</th>
               <th className="p-2 text-center font-medium text-gray-600">
                 상품명
+              </th>
+              <th className="p-2 text-center font-medium text-gray-600">
+                회원명
               </th>
               <th className="p-2 text-center font-medium text-gray-600">
                 사유
@@ -135,7 +128,13 @@ export default function AdminSubscribeCancelList() {
             {currentData.map((s) => {
               const reasonLabel =
                   statusLabelMap.ReasonCode[s.reasonCode] || s.reasonCode;
-              const isProcessed = ["APPROVED", "REJECTED"].includes(s.status);
+              const isProcessed =
+                  ["APPROVED", "REJECTED", "ENDED", "CANCELED"].includes(
+                      s.status
+                  ) ||
+                  ["APPROVED_WAITING_RETURN", "APPROVED_COMPLETED"].includes(
+                      s.refundRequestStatus
+                  );
 
               return (
                   <tr
@@ -145,21 +144,27 @@ export default function AdminSubscribeCancelList() {
                     <td className="p-2 text-center text-gray-700">
                       {s.subscribeId}
                     </td>
-                    <td className="p-2 text-center text-gray-700">
-                      {s.orderItemId}
-                    </td>
+
+                    {/* 상품명 클릭 시 상세보기 */}
                     <td
-                        className="p-2 text-center text-gray-600 hover:underline cursor-pointer"
+                        className="p-2 text-center text-gray-700 hover:underline cursor-pointer"
                         onClick={() => openDetailModal(s.subscribeId)}
                     >
-                      {s.productName}
+                      {s.productName || "-"}
                     </td>
-                    <td className="p-2 text-center text-gray-600">
-                      {reasonLabel}
+
+                    <td className="p-2 text-center text-gray-700">
+                      {s.memberName || "-"}
                     </td>
+
+                    <td className="p-2 text-center">
+                      <StatusBadge type="ReasonCode" value={s.reasonCode} />
+                    </td>
+
                     <td className="p-2 text-center">
                       <StatusBadge type="SubscribeStatus" value={s.status} />
                     </td>
+
                     <td className="p-2 text-center text-gray-500">
                       {formatDate(s.startDate)}
                     </td>
@@ -169,6 +174,7 @@ export default function AdminSubscribeCancelList() {
                     <td className="p-2 text-center text-gray-500">
                       {formatDate(s.regDate)}
                     </td>
+
                     <td className="p-2 text-center">
                       <Button
                           variant={isProcessed ? "secondary" : "primary"}
@@ -185,7 +191,7 @@ export default function AdminSubscribeCancelList() {
             </tbody>
           </table>
 
-          {/* 페이지네이션 */}
+          {/* Pagination */}
           <div className="mt-6 flex justify-center">
             <Pagination
                 data={{

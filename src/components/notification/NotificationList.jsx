@@ -20,7 +20,7 @@ export default function NotificationList() {
   const { data, isLoading, isError } = useMyNotificationsQuery();
   const notifications = Array.isArray(data) ? data : [];
 
-  //  10초마다 실시간 새로고침
+  // 실시간 새로고침 (10초마다)
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(["myNotifications"]);
@@ -29,6 +29,7 @@ export default function NotificationList() {
   }, [queryClient]);
 
   if (isLoading) return <div>불러오는 중...</div>;
+
   if (isError)
     return (
         <EmptyState
@@ -36,6 +37,7 @@ export default function NotificationList() {
             message="알림 정보를 불러오는 중 오류가 발생했습니다."
         />
     );
+
   if (notifications.length === 0)
     return <EmptyState title="알림 없음" message="현재 받은 알림이 없습니다." />;
 
@@ -43,15 +45,21 @@ export default function NotificationList() {
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentData = notifications.slice(startIdx, startIdx + itemsPerPage);
 
-  //  타입별 경로 이동 함수
+  // 타입별 경로 이동 처리
   const handleAction = (n) => {
+    const navigateTo = (url) => {
+      const cleanUrl = url.startsWith("/mypage") ? url : `/mypage${url}`;
+      router.push(cleanUrl);
+    };
+
     switch (n.type) {
       case "SUBSCRIBE":
         router.push(`/mypage/subscribe/${n.targetId}`);
         break;
 
       case "SUBSCRIBE_ROUND":
-        router.push(`/mypage/subscribe/${n.subscribeId}/rounds/${n.roundNo}`);
+        router.push(`/mypage/notification`);
+
         break;
 
       case "DELIVERY":
@@ -66,16 +74,9 @@ export default function NotificationList() {
         router.push("/mypage/refund");
         break;
 
-      case "NOTICE":
-        router.push(`/mypage/notification/${n.notificationId}`);
-        break;
-
       default:
         if (n.linkUrl) {
-          const cleanUrl = n.linkUrl.startsWith("/mypage")
-              ? n.linkUrl
-              : `/mypage${n.linkUrl}`;
-          router.push(cleanUrl);
+          navigateTo(n.linkUrl);
         } else {
           router.push(`/mypage/notification/${n.notificationId}`);
         }

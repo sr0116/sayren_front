@@ -73,10 +73,15 @@ export function useSubscribeHistoriesQuery(id, options) {
 
 // 구독 취소
 export function useCancelSubscribeMutation(id, options) {
-  return useApiMutation("POST", `/api/user/subscribes/${id}/cancel`, {
-    options,
-  });
+  return useApiMutation(
+      "POST",
+      // reasonCode를 URL에 직접 포함시킴
+      ({ reasonCode }) =>
+          `/api/user/subscribes/${id}/cancel?reasonCode=${reasonCode || "USER_REQUEST"}`,
+      { options }
+  );
 }
+
 
 // 구독 회차 리스트
 export function useSubscribeRoundsQuery(subscribeId, options) {
@@ -93,24 +98,6 @@ export function useSubscribeRoundDetailQuery(subscribeId, roundNo, options) {
       ["subscribeRound", subscribeId, roundNo],
       `/api/user/subscribes/${subscribeId}/rounds/${roundNo}`,
       { options }
-  );
-}
-
-// 관리자: 전체 구독 조회
-export function useAllSubscribesForAdminQuery(options) {
-  return useApiQuery("allSubscribes", "/api/admin/subscribes", { options });
-}
-
-// 관리자: 구독 취소 승인/거절 처리
-export function useProcessSubscribeCancelMutation(options) {
-  return useApiMutation(
-      "POST",
-      (params) =>
-          `/api/admin/subscribes/${params.id}/cancel?status=${params.status}&reasonCode=${params.reasonCode}`,
-      {
-        invalidateKeys: ["allSubscribes"],
-        options,
-      }
   );
 }
 
@@ -134,6 +121,58 @@ export function useDeleteSubscribeMutation(options) {
     onError: options?.onError,
   });
 }
+//  관리자: 전체 구독 조회 (응답 구조 자동 정규화)
+export function useAllSubscribesForAdminQuery(options) {
+  return useApiQuery(["allSubscribes"], "/api/admin/subscribes", {
+    options: {
+      select: (res) => {
+
+        //  res가 배열 형태면 그대로 반환
+        if (Array.isArray(res)) return res;
+        // res.data 형태면 내부 배열 반환
+        if (Array.isArray(res?.data)) return res.data;
+        // ️res.data.data 형태면 그것 반환
+        if (Array.isArray(res?.data?.data)) return res.data.data;
+
+        console.warn(" 예기치 않은 응답 구조:", res);
+        return [];
+      },
+      ...options,
+    },
+  });
+}
+//  관리자: 구독 취소 승인/거절 처리
+export function useProcessSubscribeCancelMutation(options) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (variables) => {
+
+      if (!variables?.id) throw new Error("Missing id in mutation variables");
+
+      const { id, status, reasonCode } = variables;
+
+      //  URL 직접 구성
+      const url = `/api/admin/subscribes/${id}/cancel?status=${status}&reasonCode=${reasonCode}`;
+      console.debug("[DEBUG] 관리자 구독 취소 요청 URL:", url);
+
+      //  API 호출
+      return await api.post(url, {});
+    },
+
+    onSuccess: async (res, variables, context) => {
+      console.debug("구독 취소 처리 성공:", res);
+      await queryClient.invalidateQueries(["allSubscribes"]);
+      options?.onSuccess?.(res, variables, context);
+    },
+
+    onError: (err, variables, context) => {
+      console.error(" 구독 취소 처리 실패:", err);
+      options?.onError?.(err, variables, context);
+    },
+  });
+}
+
 
 
 
