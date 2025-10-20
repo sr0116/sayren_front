@@ -57,6 +57,9 @@ export default function DeleteMember(){
       })
     }
   })
+  const handleDelete = () => {
+    deleteMemberMutation.mutate();
+  }
 
   return (
     <div className="max-w-[400px] mx-auto mt-4">
@@ -67,7 +70,7 @@ export default function DeleteMember(){
         <CheckBox label={"3. 탈퇴 후 동일한 이메일으로 30일동안 가입하실 수 없습니다."} name="checkThree" checked={check.checkThree} onChange={handleChange}/>
         <CheckBox label={"4. 신중히 고려하신 후 탈퇴 부탁드립니다."} name="checkFour" checked={check.checkFour} onChange={handleChange}/>
       </div>
-      <Button variant="primary" disabled={!(check.checkOne && check.checkTwo && check.checkThree && check.checkFour)}>회원 탈퇴</Button>
+      <Button variant="primary" onClick={handleDelete} disabled={!(check.checkOne && check.checkTwo && check.checkThree && check.checkFour)}>회원 탈퇴</Button>
     </div>
   )
 }
