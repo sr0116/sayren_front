@@ -16,12 +16,7 @@ import SubscribeRoundItem from "@/components/subscribe/SubscribeRoundItem";
 import Pagination from "@/components/common/Pagination";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 
-/**
- * 구독 회차 리스트
- * - 첫 미납 회차만 결제 가능
- * - 모든 회차 납부 완료 시 자동 구독 취소(EXPIRED 사유) 요청 모달 표시
- * - 페이지네이션 + 실시간 상태 감시
- */
+
 export default function SubscribeRoundList() {
   const { id: subscribeId } = useParams();
   const router = useRouter();
