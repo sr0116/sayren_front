@@ -27,6 +27,7 @@ export default function Page() {
 
   const [itemList, setItemList] = useState([]);
   const plans = [
+    { planId: 1 },
     { planId: 2, month: 12 },
     { planId: 3, month: 24 },
     { planId: 4, month: 36 },
@@ -168,37 +169,14 @@ export default function Page() {
                     </div>
 
                     {/* 수량 조절 */}
-                    <div className="flex gap-3 flex-col">
-                      <div className="items-center border border-gray-300 rounded-full px-1 py-1 flex w-20">
-                        <button
-                          className="px-2 text-gray-500 hover:text-black cursor-pointer"
-                          onClick={() => {
-                            const updated = [...itemList];
-                            updated[idx].quantity += 1;
-                            setItemList(updated);
-                          }}
-                        >
-                          +
-                        </button>
-                        <span className="w-6 text-center">{item.quantity}</span>
-                        <button
-                          className="px-2 text-gray-500 hover:text-black cursor-pointer"
-                          onClick={() => {
-                            const updated = [...itemList];
-                            if (updated[idx].quantity > 1)
-                              updated[idx].quantity -= 1;
-                            setItemList(updated);
-                          }}
-                        >
-                          −
-                        </button>
-                      </div>
+                    <div className="">
+                      <span className="w-6 text-center text-gray-400 text-sm">수량 : {item.quantity}개</span>
                     </div>
                   </div>
 
                   {/*  단일 삭제 버튼 */}
                   <RemoveCartItemButton
-                    cartItemId={item.cartItemIds[0]}
+                    cartItemId={item.cartItemIds[item.cartItemIds.length - 1]}
                     productName={item.productName}
                   />
                 </div>

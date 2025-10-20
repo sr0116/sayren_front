@@ -8,6 +8,7 @@ import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import dayjs from "dayjs";
 import OrderDetail from "@/components/order/OrderDetail";
+import {calcRentalPrice} from "@/utils/CalcRentalPrice";
 
 export default function OrderList() {
   const dispatch = useDispatch();
@@ -17,6 +18,13 @@ export default function OrderList() {
     ["orders"],
     "/api/user/orders/my"
   );
+
+  const plans = [
+    { planId: 1 },
+    { planId: 2, month: 12 },
+    { planId: 3, month: 24 },
+    { planId: 4, month: 36 },
+  ];
 
 
   // 응답 구조 안전 처리
@@ -45,12 +53,6 @@ export default function OrderList() {
       />
     );
 
-  //  페이지네이션 (10개씩)
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
-  const currentPage = 1; // 단순 예시 (URL query로 개선 가능)
-  const pagedOrders = orders.slice(0, itemsPerPage);
-
   // 렌더링
   return (
     <div className="w-full h-full space-y-10">
@@ -58,57 +60,49 @@ export default function OrderList() {
         <h2 className="text-xl font-semibold text-gray-900">주문 내역</h2>
       </header>
 
-      {pagedOrders.map((o) => (
+      {orders.map((o) => {
+        let allPrice = 0;
+        return (
         <section
           key={o.orderId}
           className="space-y-3 border-b border-gray-100 pb-6"
         >
-          {/* 주문 헤더 */}
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">
-                {dayjs(o.regDate).format("YYYY.MM.DD (dd)")}
-              </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
-                상태: {o.status}
-              </p>
-            </div>
-            <button
-              className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={() =>
-                dispatch(openModal({ content: <OrderDetail orderId={o.orderId} /> }))
-              }
-            >
-              주문 상세
-            </button>
-          </div>
-
           {/* 주문 카드 */}
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="flex justify-between items-center p-4">
               <p className="font-semibold text-gray-900">
                 주문번호 #{o.orderId}
+                <span className="text-base font-semibold text-gray-900">
+                   - {dayjs(o.regDate).format("YYYY.MM.DD (dd)")}
+                </span>
               </p>
               <StatusBadge type="OrderStatus" value={o.status} />
             </div>
             <div className="border-t text-sm text-gray-700 text-right py-2 pr-4">
-              총 금액: {o.totalPrice?.toLocaleString()}원
+              {o.orderItems.map(oi =>  {
+                const plan = plans.find((p) => p.planId === oi.planId);
+                const { monthlyFee, deposit: itemDeposit, totalPrice } = calcRentalPrice(
+                +oi.priceSnapshot,
+                plan?.month || 0
+                );
+                const total = (monthlyFee && itemDeposit) ? monthlyFee + itemDeposit : totalPrice;
+                allPrice += total;
+                return (
+                <div className="flex items-center m-4 gap-4 justify-between me-0">
+                  <img src={oi.productThumbnail} className="w-20 h-20"/>
+                  <div className="flex items-start flex-col gap-1 flex-1">
+                    <p className="font-semibold">{oi.productName}</p>
+                    { monthlyFee && itemDeposit && <p className="text-gray-500">렌탈료 : {monthlyFee.toLocaleString()}원 / 보증금 : {itemDeposit.toLocaleString()}원</p>}
+                  </div>
+                  <p className="text-primary text-lg font-bold">{total.toLocaleString()}원</p>
+                </div>
+
+              )})}
+              총 금액: {allPrice.toLocaleString()}원
             </div>
           </div>
         </section>
-      ))}
-
-      {/* 페이지네이션 */}
-      <div className="mt-8 flex justify-center">
-        <Pagination
-          data={{
-            page: currentPage,
-            totalPages,
-            hasPrev: currentPage > 1,
-            hasNext: currentPage < totalPages,
-          }}
-        />
-      </div>
+      )})}
     </div>
-  );
+      );
 }

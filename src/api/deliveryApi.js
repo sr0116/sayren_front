@@ -2,29 +2,28 @@ import { useApiMutation, useApiQuery } from "@/hooks/useApi";
 import { useQueryClient } from "@tanstack/react-query";
 
 //  전체 배송 목록 조회
-export function useAllDeliveriesQuery(params, options) {
+export function useAllDeliveriesQuery(params = {}, options) {
   return useApiQuery(
-      ["allDeliveries", params],
-      "/api/admin/deliveries/get-list",
-      {
-        params,
-
-        options: {
-          keepPreviousData: true,
-          staleTime: 0,
-          cacheTime: 0,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          ...options,
-        },
-      }
-  );rp
+    ["allDeliveries", params],
+    "/api/admin/deliveries/get-list",
+    {
+      params, // { page, size }
+      options: {
+        keepPreviousData: true,
+        staleTime: 0,
+        cacheTime: 0,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        ...options,
+      },
+    }
+  );
 }
 
-//이벤트 처리된 배송 상태 변경 + invalidate 자동 포함
+// 상태 변경
 export function useChangedDeliveryStatusMutation(
-    options = {},
-    invalidateKey = ["allDeliveries"]
+  options = {},
+  invalidateKey = ["allDeliveries"]
 ) {
   const queryClient = useQueryClient();
 

@@ -12,13 +12,11 @@ export default function RemoveCartItemButton({ cartItemId, productName }) {
       console.error("삭제 실패:", err);
       alert("상품 삭제 중 오류가 발생했습니다.");
     },
-  });
+  }, cartItemId);
 
   const handleRemove = () => {
     if (confirm(`${productName}을(를) 장바구니에서 삭제하시겠습니까?`)) {
-      removeCartItem.mutate({
-        url: `/api/user/cart/delete-item/${cartItemId}`,
-      });
+      removeCartItem.mutate();
     }
   };
 
