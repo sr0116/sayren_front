@@ -16,7 +16,7 @@ export const updateReview = async (id, data) => {
 
 // 리뷰 목록 조회 (페이지네이션)
 export const getReviews = async (page = 1, size = 10) => {
-  const res = await api.get("/api/user/review/list", {
+  const res = await api.get("/api/user/review", {
     params: { page, size },
   });
   console.log("[리뷰 응답]", res.data);

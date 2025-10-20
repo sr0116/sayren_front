@@ -7,6 +7,7 @@ import ProductTagFilter from "@/components/product/ProductTagFilter";
 import SearchBar from "@/components/common/SearchBar";
 import Link from "next/link";
 import ProductCardPurchase from "@/components/product/ProductCardPurchase";
+import { useRouter } from "next/navigation";
 
 export default function ProductList({products, searchParams}) {
   const [cate, setCate] = useState(null);
@@ -95,6 +96,16 @@ export default function ProductList({products, searchParams}) {
     setTags(data);
   }
 
+  // 검색 후 초기화
+
+  const router = useRouter();
+  const handleResetAll = () => {
+    setTags([]);
+    setCate(products);
+    setProductList(products);
+    router.replace("/product");
+  };
+
   // 필터
   useEffect(() => {
     if (products !== null) {
@@ -122,17 +133,17 @@ export default function ProductList({products, searchParams}) {
         />
         {/* 검색 입력창 */}
         <div className="flex items-center gap-2 w-full">
-          <SearchBar keyword={keyword}/>
+          <SearchBar keyword={keyword} onReset={handleResetAll}/>
         </div>
         {/*상세검색 태그 필터*/}
-        <ProductTagFilter productList={cate} onTagSelect={onTagSelect}/>
+        <ProductTagFilter productList={cate} onTagSelect={onTagSelect} onReset={handleResetAll} />
       </div>
 {/*<pre>{JSON.stringify(productList, null, 2)}</pre>*/}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
-          <Link key={p.productId} href={`/product/${p.productId}`}>
+
             <ProductCardPurchase product={p}/>
-          </Link>
+
         ))}
       </div>
     </div>

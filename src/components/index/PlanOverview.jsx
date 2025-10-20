@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function PlanOverview() {
   const plans = [
-    { name: "일반 구매", desc: "바로 구매하러 가기", href: "/products" },
-    { name: "렌탈 구독", desc: "매월 정기 결제, 구독 상품 보러가기", href: "#" },
+    { name: "일반 구매", desc: "바로 구매하러 가기", href: "/product" },
+    { name: "렌탈 구독", desc: "매월 정기 결제, 구독 상품 보러가기", href: "/rental" },
   ];
 
   return (

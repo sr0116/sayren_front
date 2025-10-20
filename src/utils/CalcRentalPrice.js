@@ -1,5 +1,5 @@
 export function calcRentalPrice(productPrice, months = 36) {
-    if (!productPrice || productPrice <= 0 || months <= 0) {
+    if (!productPrice || productPrice <= 0 || months < 0) {
         throw new Error("상품 가격과 개월 수는 0보다 커야 합니다.");
     }
 

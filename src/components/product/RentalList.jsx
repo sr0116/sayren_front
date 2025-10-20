@@ -7,6 +7,8 @@ import ProductTagFilter from "@/components/product/ProductTagFilter";
 import SearchBar from "@/components/common/SearchBar";
 import Link from "next/link";
 import ProductCardRental from "@/components/product/ProductCardRental";
+import rentalProductListCategory from "@/components/product/RentalProductListCategory";
+import RentalProductListCategory from "@/components/product/RentalProductListCategory";
 
 export default function RentalList({products, searchParams}) {
   const [cate, setCate] = useState(null);
@@ -116,7 +118,7 @@ export default function RentalList({products, searchParams}) {
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex flex-col justify-between items-center mb-6 gap-4">
         {/* 카테고리 필터 */}
-        <ProductListCategory
+        <RentalProductListCategory
           products={products}
           selected={category}
         />
@@ -129,9 +131,7 @@ export default function RentalList({products, searchParams}) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {productList?.map((p) => (
-          <Link key={p.productId} href={`/rental/${p.productId}`}>
             <ProductCardRental product={p}/>
-          </Link>
         ))}
       </div>
     </div>
