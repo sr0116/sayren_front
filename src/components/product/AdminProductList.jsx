@@ -24,16 +24,21 @@ export default function AdminProductList({ products = [] }) {
     if (Array.isArray(products)) {
       setProductList(products);
     }
-    if(products === null || products === undefined) {
-      return (<div>불러오는 중</div>)
-    }
+    // if(products === null || products === undefined) {
+    //   return (<div>불러오는 중</div>)
+    // }
 
   }, [products]);
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   const { data, isLoading, isError } = useApiQuery(
     ["productCategory"],
     `/api/admin/product/category`,
     {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       options: {
         keepPreviousData: true,
         staleTime: 0,
@@ -44,7 +49,10 @@ export default function AdminProductList({ products = [] }) {
     })
 
   useEffect(() => {
-    setCategoryList(Array.isArray(data) && data);
+    if (!data || !Array.isArray(data)) return;
+    if (JSON.stringify(data) !== JSON.stringify(categoryList)) {
+      setCategoryList(data);
+    }
   }, [data]);
 
   // 상태별 필터링
