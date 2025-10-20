@@ -58,10 +58,16 @@ export default function SubscribeList() {
           content: (
               <ConfirmDialog
                   title="구독 내역 삭제"
-                  message="해당 구독 내역을 삭제하시겠습니까?\n진행 중이거나 환불 중인 구독은 삭제할 수 없습니다."
+                  message={
+                    <>
+                      해당 구독 내역을 삭제하시겠습니까?<br />
+                      진행 중이거나 환불 중인 구독은 삭제할 수 없습니다.
+                    </>
+                  }
                   confirmText="삭제하기"
                   onConfirm={() => deleteMutation.mutate(id)}
               />
+
           ),
         })
     );

@@ -15,7 +15,7 @@ export default function SubscribeRoundItem({
                                              isFirstPending,
                                              firstPendingId,
                                            }) {
-  // ✅ 결제 가능 조건
+  //  결제 가능 조건
   const canPay =
       round.payStatus === "PENDING" &&
       firstPendingId !== null &&
@@ -41,7 +41,7 @@ export default function SubscribeRoundItem({
         <div className="flex items-center gap-3">
           <StatusBadge type="PaymentStatus" value={round.payStatus} />
 
-          {/* ✅ 결제 버튼 or 안내문 */}
+          {/*  결제 버튼 or 안내문 */}
           {canPay ? (
               <RoundPaymentButton
                   round={round}
