@@ -34,13 +34,6 @@ const menuGroups = [
     ],
   },
   {
-    title: "문의 / 댓글",
-    items: [
-      { name: "문의 내역", href: "/mypage/posts" },
-      { name: "내 댓글", href: "/mypage/replies" },
-    ],
-  },
-  {
     title: "상품관리",
     items: [
       { name: "상품현황 및 상품목록 ", href: "/admin/product/list" },
