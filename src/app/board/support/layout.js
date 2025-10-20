@@ -9,7 +9,7 @@ export default function SupportLayout({ children }) {
   // 사이드바 메뉴 정의
   const menus = [
     { name: "자주 묻는 질문", path: "/board/support/faq" },
-    // { name: "문의하기", path: "/board/support/qna" },
+    { name: "문의하기", path: "/board/support/qna" },
     { name: "공지사항", path: "/board/support/notice" },
   ];
 
