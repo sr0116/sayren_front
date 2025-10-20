@@ -1,7 +1,7 @@
 "use client";
 import {useEffect, useState} from "react";
 
-export default function ProductTagFilter({productList, onTagSelect}) {
+export default function ProductTagFilter({productList, onTagSelect, onReset}) {
   const [tagOptions, setTagOptions] = useState([]); // 태그 묶음
   const [selectedTags, setSelectedTags] = useState([]);
   const [openSections, setOpenSections] = useState([]);
@@ -100,6 +100,17 @@ export default function ProductTagFilter({productList, onTagSelect}) {
       })}
 
       <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => {
+            setSelectedTags([]);
+            onTagSelect?.([]);
+            onReset?.(); // 부모에서 전체 리셋
+          }}
+          className="px-5 py-2 border border-gray-400 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"
+        >
+          ↻
+        </button>
+
         <button
           onClick={handleApplyFilters}
           className="px-5 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition"

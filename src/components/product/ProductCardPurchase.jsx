@@ -58,22 +58,22 @@ export default function ProductCardPurchase({ product }) {
 
         {/* 카테고리 태그 */}
         {category && (
-            <span className="absolute top-2 left-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-md">
+          <span className="absolute top-2 left-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-md">
             {category}
           </span>
         )}
 
         {/* 찜 버튼 */}
         <button
-            onClick={handleLikeClick}
-            className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full
+          onClick={handleLikeClick}
+          className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full
              bg-black/30 hover:bg-black/50 transition text-white z-20"
         >
           <Heart
-              size={20}
-              fill={isLiked ? "#ff0066" : "none"}
-              stroke={isLiked ? "#ff0066" : "#fff"}
-              strokeWidth={2}
+            size={20}
+            fill={isLiked ? "#ff0066" : "none"}
+            stroke={isLiked ? "#ff0066" : "#fff"}
+            strokeWidth={2}
           />
         </button>
       </div>
@@ -82,19 +82,19 @@ export default function ProductCardPurchase({ product }) {
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
           <div className="flex flex-wrap gap-2 mb-2">
-          {tags.length > 0 && tags.map((tag, i) => (
-              <p key={`${tag}-${i}`}
-                 className="text-xs text-gray-500">
-                #{tag.split("#")[1]}
-              </p>
-            )
-          )}
+            {tags.length > 0 && tags.map((tag, i) => (
+                <p key={`${tag}-${i}`}
+                   className="text-xs text-gray-500">
+                  #{tag.split("#")[1]}
+                </p>
+              )
+            )}
           </div>
 
           <Link href={`/product/${product.productId}`}>
-          <h3 className="font-semibold text-base line-clamp-1 hover:underlin">
-            {productName}
-          </h3>
+            <h3 className="font-semibold text-base line-clamp-1 hover:underlin">
+              {productName}
+            </h3>
           </Link>
 
           <span className=" text-sm text-gray-600 mt-1">{modelName}</span>

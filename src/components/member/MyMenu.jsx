@@ -37,12 +37,12 @@ const menuGroups = [
       { name: "알림", href: "/mypage/notification" },
     ],
   },
-  {
-    title: "찜",
-    items: [
-      { name: "상품 찜 목록", href: "/mypage/like" },
-    ],
-  },
+  // {
+  //   title: "찜",
+  //   items: [
+  //     { name: "상품 찜 목록", href: "/mypage/like" },
+  //   ],
+  // },
 ];
 
 export default function MyMenu() {

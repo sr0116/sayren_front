@@ -113,16 +113,16 @@ export default function AdminProductList({ products = [] }) {
         >
           전체
         </button>
-        <button
-          onClick={() => setFilter("ACTIVE")}
-          className={`px-4 py-1.5 text-sm rounded-md border transition ${
-            filter === "ACTIVE"
-              ? "bg-yellow-500 text-white border-yellow-500"
-              : "bg-white text-gray-700 hover:bg-gray-100"
-          }`}
-        >
-          노출됨
-        </button>
+        {/*<button*/}
+        {/*  onClick={() => setFilter("ACTIVE")}*/}
+        {/*  className={`px-4 py-1.5 text-sm rounded-md border transition ${*/}
+        {/*    filter === "ACTIVE"*/}
+        {/*      ? "bg-yellow-500 text-white border-yellow-500"*/}
+        {/*      : "bg-white text-gray-700 hover:bg-gray-100"*/}
+        {/*  }`}*/}
+        {/*>*/}
+        {/*  노출됨*/}
+        {/*</button>*/}
 
         <button
           onClick={() => setFilter("HIDDEN")}
@@ -146,12 +146,12 @@ export default function AdminProductList({ products = [] }) {
         {/*  삭제*/}
         {/*</button>*/}
 
-        <Link
-          href="/admin/product/register"
-          className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition"
-        >
-          상품 등록
-        </Link>
+        {/*<Link*/}
+        {/*  href="/admin/product/register"*/}
+        {/*  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition"*/}
+        {/*>*/}
+        {/*  상품 등록*/}
+        {/*</Link>*/}
       </div>
 
       {/* 상품 목록 테이블 */}

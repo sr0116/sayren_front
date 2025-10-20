@@ -11,7 +11,7 @@ const navItems = [
   { label: "Rental", href: "/rental", hasMegaMenu: true },
   { label: "Review", href: "/board/review" },
   { label: "Support", href: "/board/support" },
-  { label: "B2B", href: "#" },
+  // { label: "B2B", href: "#" },
 ];
 
 export default function NavMenu({layout = "horizontal"}) {

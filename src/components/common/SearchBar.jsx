@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {TextInput} from "@/components/common/Input";
 import Button from "@/components/common/Button";
 
-export default function SearchBar({keyword = ""}) {
+export default function SearchBar({keyword = "", onReset}) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -36,6 +36,14 @@ export default function SearchBar({keyword = ""}) {
         className="max-w-[100px]"
       >
         검색
+      </Button>
+
+      <Button
+        variant="secondary"
+        onClick={onReset}
+        className="max-w-[100px]"
+      >
+        초기화
       </Button>
     </div>
   );

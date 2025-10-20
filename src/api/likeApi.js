@@ -17,7 +17,7 @@ export const toggleLike = async (boardId) => {
 // 특정 게시글 좋아요 개수 가져오기
 export const getLikeCount = async (boardId) => {
     const res = await api.get(`/api/user/board/${boardId}/like`);
-    return res.data; // { likeCount: n }
+    return res.data;
 };
 
 //  내가 찜한 상품 목록 (마이페이지용)
@@ -25,5 +25,5 @@ export const getLikedProducts = async () => {
     console.log("[찜한 상품 목록 요청]");
     const res = await api.get("/api/mypage/like");
     console.log("[찜한 상품 목록 응답]", res.data);
-    return res.data; // [{ boardId, title, productName, ... }]
+    return res.data;
 };

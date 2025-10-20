@@ -26,37 +26,37 @@ export default function IndexContainer() {
       <>
         <HeroSection />
         <CategorySection />
-        <RentalHighlight />
+        {/*<RentalHighlight />*/}
 
-        {/* 정수기 카테고리 */}
-        {products["정수기"] && (
-            <ProductHighlight
-                title="MD's Pick"
-                subtitle="놓치기 아쉬운 특별한 가격"
-                products={products["정수기"]}
-            />
-        )}
+        {/*/!* 정수기 카테고리 *!/*/}
+        {/*{products["정수기"] && (*/}
+        {/*    <ProductHighlight*/}
+        {/*        title="MD's Pick"*/}
+        {/*        subtitle="놓치기 아쉬운 특별한 가격"*/}
+        {/*        products={products["정수기"]}*/}
+        {/*    />*/}
+        {/*)}*/}
 
         <PlanOverview />
 
 
-        {/* TV 카테고리 */}
-        {products["TV"] && (
-            <ProductHighlight
-                title="TV 추천"
-                subtitle="이번 달 가장 인기 있는 상품"
-                products={products["TV"]}
-            />
-        )}
+        {/*/!* TV 카테고리 *!/*/}
+        {/*{products["TV"] && (*/}
+        {/*    <ProductHighlight*/}
+        {/*        title="TV 추천"*/}
+        {/*        subtitle="이번 달 가장 인기 있는 상품"*/}
+        {/*        products={products["TV"]}*/}
+        {/*    />*/}
+        {/*)}*/}
 
-        {/* 에어컨 카테고리 */}
-        {products["에어컨"] && (
-            <ProductHighlight
-                title="에어컨 추천"
-                subtitle="여름 필수 가전"
-                products={products["냉장고"]}
-            />
-        )}
+        {/*/!* 에어컨 카테고리 *!/*/}
+        {/*{products["에어컨"] && (*/}
+        {/*    <ProductHighlight*/}
+        {/*        title="에어컨 추천"*/}
+        {/*        subtitle="여름 필수 가전"*/}
+        {/*        products={products["냉장고"]}*/}
+        {/*    />*/}
+        {/*)}*/}
 
         <ReviewSection />
         <QnASection />

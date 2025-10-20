@@ -4,6 +4,7 @@ import {useToggleLikeMutation} from "@/api/likeApi";
 import {useState} from "react";
 import { Heart } from "lucide-react";
 import Link from "next/link";
+import {calcRentalPrice} from "@/utils/CalcRentalPrice";
 
 export default function ProductCardRental({ product }) {
   const {
@@ -18,7 +19,8 @@ export default function ProductCardRental({ product }) {
     liked = false,
   } = product || {};
 
-  const monthlyPrice = Math.round(price / 36 * 1.005);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const { monthlyFee, deposit, totalPrice } = calcRentalPrice(price, selectedPlan?.month);
 
   const [isLiked, setIsLiked] = useState(liked);
   const [count, setCount] = useState(likeCount);
@@ -103,7 +105,7 @@ export default function ProductCardRental({ product }) {
 
         <div className="mt-2">
           <p className="text-lg font-bold text-[#ff0066] line-clamp-1">
-            월 {monthlyPrice.toLocaleString()}원
+            월 {monthlyFee.toLocaleString()}원
           </p>
           <p className="text-gray-400">36개월 기준</p>
         </div>

@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   const slides = [
@@ -29,6 +30,7 @@ export default function HeroSection() {
           >
             {slides.map((url, i) => (
                 <SwiperSlide key={i} className="swiper-slide-custom">
+                  <Link href="/product?category=냉장고">
                   <Image
                       src={url}
                       alt={`Slide ${i + 1}`}
@@ -36,6 +38,7 @@ export default function HeroSection() {
                       priority={i === 0}
                       className="object-cover"
                   />
+                  </Link>
                 </SwiperSlide>
             ))}
 

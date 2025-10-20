@@ -20,7 +20,6 @@ export default function ProductListPage({ searchParams }) {
     }
   );
 
-
     return (
         <div>
             {/*<AdminProductState />*/}
