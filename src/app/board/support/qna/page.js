@@ -17,7 +17,7 @@ export default function QnaListPage() {
   const [prev, setPrev] = useState(false);
   const [next, setNext] = useState(false);
 
-  // ✅ 더미 데이터 불러오기
+  // 더미 데이터 불러오기
   useEffect(() => {
     const fetchQnas = async () => {
       try {
@@ -109,14 +109,14 @@ export default function QnaListPage() {
           );
         })}
       </ul>
-      {/*/!* 작성 버튼 *!/*/}
-      {/*<div className="mt-4 text-right">*/}
-      {/*  <Link href="/board/support/qna/new">*/}
-      {/*    <Button variant="primary" className="w-auto px-6 py-2">*/}
-      {/*      문의 작성하기*/}
-      {/*    </Button>*/}
-      {/*  </Link>*/}
-      {/*</div>*/}
+      {/* 작성 버튼 */}
+      <div className="mt-4 text-right">
+        <Link href="/board/support/qna/new">
+          <Button variant="primary" className="w-auto px-6 py-2">
+            문의 작성하기
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

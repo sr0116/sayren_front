@@ -3,12 +3,6 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-// 더미 데이터
-const dummyQnas = {
-  1: { id: 1, type: "일반", title: "제품 사용 방법이 궁금합니다.", content: "이 제품은 어떻게 사용하는 건가요?", createdAt: "2025-09-20" },
-  2: { id: 2, type: "AS", title: "설치 후 소음이 있습니다.", content: "설치 후 소음이 발생합니다. 조치가 필요합니다.", createdAt: "2025-09-21" },
-};
-
 export default function QnaDetailPage() {
   const { id } = useParams();
   const qna = dummyQnas[id];

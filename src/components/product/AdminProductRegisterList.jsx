@@ -124,7 +124,7 @@ export default function AdminProductRegisterList({products, searchParams}) {
           <ProductTagFilter productList={cate} onTagSelect={onTagSelect} />
         </div>
 
-        {/* ✅ 관리자 스타일 테이블 */}
+        {/* 관리자 스타일 테이블 */}
         <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h3 className="font-semibold text-gray-800">상품 목록</h3>
