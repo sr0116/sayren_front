@@ -1,0 +1,50 @@
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { login } from "@/store/authSlice";
+import { openModal, closeModal } from "@/store/modalSlice";
+import SocialSignupModal from "@/components/auth/SocialSignupModal";
+import SocialLinkModal from "@/components/auth/SocialLinkModal";
+import {queryClient} from "@/lib/queryClient";
+import {api} from "@/lib/axios";
+
+export default function SocialAuthHandler() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.origin !== process.env.NEXT_PUBLIC_SPRING_API_BASE_URL) return;
+      const data = event.data;
+
+      if (data && data.id) {
+        dispatch(login({ data }));
+        queryClient
+            .fetchQuery({
+              queryKey: ["2fa"],
+              queryFn: () => api.get("/api/auth/read-2fa"),
+            })
+            .then(() => {
+              queryClient.setQueryData(["2fa"], true);
+            })
+            .catch(() => {
+              queryClient.setQueryData(["2fa"], false);
+            });
+        router.push("/");
+      } else if (data.error === "SIGNUP_REQUIRED") {
+        dispatch(openModal({content: <SocialSignupModal socialUser={data.socialUser} />}));
+      } else if (data.error === "LINK_REQUIRED") {
+        dispatch(openModal({content: <SocialLinkModal socialUser={data.socialUser} />}));
+      } else {
+        console.error("소셜 로그인 실패:", data);
+      }
+    };
+
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [dispatch, router]);
+
+  return null;
+}

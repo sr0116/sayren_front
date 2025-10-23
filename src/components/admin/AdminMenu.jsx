@@ -1,0 +1,98 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
+const menuGroups = [
+  {
+    items: [
+      { name: "대시보드", href: "/admin" },
+    ],
+  },
+  {
+    title: "회원관리",
+    items: [
+      { name: "회원 목록", href: "/admin/member/list" },
+      { name: "탈퇴 회원 목록", href: "/admin/member/delete-list" },
+    ],
+  },
+  {
+    title: "배송관리",
+    items: [
+      { name: "배송 및 환불 목록", href: "/admin/delivery/list" },
+    ],
+  },
+  {
+    title: "구독 / 결제 관리",
+    items: [
+      { name: "구독 내역", href: "/admin/subscribe/list" },
+      { name: "결제 내역", href: "/admin/payments/list" },
+      { name: "환불 요청 관리", href: "/admin/refund/list" },
+      { name: "구독 취소 요청 관리", href: "/admin/subscribe/cancel" },
+    ],
+  },
+  {
+    title: "상품관리",
+    items: [
+      { name: "상품현황 및 상품목록 ", href: "/admin/product/list" },
+    ],
+  },
+];
+
+export default function AdminMenu() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  const renderLinks = () =>
+      menuGroups.map((group, i) => (
+          <div key={i} className="mb-4">
+            <h3 className="text-sm font-bold text-gray-500 mb-3">{group.title}</h3>
+            <div className="flex flex-col ">
+              {group.items.map((menu) => {
+                const isActive = pathname === menu.href;
+                return (
+                    <Link
+                        key={menu.href}
+                        href={menu.href}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                            isActive
+                                ? "bg-gray-900 text-white font-semibold"
+                                : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                        onClick={() => setOpen(false)}
+                    >
+                      {menu.name}
+                    </Link>
+                );
+              })}
+            </div>
+          </div>
+      ));
+
+  return (
+      <div>
+        {/* 모바일 전용 버튼 */}
+        <div className="md:hidden mb-4">
+          <button
+              onClick={() => setOpen(!open)}
+              className="flex items-center gap-2 px-4 py-2 border rounded-lg w-full justify-between text-gray-700 cursor-pointer"
+          >
+            <span>메뉴</span>
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* 데스크탑 메뉴 */}
+        <nav className="hidden md:block">{renderLinks()}</nav>
+
+        {/* 모바일 드롭다운 */}
+        {open && (
+            <nav className="flex flex-col mt-2 md:hidden border rounded-lg p-4 bg-white shadow">
+              {renderLinks()}
+            </nav>
+        )}
+      </div>
+  );
+}

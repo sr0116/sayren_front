@@ -1,0 +1,141 @@
+import { api } from "@/lib/axios";
+import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+
+
+// 결제 준비 (결제창 열기 전 호출)
+export const preparePayment = async ({ orderItemId}) => {
+  try {
+    const data = await api.post("/api/user/payments/prepare", {
+      orderItemId,
+    });
+    return data;
+  } catch (err) {
+    console.error("결제 준비 실패:", err);
+    throw err;
+  }
+};
+
+// 회차 결제 준비
+export const prepareRoundPayment = async (subscribeRoundId) => {
+  try {
+    const data = await api.post(`/api/user/payments/prepare/round/${subscribeRoundId}`)
+    return data;
+  } catch (err) {
+    console.error("회차 결제 준비 실패:", err);
+    throw err;
+  }
+};
+
+export function usePrepareRoundPaymentMutation(options) {
+  return useApiMutation(
+      "POST",
+      ({ subscribeRoundId }) => `/api/user/payments/prepare/round/${subscribeRoundId}`,
+      { options }
+  );
+}
+
+// 결제 삭제 (직접 axios.delete 사용)
+export function useDeletePaymentMutation(options) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (paymentId) => {
+      // DELETE는 body 없이 전송해야 함
+      return await api.delete(`/api/user/payments/${paymentId}`, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: async (res, variables, context) => {
+      //  캐시 무효화 (최근 결제 + 전체 결제 목록 갱신)
+      await Promise.all([
+        queryClient.invalidateQueries(["recentPayments"]),
+        queryClient.invalidateQueries(["allPayments"]),
+      ]);
+      options?.onSuccess?.(res, variables, context);
+    },
+    onError: options?.onError,
+  });
+}
+
+
+
+
+// 결제 완료 검증 (PortOne imp_uid → 백엔드 검증)
+export const completePayment = async ({ paymentId, impUid }) => {
+  try {
+    const data = await api.post(
+        `/api/user/payments/${paymentId}/complete`,
+        {},
+        { params: { imp_uid: impUid }, withCredentials: true }
+    );
+    return data;
+  } catch (err) {
+    console.error("결제 완료 검증 실패:", err);
+    throw err;
+  }
+};
+
+// 최근 결제 요약 조회
+export const getRecentPayments = async () => {
+  try {
+    const data = await api.get("/api/user/payments/summaries");
+    return data;
+  } catch (err) {
+    console.error("최근 결제 조회 실패:", err);
+    throw err;
+  }
+};
+
+
+
+// 단일 결제 조회 (백엔드 엔드포인트 추가 필요)
+export const getPaymentById = async (paymentId) => {
+  try {
+    const data = await api.get(`/api/user/payments/${paymentId}`);
+    return data;
+  } catch (err) {
+    console.error("결제 조회 실패:", err);
+    throw err;
+  }
+};
+
+// React Query Hooks
+export function usePreparePaymentMutation(options) {
+  return useApiMutation("POST", "/api/user/payments/prepare", { options });
+}
+
+export function useCompletePaymentMutation(paymentId, options) {
+  return useApiMutation("POST", `/api/user/payments/${paymentId}/complete`, {
+    options,
+  });
+}
+
+// export function useRefundPaymentMutation(paymentId, options) {
+//   return useApiMutation("POST", `/api/user/payments/${paymentId}/refund`, {
+//     options,
+//   });
+// }
+
+// 최근 결제 요약 조회
+export function useRecentPaymentsQuery(options) {
+  return useApiQuery(
+      "recentPayments",
+      "/api/user/payments/summaries",
+      { options }
+  );
+}
+
+export function usePaymentByIdQuery(paymentId, options) {
+  return useApiQuery(["payment", paymentId], `/api/user/payments/${paymentId}`, {
+    options,
+  });
+}
+
+
+
+// 관리자: 전체 결제 내역 조회
+export function useAllPaymentsForAdminQuery(options) {
+  return useApiQuery("allPayments", "/api/admin/payments", { options });
+}
