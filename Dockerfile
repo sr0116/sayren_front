@@ -13,14 +13,17 @@ RUN npm install --legacy-peer-deps
 # 5. 소스 복사
 COPY . .
 
-#  6. 환경변수 복사 (.env.local → .env)
-COPY .env.local .env
+# ✅ 환경변수 복사 (운영환경용)
+#    .env.local이 있으면 개발용, .env.production은 배포용
+#    둘 다 있을 경우, .env.production이 우선 적용되도록 순서 주의
+COPY .env.local .env.local
+COPY .env.production .env
 
-# 7. Next.js 프로덕션 빌드
+# 6. Next.js 프로덕션 빌드
 RUN npm run build
 
 # -----------------------------
-# 2단계: 경량 실행 환경
+# 🚀 2단계: 경량 실행 환경
 # -----------------------------
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -31,9 +34,7 @@ ENV NODE_ENV=production
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-
-#  .env 복사
-COPY .env .env
+COPY --from=builder /app/.env ./env
 
 # 의존성 설치 (프로덕션만)
 RUN npm install --omit=dev --legacy-peer-deps
