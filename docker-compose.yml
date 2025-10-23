@@ -1,0 +1,12 @@
+frontend:
+  build: ../sayren_front  # 또는 실제 경로 지정
+  container_name: sayren_frontend
+  ports:
+    - "3000:3000"
+  environment:
+    - NEXT_PUBLIC_SPRING_API_BASE_URL=http://backend:8080
+    - NEXT_PUBLIC_API_BASE_URL=http://backend:8080
+    - NEXT_PUBLIC_ACCESS_TOKEN_MAXAGE=30
+    - REVALIDATE_SECRET=sayren-next-secret
+    - NEXT_PUBLIC_IMP_CODE=imp52145352
+  restart: always
