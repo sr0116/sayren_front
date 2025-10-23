@@ -29,6 +29,8 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 
+COPY .env.production .env
+
 # 의존성 설치 (프로덕션만)
 RUN npm install --omit=dev --legacy-peer-deps
 
