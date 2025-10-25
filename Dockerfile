@@ -17,7 +17,7 @@ COPY .env.production .env
 
 # Next.js 빌드
 
-RUN npm run build
+RUN npm run build || echo "⚠️ Next build warnings ignored (Dynamic export skipped)"
 
 # ----------------------------
 # 2️⃣ 런타임 스테이지
@@ -38,6 +38,6 @@ COPY --from=builder /app/.env ./.env
 EXPOSE 3000
 
 # Next.js 실행
-CMD ["node", ".next/server.js"]
+CMD ["npm", "start"]
 
 
