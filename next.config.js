@@ -2,13 +2,11 @@
 const nextConfig = {
   reactStrictMode: false,
 
-  //  모든 페이지를 SSR로 강제 (빌드 시 prerender-manifest.json 생성 방지)
-  output: "standalone", // optional — 빌드 경량화 원할 때만
+  output: "standalone",
   experimental: {
-    appDir: true, // App Router 사용 명시
+    appDir: true,
   },
 
-  //  이미지 도메인 설정
   images: {
     remotePatterns: [
       {
@@ -19,12 +17,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "kiylab-bucket.s3.ap-northeast-2.amazonaws.com",
-        pathname: "/**", // S3 버킷 내 모든 경로 허용
+        pathname: "/**",
       },
     ],
   },
 
-  //  백엔드 API 경로 리라이트
   async rewrites() {
     return [
       {
@@ -43,7 +40,8 @@ const nextConfig = {
   },
 };
 
-//  동적 렌더링 강제 (정적 export 시도 방지)
+//  정적 export 방지용 (SSR 강제)
 export const dynamic = "force-dynamic";
 
-module.exports = nextConfig;
+//  ESM 방식으로 내보내기
+export default nextConfig;
