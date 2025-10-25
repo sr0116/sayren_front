@@ -9,5 +9,3 @@ services:
     env_file:
       - .env.production
     restart: always
-    depends_on:
-      - backend   # ✅ 백엔드 먼저 띄우기 (선택)
