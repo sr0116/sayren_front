@@ -2,10 +2,12 @@ version: "3.8"
 
 services:
   frontend:
-    build: .
+    image: sr0116/sayren-frontend:latest   # ✅ Docker Hub에서 pull
     container_name: sayren_front
     ports:
       - "3000:3000"
     env_file:
       - .env.production
     restart: always
+    depends_on:
+      - backend   # ✅ 백엔드 먼저 띄우기 (선택)
