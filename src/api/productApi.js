@@ -11,3 +11,7 @@ export function useProductDeleteMutation(options) {
 // export function useProductDeleteMutation(options) {
 //   return useApiMutation("DELETE",({productId}) =>  `/api/admin/product/delete/${productId}`, { options });
 // }
+export async function productData() {
+  // ⚠️ 더미 데이터 반환 (빌드 테스트용)
+  return Promise.resolve([]);
+}

@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
 import ProductList from "@/components/product/ProductList";
 
-export const revalidate = false;
+export const revalidate = 0;
 export default async function ProductListPage({searchParams}) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`,{
     // cache: "no-store"  // 캐시 막는

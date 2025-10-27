@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
 import RentalList from "@/components/product/RentalList";
 
-export const revalidate = false;
+export const revalidate = 0;
 export default async function RentalListPage({ searchParams }) {
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`, {

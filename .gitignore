@@ -42,3 +42,36 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Docker
+.Dockerfile.swp
+/docker-compose.override.yml
+/docker-compose.prod.yml
+/tmp
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Docker build artifacts
+.dockerignore
+docker-volume/
+docker-data/
+docker-cache/
+docker-backup/
+.env.production.local
+
+# Build cache
+.next/
+out/
+.cache/
+dist/
+*.tar
+*.tgz
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+
+# System files
+Thumbs.db
