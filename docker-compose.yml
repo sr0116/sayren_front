@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .                   # 현재 폴더 기준
+      dockerfile: Dockerfile
+      args:
+        SKIP_BUILD_FETCH: "true"
+    container_name: sayren-front
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+      SKIP_BUILD_FETCH: "true"
+      NEXT_PUBLIC_API_BASE_URL: http://sayren-backend:8080
+      NEXT_PUBLIC_SPRING_API_BASE_URL: http://sayren-backend:8080
+      NEXT_PUBLIC_API_PROXY_PREFIX: /api/proxy
+    networks:
+      - sayren-net
+
+networks:
+  sayren-net:
+    driver: bridge
