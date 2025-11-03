@@ -9,7 +9,7 @@ const BACKEND_BASE =
 
 // ✅ 2️⃣ 프록시 기반 요청 (Next → /api/... → Nginx → Spring)
 const api = axios.create({
-  baseURL: "/api", // ✅ 절대주소 X, 프록시용 상대경로만 사용
+  baseURL: "/api", //  절대주소 X, 프록시용 상대경로만 사용
   withCredentials: true,
 });
 

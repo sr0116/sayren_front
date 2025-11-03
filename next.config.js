@@ -11,7 +11,7 @@ const serverBase =
 const clientBase =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://15.165.159.88:8800"; // CSR에서 Nginx 프록시 사용
 
-console.log("🧩 Next.js Config Loaded:", {
+console.log(" Next.js Config Loaded:", {
   serverBase,
   clientBase,
 });
@@ -54,7 +54,7 @@ const nextConfig = {
         : [
           {
             source: "/api/:path*",
-            destination: "http://15.165.159.88:8800/api/:path*", // ✅ 8800 경유
+            destination: "http://15.165.159.88:8800/:path*",
           },
         ];
   }

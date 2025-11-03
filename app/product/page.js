@@ -12,7 +12,7 @@ export default async function ProductListPage({ searchParams }) {
   console.log("🧩 ProductList SSR fetch →", baseUrl);
 
   try {
-    const res = await fetch(`${baseUrl}/api/product`, {
+    const res = await fetch(`${baseUrl}/api/user/product`, {
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",

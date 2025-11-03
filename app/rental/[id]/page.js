@@ -1,8 +1,8 @@
 import ProductDetail from "@/components/product/ProductDetail";
 
 export const revalidate = false;
-export default async function RentalDetailPage({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product/${params.id}`, {
+export default async function RentalDetail({ params }) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/product/${params.id}`, {
     cache: "no-store"  // 캐시 막는
   });
 

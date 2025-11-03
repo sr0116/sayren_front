@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 // ✅ 반드시 명시 — 절대 undefined 되지 않도록
 const BASE_URL =
-    process.env.NEXT_SERVER_API_BASE_URL || "http://15.165.159.88:8800/api";
+    process.env.NEXT_SERVER_API_BASE_URL || "http://15.165.159.88:8800";
 
 let isRefreshing = false;
 let refreshPromise = null;
