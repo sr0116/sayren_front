@@ -14,6 +14,7 @@ export const statusColorMap = {
     ADMIN: "bg-blue-200 text-blue-900",
   },
 
+
   NotificationType: {
     SUBSCRIBE: "bg-indigo-100 text-indigo-800",  // 구독
     SUBSCRIBE_ROUND: "bg-indigo-200 text-indigo-900", // 회차 결제
