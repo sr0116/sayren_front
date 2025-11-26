@@ -1,6 +1,6 @@
 export default function AdminPage(){
   return (
-    <div>
+    <div >
       관리자 페이지
     </div>
   )

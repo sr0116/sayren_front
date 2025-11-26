@@ -24,7 +24,7 @@ export default function SocialAuthHandler() {
         queryClient
             .fetchQuery({
               queryKey: ["2fa"],
-              queryFn: () => api.get("/api/auth/read-2fa"),
+              queryFn: () => noApi.get("/api/auth/read-2fa"),
             })
             .then(() => {
               queryClient.setQueryData(["2fa"], true);

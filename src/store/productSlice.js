@@ -1,6 +1,5 @@
 // 상품관련 slice
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { productData } from "@/api/productApi";
 
 export const fetchProducts = createAsyncThunk("product/fetch", async () => {
   return await productData();

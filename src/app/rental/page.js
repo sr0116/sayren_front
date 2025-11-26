@@ -1,32 +1,28 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import RentalList from "@/components/product/RentalList";
+import { api } from "@/lib/axios";
 
-export const revalidate = false;
-export default async function RentalListPage({ searchParams }) {
+export default function RentalListPage({ searchParams }) {
+  const [products, setProducts] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`, {
-    // cache: "no-store"  // 캐시 막는
-  });
+  useEffect(() => {
+    api
+        .get("/api/user/product")
+        .then((res) => {
+          setProducts(res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("렌탈 목록 로드 실패:", err);
+          setLoading(false);
+        });
+  }, []);
 
+  if (loading) return <div>불러오는 중...</div>;
+  if (!products) return <div>서버 오류</div>;
 
-  if (!res.ok) {
-    return (
-      <div>
-        <h1 className="text-center mb-16 font-semibold text-2xl">서버 에러가 발생했습니다.</h1>
-        <p>상품을 가져올 수 없습니다.</p>
-      </div>
-    );
-  }
-
-  const products = await res.json();
-
-
-  if(products === null || products === undefined) {
-    return (<div>불러오는 중</div>)
-  }
-
-  return (
-    <div>
-      <RentalList products={products} searchParams={searchParams} />
-    </div>
-  );
+  return <RentalList products={products} searchParams={searchParams} />;
 }

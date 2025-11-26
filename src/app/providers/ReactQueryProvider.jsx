@@ -21,7 +21,7 @@ export function Init2FA() {
       try {
         const res = await queryClient.fetchQuery({
           queryKey: ["2fa"],
-          queryFn: () => api.get("/api/auth/read-2fa"),
+              queryFn: () => noApi.get("/api/auth/read-2fa"),
           staleTime: Infinity,
           cacheTime: Infinity,
         });

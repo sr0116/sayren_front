@@ -1,31 +1,28 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import ProductList from "@/components/product/ProductList";
+import { api } from "@/lib/axios";
 
-export const revalidate = false;
-export default async function ProductListPage({searchParams}) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/product`,{
-    // cache: "no-store"  // 캐시 막는
-  });
+export default function ProductListPage({ searchParams }) {
+  const [products, setProducts] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    api
+        .get("/api/user/product")
+        .then((res) => {
+          setProducts(res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("❌ 상품 목록 요청 실패:", err);
+          setLoading(false);
+        });
+  }, []);
 
-  if (!res.ok) {
-    return (
-      <div>
-        <h1 className="text-center mb-16 font-semibold text-2xl">서버 에러가 발생했습니다.</h1>
-        <p>상품을 가져올 수 없습니다.</p>
-      </div>
-    );
-  }
+  if (loading) return <div>상품 불러오는 중...</div>;
+  if (!products) return <div>상품 로드 실패</div>;
 
-  const products = await res.json();
-
-
-  if(products === null || products === undefined) {
-    return (<div>불러오는 중</div>)
-  }
-  
-  return (
-      <div>
-        <ProductList products={products} searchParams={searchParams} />
-      </div>
-  );
+  return <ProductList products={products} searchParams={searchParams} />;
 }
