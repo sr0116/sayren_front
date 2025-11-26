@@ -1,21 +1,18 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = false;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SPRING_API_BASE_URL; // 백엔드 주소
-    const url = `${baseUrl}/api/user/product`;
+    const baseUrl = process.env.NEXT_SERVER_API_BASE_URL;
+    const res = await fetch(`${baseUrl}/api/user/product`, {
+      cache: "no-store",
+    });
 
-    const res = await fetch(url, { cache: "no-store" });
-    const contentType = res.headers.get("content-type");
-
-    const data = contentType?.includes("application/json")
-      ? await res.json()
-      : await res.text();
-
+    const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (err) {
-    console.error("서버오류 오류:", err);
-    return NextResponse.json({ error: "서버 오류" }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: "fail" }, { status: 500 });
   }
 }
